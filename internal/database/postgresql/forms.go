@@ -9,6 +9,13 @@ import (
 )
 
 func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, description string) error {
+	if strings.TrimSpace(description) == "" {
+		return db.CreateForm(id, title)
+	}
+	if strings.TrimSpace(title) == "" {
+		return internal_errors.ErrParameterIssue
+	}
+
 	conn := db.getConnection()
 	_, err := conn.Exec(`
 	INSERT INTO forms (form_id, form_title, form_description) VALUES ($1, $2, $3);
@@ -25,6 +32,9 @@ func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, descr
 }
 
 func (db PostgreSQL) CreateForm(id uuid.UUID, title string) error {
+	if strings.TrimSpace(title) == "" {
+		return internal_errors.ErrParameterIssue
+	}
 	conn := db.getConnection()
 	_, err := conn.Exec(`
 	INSERT INTO forms (form_id, form_title) VALUES ($1, $2);
