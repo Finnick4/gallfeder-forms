@@ -2,6 +2,7 @@ package postgresql
 
 import (
 	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/shared"
 	"strings"
 	"uuid"
 
@@ -48,4 +49,27 @@ func (db PostgreSQL) CreateForm(id uuid.UUID, title string) error {
 		return internal_errors.ErrGeneralIssue
 	}
 	return nil
+}
+
+func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
+	if id.String() == "" {
+		return shared.Form{}, internal_errors.ErrParameterIssue
+	}
+
+	conn := db.getConnection()
+	row := conn.QueryRow(`SELECT form_title, COALESCE(form_description, '') FROM forms WHERE form_id=$1;`, id.String())
+	var form = shared.Form{
+		Id: id.String(),
+	}
+
+	err := row.Scan(&form.Title, &form.Description)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return shared.Form{}, internal_errors.ErrNotFound
+		}
+		log.Errorf(`Ran into issue while getting form: %s\n`, err)
+		return shared.Form{}, internal_errors.ErrGeneralIssue
+	}
+
+	return form, nil
 }

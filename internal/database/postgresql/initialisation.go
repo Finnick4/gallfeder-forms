@@ -53,9 +53,9 @@ func (db PostgreSQL) connectToDatabase() {
 		log.Warn("'POSTGRES_PORT' is not set in .env. Using default...")
 	}
 
-	name, ok := os.LookupEnv("POSTGRES_NAME")
+	name, ok := os.LookupEnv("POSTGRES_DB")
 	if !ok {
-		name = "forms"
+		name = "gallfederforms"
 		log.Warn("'POSTGRES_NAME' is not set in .env. Using default...")
 	}
 

@@ -12,5 +12,7 @@ func Handler(r *chi.Mux) {
 
 	r.Route("/api/forms", func(router chi.Router) {
 		router.Post("/", forms.FormCreateHandler)
+		router.Get("/{formID}", forms.FormGetHandler)
+
 	})
 }

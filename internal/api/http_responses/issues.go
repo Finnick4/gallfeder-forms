@@ -35,6 +35,9 @@ var (
 	ParameterIssueSpecificHandler = func(w http.ResponseWriter, parameterName string) {
 		writeError(w, fmt.Sprintf("There was an issue with the parameter '%s'!", parameterName), http.StatusBadRequest)
 	}
+	DoesntExistHandler = func(w http.ResponseWriter) {
+		writeError(w, fmt.Sprintf("The requested resource does not exist!"), http.StatusNotFound)
+	}
 	ParameterIssueHandler = func(w http.ResponseWriter) {
 		writeError(w, "There was an issue with one of the parameters!", http.StatusBadRequest)
 	}

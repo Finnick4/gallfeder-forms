@@ -3,6 +3,7 @@ package application
 import (
 	"errors"
 	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/shared"
 	"uuid"
 
 	log "github.com/sirupsen/logrus"
@@ -36,4 +37,20 @@ func CreateForm(title string, description string) (string, error) {
 	}
 
 	return id.String(), nil
+}
+
+func GetForm(id uuid.UUID) (shared.Form, error) {
+	if !IsDBSet() {
+		log.Error("Aborted query of specific form as no database is set!")
+		return shared.Form{}, internal_errors.ErrNoDatabaseProvider
+	}
+
+	// @TODO check in cache whether this ID actually exists
+
+	form, err := db.GetForm(id)
+	if err != nil {
+		return shared.Form{}, err
+	}
+
+	return form, nil
 }
