@@ -20,12 +20,14 @@ func main() {
 		log.Fatalf("Failed to load .env variables: %s", err)
 	}
 
-	application.SetDatabase(postgresql.PostgreSQL{})
+	db := postgresql.PostgreSQL{}
+	application.SetDatabase(db)
 
 	var r *chi.Mux = chi.NewRouter()
 	api.Handler(r)
 
 	err = http.ListenAndServe(":8080", r)
+	_ = db.Close()
 	if err != nil {
 		log.Fatal(err)
 	}

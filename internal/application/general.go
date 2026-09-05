@@ -8,6 +8,7 @@ var db general.Database
 
 func SetDatabase(database general.Database) {
 	db = database
+	db.Load()
 }
 func IsDBSet() bool {
 	return db != nil

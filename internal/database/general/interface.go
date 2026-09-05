@@ -11,8 +11,8 @@ type Database interface {
 	GetForm(id uuid.UUID) (shared.Form, error)
 	StartFormEditSession(formID uuid.UUID) (FormEditSession, error)
 
-	// @TODO add close
-	// @TODO add ping
+	Close() error
+	Load()
 }
 
 type FormEditSession interface {

@@ -11,6 +11,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type PostgreSQL struct {
+}
+
 var connection *sql.DB
 
 func (db PostgreSQL) getConnection() *sql.DB {
@@ -25,8 +28,7 @@ func (db PostgreSQL) getConnection() *sql.DB {
 
 func (db PostgreSQL) connectToDatabase() {
 	if connection != nil {
-		// @TODO native db.Close() call
-		err := connection.Close()
+		err := db.Close()
 		if err != nil {
 			log.Error("Encountered error while trying to close PostgreSQL database: %s", err)
 		}
@@ -122,4 +124,17 @@ func createIndexOnTable(table string, row string, wg *sync.WaitGroup) {
 		log.Fatalf("Failed to create index for PostgreSQL table '%s' on row '%s'! Error: %s\n", table, row, err)
 	}
 	wg.Done()
+}
+
+func (db PostgreSQL) Close() error {
+	err := connection.Close()
+	if err != nil {
+		log.Errorf("Encountered error while closing PostgreSQL database: %s\n", err)
+		return err
+	}
+	return nil
+}
+
+func (db PostgreSQL) Load() {
+	_ = db.getConnection()
 }
