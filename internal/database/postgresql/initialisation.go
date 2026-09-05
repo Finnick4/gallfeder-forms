@@ -85,16 +85,27 @@ func initialiseDatabase() {
 	wg := sync.WaitGroup{}
 
 	_, err := connection.Exec(`CREATE TABLE IF NOT EXISTS "forms" (
-		"form_id"				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
-		"form_title"			VARCHAR(64) NOT NULL,
-		"form_description"		TEXT,
-		"form_creation_date"	TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		"id"				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
+		"title"			VARCHAR(64) NOT NULL,
+		"description"		TEXT,
+		"creation_date"	TIMESTAMPTZ NOT NULL DEFAULT NOW()
 	);`)
 	if err != nil {
 		log.Fatalf("Failed to initialise table 'forms' for PostgreSQL database! Error: %s\n", err)
 	}
-	go createIndexOnTable("forms", "form_title", &wg)
+	go createIndexOnTable("forms", "title", &wg)
 	wg.Add(1)
+
+	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "questions" (
+		"id" 		VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE, 
+		"form_id"	VARCHAR(36) NOT NULL,
+		"index"		INTEGER NOT NULL,
+		"type"		INTEGER NOT NULL,
+		"meta"		TEXT NOT NULL,
+		CONSTRAINT "fk_questions_form" FOREIGN KEY(form_id) REFERENCES forms(id) ON DELETE CASCADE);`)
+	if err != nil {
+		log.Fatalf("Failed to initialise table 'questions' for PostgreSQL database! Error: %s\n", err)
+	}
 
 	wg.Wait()
 }

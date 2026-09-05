@@ -19,7 +19,7 @@ func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, descr
 
 	conn := db.getConnection()
 	_, err := conn.Exec(`
-	INSERT INTO forms (form_id, form_title, form_description) VALUES ($1, $2, $3);
+	INSERT INTO forms (id, title, description) VALUES ($1, $2, $3);
 	`, id.String(), title, description)
 
 	if err != nil {
@@ -38,7 +38,7 @@ func (db PostgreSQL) CreateForm(id uuid.UUID, title string) error {
 	}
 	conn := db.getConnection()
 	_, err := conn.Exec(`
-	INSERT INTO forms (form_id, form_title) VALUES ($1, $2);
+	INSERT INTO forms (id, title) VALUES ($1, $2);
 	`, id.String(), title)
 
 	if err != nil {
@@ -57,7 +57,7 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	}
 
 	conn := db.getConnection()
-	row := conn.QueryRow(`SELECT form_title, COALESCE(form_description, '') FROM forms WHERE form_id=$1;`, id.String())
+	row := conn.QueryRow(`SELECT title, COALESCE(description, '') FROM forms WHERE id=$1;`, id.String())
 	var form = shared.Form{
 		Id: id.String(),
 	}

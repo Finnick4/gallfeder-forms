@@ -8,12 +8,12 @@ import (
 )
 
 type SuccessResponse struct {
-	Code int
-	Data any
+	Code int `json:"code"`
+	Data any `json:"data"`
 }
 
 type BarebonesResponse struct {
-	Code int
+	Code int `json:"code"`
 }
 
 func WriteResponse(data any, w http.ResponseWriter) {

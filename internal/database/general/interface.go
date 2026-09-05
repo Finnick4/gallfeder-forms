@@ -10,4 +10,5 @@ type Database interface {
 	CreateForm(id uuid.UUID, title string) error
 	GetForm(id uuid.UUID) (shared.Form, error)
 	// @TODO add close
+	// @TODO add ping
 }
