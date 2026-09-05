@@ -8,4 +8,5 @@ var (
 	ErrNotFound           = errors.New("the queried piece of data does not exist")
 	ErrNoDatabaseProvider = errors.New("the database provider was not set")
 	ErrParameterIssue     = errors.New("one of the parameters was invalid")
+	ErrSessionClosed      = errors.New("the given session is already closed")
 )

@@ -1,9 +1,12 @@
 package postgresql
 
 import (
+	"errors"
+	"gallfeder-forms/internal/database/general"
 	"gallfeder-forms/internal/internal_errors"
 	"gallfeder-forms/internal/shared"
 	"strings"
+	"time"
 	"uuid"
 
 	log "github.com/sirupsen/logrus"
@@ -72,4 +75,32 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	}
 
 	return form, nil
+}
+
+func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (general.FormEditSession, error) {
+	conn := db.getConnection()
+	tx, err := conn.Begin()
+	if err != nil {
+		log.Errorf("Ran into issue while initiating tx for editing a form: %s\n", err)
+		return PostgresFormEditSession{}, err
+	}
+
+	session := PostgresFormEditSession{
+		tx:     tx,
+		formID: formID,
+	}
+
+	time.AfterFunc(time.Second*5, func() {
+		err := session.AbortSession()
+		if err != nil {
+			if errors.Is(err, internal_errors.ErrSessionClosed) {
+				return
+			}
+			log.Errorf("Encountered unexpected error while automatically to close FormEditSession: %s\n", err)
+			return
+		}
+		log.Warn("Automatically closed unclosed FormEditSession after 5 seconds. As this is a failsafe timeout, there probably is an issue present with how the session is handled. If this is not a development environment, please report it immediately!")
+	})
+
+	return session, nil
 }
