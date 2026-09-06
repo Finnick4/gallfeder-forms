@@ -16,7 +16,6 @@ func CreateForm(title string, description string) (string, error) {
 	}
 
 	id := uuid.NewV4()
-	// @TODO Check cache for possible duplicate id
 
 	var err error
 	if description == "" {
@@ -53,4 +52,64 @@ func GetForm(id uuid.UUID) (shared.Form, error) {
 	}
 
 	return form, nil
+}
+
+func EditForm(form shared.Form, removeDescription bool, questions []shared.QuestionEdit) ([]shared.Question, error) {
+	if !IsDBSet() {
+		log.Error("Aborted editing form as no database is set!")
+		return nil, internal_errors.ErrNoDatabaseProvider
+	}
+	s, err := db.StartFormEditSession(form.Id)
+	if err != nil {
+		log.Errorf("Encountered unexpected error while starting form edit session: %s\n", err)
+		return nil, err
+	}
+
+	if form.Title != "" && form.Description != "" && !removeDescription {
+		s.EditTitleAndDescription(form.Title, form.Description)
+	}
+	if form.Title != "" && (form.Description == "" || removeDescription) {
+		s.EditTitle(form.Title)
+	}
+	if form.Title == "" && form.Description != "" && !removeDescription {
+		s.EditDescription(form.Description)
+	}
+	if removeDescription {
+		s.RemoveDescription()
+	}
+
+	var created []shared.Question
+	for _, q := range questions {
+		if q.QuestionID == uuid.Nil() {
+			q.QuestionID = uuid.NewV4()
+			s.CreateQuestion(q.QuestionID, q.Type, q.Meta)
+			q.FormID = form.Id
+			created = append(created, q.RemoveInternalData())
+			continue
+		}
+		if q.DeleteQuestion {
+			s.DeleteQuestion(q.QuestionID)
+			continue
+		}
+		if q.OverwriteMetadata && q.Type != 0 {
+			s.UpdateQuestionTypeAndMetadata(q.QuestionID, q.Type, q.Meta)
+		}
+		if q.OverwriteMetadata && q.Type == 0 {
+			s.UpdateQuestionMetadata(q.QuestionID, q.Meta)
+		}
+		if !q.OverwriteMetadata && q.Type != 0 {
+			s.UpdateQuestionType(q.QuestionID, q.Type)
+		}
+	}
+
+	err = s.ExecuteSession()
+	if err != nil {
+		if errors.Is(err, internal_errors.ErrSessionClosed) {
+			log.Error("The edit session was already closed when trying to execute changes to edit form.")
+			return nil, err
+		}
+		log.Errorf("Encountered issue while executing edit form session: %s\n", err)
+		return nil, err
+	}
+	return created, nil
 }

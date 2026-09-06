@@ -53,6 +53,18 @@ func (p PostgresFormEditSession) EditTitleAndDescription(title string, descripti
 	}
 }
 
+func (p PostgresFormEditSession) RemoveDescription() {
+	if p.ended {
+		return
+	}
+	_, err := p.tx.Exec(`UPDATE forms SET description=NULL WHERE id=$1;`, p.formID.String())
+	if err != nil {
+		log.Errorf("Failed to stage RemoveDescription within forms edit session: %s\n", err)
+		_ = p.AbortSession()
+		return
+	}
+}
+
 func (p PostgresFormEditSession) CreateQuestion(questionID uuid.UUID, questionType shared.QuestionType, meta shared.QuestionMetaData) {
 	if p.ended {
 		return

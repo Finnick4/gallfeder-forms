@@ -16,7 +16,7 @@ func GetParameters[T any](body io.ReadCloser, w http.ResponseWriter) (T, bool) {
 
 	if err != nil {
 		http_responses.ParameterDecodingIssueHandler(w)
-		log.Debug("Could not process the request due to parameter issues")
+		log.Debugf("Could not process the request due to parameter issues: %s\n", err)
 		return params, false
 	}
 

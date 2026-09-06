@@ -62,7 +62,7 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	conn := db.getConnection()
 	row := conn.QueryRow(`SELECT title, COALESCE(description, '') FROM forms WHERE id=$1;`, id.String())
 	var form = shared.Form{
-		Id: id.String(),
+		Id: id,
 	}
 
 	err := row.Scan(&form.Title, &form.Description)

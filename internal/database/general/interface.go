@@ -19,6 +19,7 @@ type FormEditSession interface {
 	EditTitle(title string)
 	EditDescription(description string)
 	EditTitleAndDescription(title string, description string)
+	RemoveDescription()
 
 	CreateQuestion(questionID uuid.UUID, questionType shared.QuestionType, meta shared.QuestionMetaData)
 	UpdateQuestionMetadata(questionID uuid.UUID, meta shared.QuestionMetaData)

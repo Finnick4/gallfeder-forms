@@ -26,3 +26,24 @@ type Question struct {
 	Type       QuestionType
 	Meta       QuestionMetaData
 }
+
+type QuestionEdit struct {
+	FormID     uuid.UUID
+	QuestionID uuid.UUID
+	Index      int
+	Type       QuestionType
+	Meta       QuestionMetaData
+
+	DeleteQuestion    bool
+	OverwriteMetadata bool
+}
+
+func (q QuestionEdit) RemoveInternalData() Question {
+	return Question{
+		FormID:     q.FormID,
+		QuestionID: q.QuestionID,
+		Index:      q.Index,
+		Type:       q.Type,
+		Meta:       q.Meta,
+	}
+}
