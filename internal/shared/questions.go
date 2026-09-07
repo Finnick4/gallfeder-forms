@@ -10,21 +10,21 @@ const (
 )
 
 type QuestionMetaData struct {
-	Question       string
-	ChoiceOptions  []ChoiceQuestionOption
-	MaximumChoices int
+	Question       string                 `json:"question"`
+	ChoiceOptions  []ChoiceQuestionOption `json:"choiceOptions"`
+	MaximumChoices int                    `json:"maximumChoices"`
 }
 
 type ChoiceQuestionOption struct {
-	Text string
+	Text string `json:"text"`
 }
 
 type Question struct {
-	FormID     uuid.UUID
-	QuestionID uuid.UUID
-	Index      int
-	Type       QuestionType
-	Meta       QuestionMetaData
+	QuestionID uuid.UUID        `json:"id"`
+	FormID     uuid.UUID        `json:"formID"`
+	Index      int              `json:"index"`
+	Type       QuestionType     `json:"type"`
+	Meta       QuestionMetaData `json:"meta"`
 }
 
 type QuestionEdit struct {

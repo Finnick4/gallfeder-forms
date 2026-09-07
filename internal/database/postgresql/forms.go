@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"encoding/json"
 	"errors"
 	"gallfeder-forms/internal/database/general"
 	"gallfeder-forms/internal/internal_errors"
@@ -74,6 +75,52 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 		return shared.Form{}, internal_errors.ErrGeneralIssue
 	}
 
+	rows, err := conn.Query(`SELECT id, index, type, meta FROM questions WHERE form_id=$1;`, id.String())
+
+	if err != nil {
+		if err.Error() != "sql: no rows in result set" {
+			log.Errorf(`Ran into issue while getting questions of form: %s\n`, err)
+			return shared.Form{}, internal_errors.ErrGeneralIssue
+		}
+		form.Questions = nil
+		return form, nil
+	}
+
+	for rows.Next() {
+		var q shared.Question
+		var qid, qmeta string
+		err = rows.Scan(&qid, &q.Index, &q.Type, &qmeta)
+		if err != nil {
+			log.Errorf(`Ran into issue while scanning questions of form: %s\n`, err)
+			_ = rows.Close()
+			return shared.Form{}, internal_errors.ErrGeneralIssue
+		}
+
+		q.FormID = id
+		q.QuestionID, err = uuid.Parse(qid)
+		if err != nil {
+			log.Errorf(`Encountered invalid question id in database while trying to parse just this: %s\n`, err)
+			_ = rows.Close()
+			return shared.Form{}, internal_errors.ErrGeneralIssue
+		}
+
+		decoded, err := shared.DecodeBase64(qmeta)
+		if err != nil {
+			log.Errorf(`Encountered invalidly encoded question metadata in database while trying to decode just this: %s\n`, err)
+			_ = rows.Close()
+			return shared.Form{}, internal_errors.ErrGeneralIssue
+		}
+		err = json.Unmarshal([]byte(decoded), &q.Meta)
+		if err != nil {
+			log.Errorf(`Encountered invalidly marshaled question metadata in database while trying to unmarshal just this: %s\n`, err)
+			_ = rows.Close()
+			return shared.Form{}, internal_errors.ErrGeneralIssue
+		}
+
+		form.Questions = append(form.Questions, q)
+	}
+
+	_ = rows.Close()
 	return form, nil
 }
 

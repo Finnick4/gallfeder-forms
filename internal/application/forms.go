@@ -33,6 +33,8 @@ func CreateForm(title string, description string) (string, error) {
 			log.Debug("Form name was set to a whitespace!")
 			return "", err
 		}
+		log.Errorf("Failed to create form: %s\n", err)
+		return "", err
 	}
 
 	return id.String(), nil

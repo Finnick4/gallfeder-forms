@@ -72,7 +72,7 @@ func FormEditHandler(w http.ResponseWriter, r *http.Request) {
 		if change.Index != 0 {
 			q.Index = change.Index
 		}
-		if change.OverwriteMetadata {
+		if change.OverwriteMetadata || change.Id == "" {
 			q.Meta = change.Metadata
 			q.OverwriteMetadata = true
 		}
