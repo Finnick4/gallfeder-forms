@@ -2,6 +2,7 @@ package api
 
 import (
 	"gallfeder-forms/internal/api/forms"
+	"gallfeder-forms/internal/api/responses"
 
 	"github.com/go-chi/chi/v5"
 	chimiddle "github.com/go-chi/chi/v5/middleware"
@@ -15,5 +16,6 @@ func Handler(r *chi.Mux) {
 		router.Get("/{formID}", forms.FormGetHandler)
 		router.Patch("/{formID}", forms.FormEditHandler)
 
+		router.Post("/{formID}/responses", responses.ResponseCreateHandler)
 	})
 }

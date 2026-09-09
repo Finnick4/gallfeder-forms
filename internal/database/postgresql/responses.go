@@ -53,6 +53,9 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
 			return internal_errors.ErrDuplicatePresent
 		}
+		if strings.HasPrefix(err.Error(), "pq: insert or update on table \"response_to_question\" violates foreign key constraint") {
+			return internal_errors.ErrParameterIssue
+		}
 		log.Errorf(`Ran into issue while getting questions of form: %s\n`, err)
 		return internal_errors.ErrGeneralIssue
 	}
