@@ -11,6 +11,8 @@ type Database interface {
 	GetForm(id uuid.UUID) (shared.Form, error)
 	StartFormEditSession(formID uuid.UUID) (FormEditSession, error)
 
+	CreateResponse(responseID uuid.UUID, formID uuid.UUID, answers []shared.QuestionAnswer) error
+
 	Close() error
 	Load()
 }

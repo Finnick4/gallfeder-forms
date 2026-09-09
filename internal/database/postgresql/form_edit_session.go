@@ -160,7 +160,7 @@ func (p PostgresFormEditSession) ExecuteSession() error {
 			return internal_errors.ErrSessionClosed
 		}
 		log.Errorf("Ran into error while trying to commit FormEditSession: %s\n", err)
-		return err
+		return internal_errors.ErrGeneralIssue
 	}
 	return nil
 }
@@ -171,7 +171,7 @@ func (p PostgresFormEditSession) AbortSession() error {
 	}
 	p.ended = true
 
-	err := p.tx.Commit()
+	err := p.tx.Rollback()
 	if err != nil {
 		if errors.Is(err, sql.ErrTxDone) {
 			return internal_errors.ErrSessionClosed

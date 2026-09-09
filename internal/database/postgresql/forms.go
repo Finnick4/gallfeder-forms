@@ -129,7 +129,7 @@ func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (general.FormEditSes
 	tx, err := conn.Begin()
 	if err != nil {
 		log.Errorf("Ran into issue while initiating tx for editing a form: %s\n", err)
-		return PostgresFormEditSession{}, err
+		return PostgresFormEditSession{}, internal_errors.ErrGeneralIssue
 	}
 
 	session := PostgresFormEditSession{

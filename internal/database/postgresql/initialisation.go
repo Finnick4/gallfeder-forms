@@ -109,6 +109,27 @@ func initialiseDatabase() {
 		log.Fatalf("Failed to initialise table 'questions' for PostgreSQL database! Error: %s\n", err)
 	}
 
+	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "responses" (
+		"id" 				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE, 
+		"form_id"			VARCHAR(36) NOT NULL,
+		"submission_date"	TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+		"last_change"		TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+		CONSTRAINT "fk_responses_form" FOREIGN KEY(form_id) REFERENCES forms(id) ON DELETE CASCADE);`)
+	if err != nil {
+		log.Fatalf("Failed to initialise table 'responses' for PostgreSQL database! Error: %s\n", err)
+	}
+
+	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "response_to_question" (
+		"response_id" 	VARCHAR(36) NOT NULL, 
+		"question_id"	VARCHAR(36) NOT NULL,
+		"meta" 			TEXT NOT NULL,
+		CONSTRAINT "fk_response_head" FOREIGN KEY(response_id) REFERENCES responses(id) ON DELETE CASCADE,
+		CONSTRAINT "fk_response_question" FOREIGN KEY(question_id) REFERENCES questions(id) ON DELETE CASCADE,
+		PRIMARY KEY (response_id, question_id));`)
+	if err != nil {
+		log.Fatalf("Failed to initialise table 'response_to_question' for PostgreSQL database! Error: %s\n", err)
+	}
+
 	wg.Wait()
 }
 
