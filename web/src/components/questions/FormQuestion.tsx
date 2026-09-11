@@ -1,13 +1,12 @@
-import {type Question, QuestionTypes} from "../../shared/types.ts";
+import {QuestionTypes} from "../../shared/types.ts";
 import {ChoiceQuestion} from "./ChoiceQuestion.tsx";
+import type {FormQuestionProperties} from "../../shared/properties.ts";
 
-interface Properties {
-   question: Question
-}
 
-export const FormQuestion = ({question}: Properties) => {
+
+export const FormQuestion = ({question, currentAnswer, answerChangeCallback}: FormQuestionProperties) => {
     if (question.type == QuestionTypes.Choice) {
-        return (<ChoiceQuestion question={question}></ChoiceQuestion>);
+        return (<ChoiceQuestion question={question} currentAnswer={currentAnswer} answerChangeCallback={answerChangeCallback}></ChoiceQuestion>);
     }
     if (question.type == QuestionTypes.Input) {
         console.error("Text input components are not yet implemented!");
