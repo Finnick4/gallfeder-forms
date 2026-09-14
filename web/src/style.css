@@ -1,0 +1,124 @@
+:root {
+    font-size: 1rem;
+
+    --bg-color: hsl(180, 95%, 97%);
+    --bg-color-section: hsl(180, 5%, 100%);
+    --bg-section-border: solid hsl(180, 5%, 95%) var(--border-width);
+
+    --element-color-muted: hsl(180, 80%, 96%);
+    --element-color: hsl(180, 80%, 98%);
+    --element-color-highlight: hsl(180, 80%, 100%);
+    --element-border: solid hsl(180, 70%, 94%) var(--border-width);
+
+
+    --text: hsl(180, 4%, 5%);
+    --text-muted: hsl(180, 4%, 15%);
+
+    --primary: hsl(196, 87%, 55%);
+    --primary-highlight: hsl(196, 87%, 65%);
+    --primary-muted: hsl(196, 87%, 45%);
+    --primary-border: solid hsl(196, 65%, 50%) var(--border-width);
+
+    --secondary: hsl(209, 100%, 80%);
+    --secondary-highlight: hsl(209, 100%, 85%);
+    --secondary-muted: hsl(209, 100%, 75%);
+    --secondary-border: solid hsl(209, 75%, 76%) var(--border-width);
+
+    --accent: hsl(193, 89%, 55%);
+    --accent-highlight: hsl(193, 89%, 65%);
+    --accent-muted: hsl(193, 89%, 45%);
+    --accent-border: solid hsl(193, 75%, 50%) var(--border-width);
+
+
+    --border-width: .1rem;
+    --border-radius: 1.75rem;
+
+    --padding-button: .5rem;
+    --padding-section: 1.25rem;
+    --padding-element: .75rem;
+    --fonts: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Helvetica, Arial, sans-serif;
+    font-family: var(--fonts), sans-serif;
+
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+
+    }
+}
+
+#root {
+
+}
+
+body {
+    background-color: var(--bg-color);
+    margin: 0;
+}
+
+div.page.form.response {
+    --width: min(95vw, 50rem);
+    width: var(--width);
+    margin: 0 calc((100vw - var(--width)) / 2);
+
+    .section {
+        margin: .5rem 0;
+        background-color: var(--bg-color-section);
+        border: var(--bg-section-border);
+
+        padding: var(--padding-section);
+        border-radius: var(--border-radius);
+    }
+    .section.questions {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem
+    }
+}
+
+div.question {
+    display: flex;
+    flex-direction: column;
+
+    gap: .75rem;
+    label {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-column: 1/-1;
+        gap: .5rem;
+        align-content: center;
+        font-size: 1.125rem;
+    }
+
+    h2 {
+        grid-column: 2;
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin: 0;
+    }
+}
+div.question.choice {
+    input {
+        width: 1.125rem;
+        aspect-ratio: 1/1;
+        cursor: pointer;
+        /* @TODO add styling to checked state */
+    }
+}
+
+button {
+    font-size: 1rem;
+    padding: var(--padding-button);
+    background: var(--secondary);
+    border: var(--secondary-border);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+    transition:
+            translate .1s ease,
+            background-color .1s ease;
+}
+
+button:hover {
+    translate: 0 -2px;
+    background: var(--secondary-highlight);
+    cursor: pointer;
+}

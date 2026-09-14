@@ -30,11 +30,48 @@ export const ResponsePage = () => {
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/forms/${formID}`)
-            .then(r => r.json())
+            .then(r => {
+                if (r.ok) {
+                    return r.json();
+                }
+                if (r.status == 404) {
+                    console.log("The provided form does not exist!");
+                    return {
+                        code: 404,
+                        data: {
+                            id: "00000000-0000-0000-0000-000000000000",
+                            title: "This form does not exist!",
+                            description: "The form you are trying to view does not exist.",
+                            questions: []
+                        }
+                    }
+                }
+                if (r.status == 400) {
+                    console.log("The provided form id is invalid!");
+                    return {
+                        code: 400,
+                        data: {
+                            id: "00000000-0000-0000-0000-000000000000",
+                            title: "This form does not exist!",
+                            description: "The form id is invalid.",
+                            questions: []
+                        }
+                    };
+                }
+
+                return {
+                    code: r.status,
+                    data: {
+                        id: "00000000-0000-0000-0000-000000000000",
+                        title: "There was an issue getting the form!",
+                        description: `As such, the form cannot be responded to. Code: ${r.status}`,
+                        questions: []
+                    }
+                }
+            })
             .then((resp: FormGetResponse) => {
                 setForm(resp.data);
             });
-        // @TODO: handle invalid id => 404
     }, []);
 
     const submit = () => {
@@ -60,15 +97,15 @@ export const ResponsePage = () => {
     }
 
     return (
-        <div>
-            <div className="form-response-head">
+        <div className="page form response">
+            <div className="form-response-head section">
                 <h1>{form.title}</h1>
                 <p>{form.description}</p>
             </div>
-            <div className="questions">
+            <div className="questions section">
                 {form.questions.map(q => <FormQuestion question={q} currentAnswer={getCurrentAnswer(q)} answerChangeCallback={notifyAnswerChange} key={q.id} />)}
             </div>
-            <div className="control">
+            <div className="control section">
                 <button className="submit" onClick={submit}>Submit</button>
             </div>
         </div>
