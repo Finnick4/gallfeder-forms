@@ -99,10 +99,38 @@ div.question {
 }
 div.question.choice {
     input {
-        width: 1.125rem;
+        width: 1.2rem;
         aspect-ratio: 1/1;
         cursor: pointer;
-        /* @TODO add styling to checked state */
+
+        appearance: none;
+        margin: 0;
+        border-radius: 50%;
+        border: 0.2rem solid var(--element-color);
+        outline: 0.1rem solid #999;
+        outline-offset: -0.05rem;
+        display: grid;
+        place-content: center;
+        transition: outline-color .1s ease;
+    }
+    input:checked {
+        outline-color: var(--primary);
+    }
+    input::before {
+        content: "";
+        width: 0.8rem;
+        height: 0.8rem;
+        border-radius: 50%;
+        transform: scale(0);
+        transition: transform .1s ease;
+        box-shadow: inset 1rem 1rem var(--primary);
+    }
+    input:checked::before {
+        transform: scale(1);
+    }
+    input:focus-visible {
+        outline-color: var(--primary);
+        box-shadow: 0 0 0 max(2px, 0.1em) var(--primary);
     }
 }
 
@@ -118,7 +146,16 @@ button {
 }
 
 button:hover {
-    translate: 0 -2px;
+    translate: 0 -3px;
     background: var(--secondary-highlight);
     cursor: pointer;
+}
+
+button.primary {
+    background: var(--primary);
+    border: var(--primary-border);
+}
+
+button.primary:hover {
+    background: var(--primary-highlight);
 }

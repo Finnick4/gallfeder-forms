@@ -106,7 +106,7 @@ export const ResponsePage = () => {
                 {form.questions.map(q => <FormQuestion question={q} currentAnswer={getCurrentAnswer(q)} answerChangeCallback={notifyAnswerChange} key={q.id} />)}
             </div>
             <div className="control section">
-                <button className="submit" onClick={submit}>Submit</button>
+                <button className="submit primary" onClick={submit}>Submit</button>
             </div>
         </div>
     );
