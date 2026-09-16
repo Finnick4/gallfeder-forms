@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import type {Form} from "../../shared/types.ts";
+import type {Form, Question} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 
@@ -70,11 +70,25 @@ export const EditFormPage = () => {
             })
             .then((resp: FormGetResponse) => {
                 setFormVersions({
-                    original: resp.data,
-                    changed: resp.data
+                    original: structuredClone(resp.data),
+                    changed: structuredClone(resp.data)
                 });
             });
     }, []);
+
+    const notifyQuestionEdit =  (question: Question) => {
+        setFormVersions((prev) => {
+            console.log(prev)
+            const index = prev.changed.questions.findIndex(q => q.id == question.id);
+            if (index == -1) {
+                prev.changed.questions.push(question);
+                return prev;
+            }
+            prev.changed.questions[index] = question;
+            console.log(prev)
+            return prev;
+        });
+    }
 
 
     const save = () => {
@@ -95,8 +109,10 @@ export const EditFormPage = () => {
             </div>
             <div className="questions section">
                 {formVers.changed.questions.map(q => <FormQuestion
-                    question={q}
-                    editableSettings={undefined}
+                    question={structuredClone(q)}
+                    editableSettings={{
+                        questionEditedCallback: notifyQuestionEdit
+                    }}
                     respondableSettings={undefined}
                     key={q.id}
                 />)}

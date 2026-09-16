@@ -12,5 +12,5 @@ export interface RespondableQuestionDataset {
 }
 
 export interface EditableQuestionDataset {
-
+    questionEditedCallback: (question: Question) => void;
 }

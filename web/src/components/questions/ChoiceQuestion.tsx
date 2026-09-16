@@ -1,10 +1,13 @@
 import type {FormQuestionProperties} from "../../shared/properties.ts";
 import type {ChoiceQuestionOption} from "../../shared/types.ts";
+import {useState} from "react";
 
-export const ChoiceQuestion = ({question, respondableSettings}: FormQuestionProperties) => {
+export const ChoiceQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
     if (!question.meta.choiceOptions) {
         return (<h2>{question.meta.question}</h2>);
     }
+
+    const [opts, setOptions] = useState<ChoiceQuestionOption[]>(structuredClone(question.meta.choiceOptions));
 
     const isRespondable = respondableSettings != undefined;
 
@@ -24,10 +27,26 @@ export const ChoiceQuestion = ({question, respondableSettings}: FormQuestionProp
         return respondableSettings.currentAnswer.selectedChoices.filter(e => e.text == opt.text).length != 0;
     }
 
+    const callEditOnLabelText = (previousOpt: ChoiceQuestionOption, changedOpt: ChoiceQuestionOption) => {
+        if (previousOpt.text == changedOpt.text || editableSettings == undefined || question.meta.choiceOptions == undefined) {
+            return;
+        }
+
+        const options = structuredClone(question.meta.choiceOptions);
+        const index = options.findIndex(o => o.text == previousOpt.text);
+        if (index == -1) {
+            return;
+        }
+        options[index] = changedOpt;
+        setOptions(options);
+        question.meta.choiceOptions = options;
+        editableSettings.questionEditedCallback(question);
+    }
+
     return (
-        <div className="question choice">
+        <div className={isRespondable ? "question choice" : "question choice editable"}>
             <h2>{question.meta.question}</h2>
-            {question.meta.choiceOptions.map((opt: ChoiceQuestionOption) => {
+            {opts.map((opt: ChoiceQuestionOption) => {
                 return (
                     <label key={opt.text}>
                         <input type="radio"
@@ -37,7 +56,14 @@ export const ChoiceQuestion = ({question, respondableSettings}: FormQuestionProp
                                disabled={!isRespondable}
                                onChange={() => callUpdateWithOption(opt)}
                         />
-                        <span>{opt.text}</span>
+                        {isRespondable ?
+                            <span>{opt.text}</span> :
+                            <input
+                                className="edit-label-text"
+                                type="text"
+                                defaultValue={opt.text}
+                                onBlur={e => callEditOnLabelText(opt, {text: e.target.value})}
+                            ></input>}
                     </label>
                 );
             })}

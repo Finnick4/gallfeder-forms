@@ -1,14 +1,14 @@
 :root {
     font-size: 1rem;
 
-    --bg-color: hsl(180, 95%, 97%);
-    --bg-color-section: hsl(180, 5%, 100%);
+    --bg-color: hsl(180, 65%, 94%);
+    --bg-color-section: hsl(180, 50%, 97%);
     --bg-section-border: solid hsl(180, 5%, 95%) var(--border-width);
 
     --element-color-muted: hsl(180, 80%, 96%);
-    --element-color: hsl(180, 80%, 98%);
+    --element-color: hsl(180, 15%, 98%);
     --element-color-highlight: hsl(180, 80%, 100%);
-    --element-border: solid hsl(180, 70%, 94%) var(--border-width);
+    --element-border: solid hsl(180, 15%, 94%) var(--border-width);
 
 
     --text: hsl(180, 4%, 5%);
@@ -36,6 +36,7 @@
     --padding-button: .5rem;
     --padding-section: 1.25rem;
     --padding-element: .75rem;
+    --padding-inline-input: .25rem;
     --fonts: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Helvetica, Arial, sans-serif;
     font-family: var(--fonts), sans-serif;
 
@@ -97,8 +98,34 @@ div.question {
         margin: 0;
     }
 }
+
+div.question.editable {
+    input.edit-label-text {
+        border: var(--element-border);
+        background-color: var(--element-color);
+        border-radius: calc(var(--border-radius) - var(--padding-section));
+        padding: var(--padding-inline-input);
+        transition:
+            background-color .1s ease
+    }
+
+    input.edit-label-text:focus-visible {
+        outline: solid var(--accent) var(--border-width);
+        background-color: var(--element-color-highlight);
+    }
+
+    input.edit-label-text:disabled {
+        cursor: not-allowed;
+        background-color: var(--element-color-muted);
+    }
+}
+
+div.question.choice label:has(input.edit-label-text) input[type="radio"] {
+    margin-top: calc(var(--border-width) + var(--padding-inline-input));
+}
+
 div.question.choice {
-    input {
+    input[type="radio"] {
         width: 1.2rem;
         aspect-ratio: 1/1;
         cursor: pointer;
@@ -113,15 +140,15 @@ div.question.choice {
         place-content: center;
         transition: outline-color .1s ease;
     }
-    input:checked {
+    input[type="radio"]:checked {
         outline-color: var(--primary);
     }
-    input:disabled {
+    input[type="radio"]:disabled {
         cursor: not-allowed;
         border-color: var(--element-color-muted);
         background-color: var(--element-color-muted);
     }
-    input::before {
+    input[type="radio"]::before {
         content: "";
         width: 0.8rem;
         height: 0.8rem;
@@ -130,11 +157,11 @@ div.question.choice {
         transition: transform .1s ease;
         box-shadow: inset 1rem 1rem var(--primary);
     }
-    input:checked::before {
+    input[type="radio"]:checked::before {
         transform: scale(1);
     }
-    input:focus-visible {
-        outline-color: var(--primary);
+    input[type="radio"]:focus-visible {
+        outline-color: var(--accent);
         box-shadow: 0 0 0 max(2px, 0.1em) var(--primary);
     }
 }
