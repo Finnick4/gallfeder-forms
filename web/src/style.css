@@ -116,6 +116,11 @@ div.question.choice {
     input:checked {
         outline-color: var(--primary);
     }
+    input:disabled {
+        cursor: not-allowed;
+        border-color: var(--element-color-muted);
+        background-color: var(--element-color-muted);
+    }
     input::before {
         content: "";
         width: 0.8rem;

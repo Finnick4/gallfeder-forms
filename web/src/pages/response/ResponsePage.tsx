@@ -103,7 +103,14 @@ export const ResponsePage = () => {
                 <p>{form.description}</p>
             </div>
             <div className="questions section">
-                {form.questions.map(q => <FormQuestion question={q} currentAnswer={getCurrentAnswer(q)} answerChangeCallback={notifyAnswerChange} key={q.id} />)}
+                {form.questions.map(q => <FormQuestion
+                    question={q}
+                    respondableSettings={{
+                        currentAnswer: getCurrentAnswer(q),
+                        answerChangeCallback: notifyAnswerChange
+                    }}
+                    editableSettings={undefined}
+                    key={q.id} />)}
             </div>
             <div className="control section">
                 <button className="submit primary" onClick={submit}>Submit</button>
