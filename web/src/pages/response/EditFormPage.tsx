@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import type {Form, Question} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
+import {getDifferencesBetweenForms} from "../../shared/form-difference.ts";
 
 type FormVersions = {
     original: Form,
@@ -92,13 +93,29 @@ export const EditFormPage = () => {
 
 
     const save = () => {
-        console.log("saving!");
-        /*fetch(`http://localhost:8080/api/forms/${formID}/responses`, {
-            method: "POST",
-            body: JSON.stringify({
-                answers: answers
-            })
-        });*/
+        const differences = getDifferencesBetweenForms(formVers.original, formVers.changed);
+        if (differences != undefined) {
+            const old = structuredClone(formVers.original);
+            const changed = structuredClone(formVers.changed);
+
+            fetch(`http://localhost:8080/api/forms/${formID}`, {
+                method: "PATCH",
+                body: JSON.stringify(differences)
+            }).then(r => {
+                if (r.status == 200) {
+                    setFormVersions({original: structuredClone(changed), changed: structuredClone(changed)});
+                    console.log("Saved successfully!");
+                    return;
+                }
+                console.log("Failed to save: " + r.status);
+                setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
+                return;
+            }).catch(reason => {
+                console.log("Failed to save: " + reason);
+                setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
+                return;
+            });
+        }
     }
 
     return (

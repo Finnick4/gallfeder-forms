@@ -46,4 +46,21 @@ export type Form = {
 }
 
 
+export type FormEditChanges = {
+    "title": string
+    "description": string
+    "removeDescription": boolean
+
+    "questionChanges": QuestionEditChanges[]
+}
+
+export type QuestionEditChanges = {
+    "id": UUID // if set, change edit the question, if not, create a new question
+    "deleteQuestion"?:    boolean
+    "index"?:             number
+    "questionType"?:      QuestionTypes
+    "overwriteMetadata"?: boolean
+    "metadata"?:          QuestionMetadata
+}
+
 

@@ -100,6 +100,8 @@ div.question {
 }
 
 div.question.editable {
+    gap: calc(0.75rem - (1.5*(var(--border-width) + var(--padding-inline-input))));
+
     input.edit-label-text {
         border: var(--element-border);
         background-color: var(--element-color);
