@@ -79,14 +79,12 @@ export const EditFormPage = () => {
 
     const notifyQuestionEdit =  (question: Question) => {
         setFormVersions((prev) => {
-            console.log(prev)
             const index = prev.changed.questions.findIndex(q => q.id == question.id);
             if (index == -1) {
                 prev.changed.questions.push(question);
                 return prev;
             }
             prev.changed.questions[index] = question;
-            console.log(prev)
             return prev;
         });
     }

@@ -102,7 +102,7 @@ div.question {
 div.question.editable {
     gap: calc(0.75rem - (1.5*(var(--border-width) + var(--padding-inline-input))));
 
-    input.edit-label-text {
+    input.edit {
         border: var(--element-border);
         background-color: var(--element-color);
         border-radius: calc(var(--border-radius) - var(--padding-section));
@@ -110,13 +110,16 @@ div.question.editable {
         transition:
             background-color .1s ease
     }
+    input.edit.edit-question-text {
+        margin-bottom: .5rem;
+    }
 
-    input.edit-label-text:focus-visible {
+    input.edit:focus-visible {
         outline: solid var(--accent) var(--border-width);
         background-color: var(--element-color-highlight);
     }
 
-    input.edit-label-text:disabled {
+    input.edit:disabled {
         cursor: not-allowed;
         background-color: var(--element-color-muted);
     }

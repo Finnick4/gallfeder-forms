@@ -1,13 +1,11 @@
 import type {FormQuestionProperties} from "../../shared/properties.ts";
-import type {ChoiceQuestionOption} from "../../shared/types.ts";
+import type {ChoiceQuestionOption, Question} from "../../shared/types.ts";
 import {useState} from "react";
 
 export const ChoiceQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
-    if (!question.meta.choiceOptions) {
-        return (<h2>{question.meta.question}</h2>);
-    }
+    const [q, setQuestion] = useState<Question>(structuredClone(question));
 
-    const [opts, setOptions] = useState<ChoiceQuestionOption[]>(structuredClone(question.meta.choiceOptions));
+    const opts = q.meta.choiceOptions ? structuredClone(q.meta.choiceOptions) : [];
 
     const isRespondable = respondableSettings != undefined;
 
@@ -28,24 +26,44 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
     }
 
     const callEditOnLabelText = (previousOpt: ChoiceQuestionOption, changedOpt: ChoiceQuestionOption) => {
-        if (previousOpt.text == changedOpt.text || editableSettings == undefined || question.meta.choiceOptions == undefined) {
+        if (previousOpt.text == changedOpt.text || editableSettings == undefined) {
             return;
         }
 
-        const options = structuredClone(question.meta.choiceOptions);
-        const index = options.findIndex(o => o.text == previousOpt.text);
+        const index = opts.findIndex(o => o.text == previousOpt.text);
         if (index == -1) {
             return;
         }
-        options[index] = changedOpt;
-        setOptions(options);
-        question.meta.choiceOptions = options;
-        editableSettings.questionEditedCallback(question);
+        opts[index] = changedOpt;
+        setQuestion(prevState => {
+            prevState.meta.choiceOptions = opts;
+            editableSettings.questionEditedCallback(prevState);
+            return prevState;
+        });
+    }
+
+    const callEditOnQuestionText = (original: string, changed: string) => {
+        if (original == changed || editableSettings == undefined) {
+            return;
+        }
+        setQuestion(prevState => {
+            prevState.meta.question = changed;
+            editableSettings.questionEditedCallback(prevState);
+            return prevState;
+        });
     }
 
     return (
         <div className={isRespondable ? "question choice" : "question choice editable"}>
-            <h2>{question.meta.question}</h2>
+            {isRespondable ?
+                <h2>{q.meta.question}</h2> :
+                <input
+                    className="edit-question-text edit"
+                    type="text"
+                    defaultValue={q.meta.question}
+                    onBlur={e => callEditOnQuestionText(q.meta.question, e.target.value)}
+                ></input>}
+
             {opts.map((opt: ChoiceQuestionOption) => {
                 return (
                     <label key={opt.text}>
@@ -59,7 +77,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                         {isRespondable ?
                             <span>{opt.text}</span> :
                             <input
-                                className="edit-label-text"
+                                className="edit-label-text edit"
                                 type="text"
                                 defaultValue={opt.text}
                                 onBlur={e => callEditOnLabelText(opt, {text: e.target.value})}
