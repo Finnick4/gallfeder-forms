@@ -5,7 +5,7 @@ import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 
 export const ResponsePage = () => {
-    const {formID} = useParams()
+    const {formID} = useParams();
 
     const [form, setForm] = useState<Form>({
         id: "00000000-0000-0000-0000-000000000000",

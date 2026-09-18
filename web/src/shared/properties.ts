@@ -1,4 +1,4 @@
-import type {Question, QuestionAnswer} from "./types.ts";
+import type {Question, QuestionAnswer, UUID} from "./types.ts";
 
 export interface FormQuestionProperties {
     question: Question;
@@ -13,4 +13,6 @@ export interface RespondableQuestionDataset {
 
 export interface EditableQuestionDataset {
     questionEditedCallback: (question: Question) => void;
+    currentlyFocussed: UUID;
+    notifyFocus: () => void;
 }

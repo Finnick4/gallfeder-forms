@@ -37,9 +37,9 @@
     --border-width: .1rem;
     --border-radius: 1.75rem;
 
-    --padding-button: .5rem;
-    --padding-section: 1.25rem;
-    --padding-element: .75rem;
+    --padding-button: .75rem;
+    --padding-section: 1.5rem;
+    --padding-element: 1rem;
     --padding-inline-input: .25rem;
     --fonts: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Helvetica, Arial, sans-serif;
     font-family: var(--fonts), sans-serif;
@@ -109,7 +109,7 @@ div.question {
         grid-column: 2;
         font-size: 1.25rem;
         font-weight: 500;
-        margin: 0;
+        margin: calc(var(--padding-inline-input) + var(--border-width)) 0;
     }
 }
 

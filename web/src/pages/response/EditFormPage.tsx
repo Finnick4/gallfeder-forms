@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import type {Form, Question} from "../../shared/types.ts";
+import type {Form, Question, UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
@@ -28,6 +28,7 @@ export const EditFormPage = () => {
             questions: []
         }
     });
+    const [currentlyFocussed, setFocussed] = useState<UUID>("");
 
     const titleEdit = useRef<HTMLInputElement>(null);
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
@@ -160,11 +161,13 @@ export const EditFormPage = () => {
                     className="edit edit-title"
                     defaultValue={formVers.changed.title}
                     ref={titleEdit}
+                    onFocus={() => setFocussed("")}
                     onChange={e => editTitleInput(e.target)}
                     onBlur={e => editTitle(e.target.value)}></input>
                 <FittingTextArea
                     className="description"
                     ref={descriptionEdit}
+                    onFocus={() => setFocussed("")}
                     initialValue={formVers.changed.description}
                     onLeave={editDescription}></FittingTextArea>
             </div>
@@ -172,14 +175,23 @@ export const EditFormPage = () => {
                 {formVers.changed.questions.map(q => <FormQuestion
                     question={structuredClone(q)}
                     editableSettings={{
-                        questionEditedCallback: notifyQuestionEdit
+                        questionEditedCallback: notifyQuestionEdit,
+                        currentlyFocussed: currentlyFocussed,
+                        notifyFocus: () => {
+                            console.log("now focussed: "+ q.id)
+                            setFocussed(q.id)
+                        },
                     }}
                     respondableSettings={undefined}
                     key={q.id}
                 />)}
             </div>
             <div className="control section">
-                <button className="save primary" onClick={save}>Save changes</button>
+                <button
+                    className="save primary"
+                    onClick={save}
+                    onFocus={() => setFocussed("")}
+                >Save changes</button>
             </div>
         </div>
     );
