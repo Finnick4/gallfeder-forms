@@ -1,0 +1,34 @@
+import {type RefObject, useRef} from "react";
+
+interface Properties {
+    initialValue: string
+    onLeave: (val: string) => void
+    className: string
+    ref?: RefObject<HTMLTextAreaElement | null>
+}
+
+export const FittingTextArea = ({initialValue, className, onLeave, ref}: Properties) => {
+    const elem = ref == undefined  ? useRef<HTMLTextAreaElement>(null) : ref;
+
+    const resize = () => {
+        if (elem.current == null) {
+            return;
+        }
+        elem.current.style.height = "1px";
+        elem.current.style.height = `calc(${elem.current.scrollHeight + "px"} - 1.5rem)`;
+    }
+
+    resize();
+
+    return (
+        <textarea
+            className={className}
+            defaultValue={initialValue}
+            onChange={resize}
+            ref={elem}
+            onBlur={e => onLeave(e.target.value)}>
+        </textarea>
+    );
+}
+
+export default FittingTextArea

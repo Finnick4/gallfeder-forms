@@ -1,9 +1,10 @@
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import type {Form, Question} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
-import {getDifferencesBetweenForms} from "../../shared/form-difference.ts";
+import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
+import FittingTextArea from "../../components/FittingTextArea.tsx";
 
 type FormVersions = {
     original: Form,
@@ -27,6 +28,9 @@ export const EditFormPage = () => {
             questions: []
         }
     });
+
+    const titleEdit = useRef<HTMLInputElement>(null);
+    const descriptionEdit = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         fetch(`http://localhost:8080/api/forms/${formID}`)
@@ -74,6 +78,12 @@ export const EditFormPage = () => {
                     original: structuredClone(resp.data),
                     changed: structuredClone(resp.data)
                 });
+                if (titleEdit.current != null) {
+                    titleEdit.current.value = resp.data.title;
+                }
+                if (descriptionEdit.current != null) {
+                    descriptionEdit.current.value = resp.data.description.replaceAll("\\n", "\n");
+                }
             });
     }, []);
 
@@ -87,40 +97,76 @@ export const EditFormPage = () => {
             prev.changed.questions[index] = question;
             return prev;
         });
+
+    }
+    const editTitle = (updatedTitle: string) => {
+        setFormVersions(prev => {
+            prev.changed.title = updatedTitle;
+            return prev;
+        });
     }
 
+    const editDescription = (updatedDescription: string) => {
+        setFormVersions(prev => {
+            prev.changed.description = updatedDescription;
+            return prev;
+        });
+    }
 
-    const save = () => {
-        const differences = getDifferencesBetweenForms(formVers.original, formVers.changed);
-        if (differences != undefined) {
-            const old = structuredClone(formVers.original);
-            const changed = structuredClone(formVers.changed);
-
-            fetch(`http://localhost:8080/api/forms/${formID}`, {
-                method: "PATCH",
-                body: JSON.stringify(differences)
-            }).then(r => {
-                if (r.status == 200) {
-                    setFormVersions({original: structuredClone(changed), changed: structuredClone(changed)});
-                    console.log("Saved successfully!");
-                    return;
-                }
-                console.log("Failed to save: " + r.status);
-                setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
-                return;
-            }).catch(reason => {
-                console.log("Failed to save: " + reason);
-                setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
-                return;
-            });
+    const editTitleInput = (obj: HTMLInputElement) => {
+        if (obj.value.length >= 64 || obj.value.length == 0) {
+            obj.classList.add("has-issue");
+        } else {
+            obj.classList.remove("has-issue");
         }
     }
 
+    const save = () => {
+        if (formVers.changed.title.length >= 64 || formVers.changed.title.length == 0) {
+            console.log("Did not initialise saving anything as the currrent title is invalid!");
+            return;
+        }
+        const differences = getDifferencesBetweenForms(formVers.original, formVers.changed);
+        if (differences == undefined) {
+            return;
+        }
+        const old = structuredClone(formVers.original);
+        const changed = structuredClone(formVers.changed);
+
+        fetch(`http://localhost:8080/api/forms/${formID}`, {
+            method: "PATCH",
+            body: JSON.stringify(differences)
+        }).then(r => {
+            if (r.status == 200) {
+                setFormVersions({original: structuredClone(changed), changed: structuredClone(changed)});
+                console.log("Saved successfully!");
+                return;
+            }
+            console.log("Failed to save: " + r.status);
+            setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
+            return;
+        }).catch(reason => {
+            console.log("Failed to save: " + reason);
+            setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
+            return;
+        });
+    }
+
     return (
-        <div className="page form response">
+        <div className="page form edit">
             <div className="form-response-head section">
-                <h1>{formVers.changed.title}</h1>
-                <p>{formVers.changed.description}</p>
+                <input
+                    type="text"
+                    className="edit edit-title"
+                    defaultValue={formVers.changed.title}
+                    ref={titleEdit}
+                    onChange={e => editTitleInput(e.target)}
+                    onBlur={e => editTitle(e.target.value)}></input>
+                <FittingTextArea
+                    className="description"
+                    ref={descriptionEdit}
+                    initialValue={formVers.changed.description}
+                    onLeave={editDescription}></FittingTextArea>
             </div>
             <div className="questions section">
                 {formVers.changed.questions.map(q => <FormQuestion

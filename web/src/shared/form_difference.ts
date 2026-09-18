@@ -53,9 +53,11 @@ export const getDifferencesBetweenForms = (old: Form, current: Form): FormEditCh
 
     let foundDifference = old.title != current.title || old.description != current.description || questionEdits.length != 0;
 
+    const fixedDesc = current.description.replaceAll("\n", "\\n")
+
     return !foundDifference ? undefined : {
         title: old.title != current.title ? current.title : "",
-        description: old.description != current.description ? current.description : "",
+        description: old.description != fixedDesc ? fixedDesc : "",
         removeDescription: old.description != current.description && current.description == "",
         questionChanges: questionEdits
     };

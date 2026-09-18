@@ -100,7 +100,9 @@ export const ResponsePage = () => {
         <div className="page form response">
             <div className="form-response-head section">
                 <h1>{form.title}</h1>
-                <p>{form.description}</p>
+                <div className="description">
+                    {form.description.split("\\n").map(line => <p className="line">{line}</p>)}
+                </div>
             </div>
             <div className="questions section">
                 {form.questions.map(q => <FormQuestion

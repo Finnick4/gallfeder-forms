@@ -29,6 +29,10 @@
     --accent-muted: hsl(193, 89%, 45%);
     --accent-border: solid hsl(193, 75%, 50%) var(--border-width);
 
+    --issue: hsl(0, 80%, 95%);
+    --issue-highlight: hsl(0, 80%, 93%);
+    --issue-muted: hsl(0, 50%, 85%);
+    --issue-border: solid hsl(0, 100%, 80%) var(--border-width);
 
     --border-width: .1rem;
     --border-radius: 1.75rem;
@@ -57,10 +61,20 @@ body {
     margin: 0;
 }
 
-div.page.form.response {
+div.page.form {
     --width: min(95vw, 50rem);
     width: var(--width);
     margin: 0 calc((100vw - var(--width)) / 2);
+
+    .section.form-response-head {
+        h1 {
+            margin: 0;
+        }
+
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
 
     .section {
         margin: .5rem 0;
@@ -99,16 +113,37 @@ div.question {
     }
 }
 
+input.edit,textarea {
+    border: var(--element-border);
+    background-color: var(--element-color);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+    padding: var(--padding-element);
+    transition:
+            background-color .1s ease
+}
+
+input.edit.has-issue {
+    background-color: var(--issue);
+    border: var(--issue-border);
+}
+
+input.edit.has-issue:focus-visible {
+    background-color: var(--issue-highlight);
+}
+
+input.edit.edit-title {
+    font-size: 1.5rem;
+    width: calc(100% - 2*var(--border-width) - 2*var(--padding-element));
+}
+h1 {
+    font-size: 2rem;
+}
+
 div.question.editable {
     gap: calc(0.75rem - (1.5*(var(--border-width) + var(--padding-inline-input))));
 
     input.edit {
-        border: var(--element-border);
-        background-color: var(--element-color);
-        border-radius: calc(var(--border-radius) - var(--padding-section));
         padding: var(--padding-inline-input);
-        transition:
-            background-color .1s ease
     }
     input.edit.edit-question-text {
         margin-bottom: .5rem;
@@ -195,4 +230,16 @@ button.primary {
 
 button.primary:hover {
     background: var(--primary-highlight);
+}
+
+textarea {
+    resize: none;
+    width: calc(100% - 2*var(--border-width) - 2*var(--padding-element));
+    font-size: 1rem;
+    font-family: var(--fonts) sans-serif;
+}
+
+.description p.line {
+    font-size: 1.125rem;
+    margin: .5rem 0;
 }
