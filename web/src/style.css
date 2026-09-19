@@ -91,6 +91,11 @@ div.page.form {
     }
 }
 
+div.page.form.responded {
+    background-color: red;
+}
+
+
 div.question {
     display: flex;
     flex-direction: column;

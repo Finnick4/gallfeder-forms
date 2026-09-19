@@ -28,7 +28,7 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 			log.Warn()
 			return internal_errors.ErrDuplicatePresent
 		}
-		log.Errorf(`Ran into issue while getting questions of form: %s\n`, err)
+		log.Errorf(`Ran into issue while creating response to form: %s\n`, err)
 		return internal_errors.ErrGeneralIssue
 	}
 
@@ -46,6 +46,16 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 		values = append(values, responseID, answer.QuestionID, meta)
 	}
 
+	if answers == nil || len(answers) == 0 {
+		err = tx.Commit()
+		if err != nil {
+			log.Errorf("Ran into error while trying to commit CreateResponse: %s\n", err)
+			return internal_errors.ErrGeneralIssue
+		}
+
+		return nil
+	}
+
 	query := fmt.Sprintf(`INSERT INTO response_to_question (response_id, question_id, meta) VALUES %s;`, generateInsertValuesMatrix(fields, len(answers)))
 	_, err = tx.Exec(query, values...)
 	if err != nil {
@@ -56,7 +66,7 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 		if strings.HasPrefix(err.Error(), "pq: insert or update on table \"response_to_question\" violates foreign key constraint") {
 			return internal_errors.ErrParameterIssue
 		}
-		log.Errorf(`Ran into issue while getting questions of form: %s\n`, err)
+		log.Errorf(`Ran into issue while setting answers for a response to a form: %s\n`, err)
 		return internal_errors.ErrGeneralIssue
 	}
 	err = tx.Commit()

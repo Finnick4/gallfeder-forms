@@ -4,6 +4,12 @@ import type {Form, Question, QuestionAnswer} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 
+// @ts-ignore
+enum ResponseStatus {
+    Respondable,
+    Responded,
+}
+
 export const ResponsePage = () => {
     const {formID} = useParams();
 
@@ -14,7 +20,8 @@ export const ResponsePage = () => {
         questions: []
     });
 
-    const [answers, setAnswers] = useState<QuestionAnswer[]>([])
+    const [answers, setAnswers] = useState<QuestionAnswer[]>([]);
+    const [status, setStatus] = useState<ResponseStatus>(ResponseStatus.Respondable);
 
     const notifyAnswerChange =  (answer: QuestionAnswer) => {
         setAnswers((prevState) => {
@@ -80,6 +87,8 @@ export const ResponsePage = () => {
             body: JSON.stringify({
                 answers: answers
             })
+        }).then(() => {
+            setStatus(ResponseStatus.Responded);
         });
     }
 
@@ -94,6 +103,21 @@ export const ResponsePage = () => {
             type: q.type,
             selectedChoices: [],
         }
+    }
+
+    if (status == ResponseStatus.Responded) {
+        return (
+            <div className="page form response responed">
+                <div className="section">
+                    <h1>Thank you for responding!</h1>
+                    <p>Thank you for taking your time and responding to this form.</p>
+                    <button
+                        onClick={() => setStatus(ResponseStatus.Respondable)}
+                        className="secondary"
+                    >Submit a new response</button>
+                </div>
+            </div>
+        );
     }
 
     return (
