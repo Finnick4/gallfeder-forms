@@ -17,7 +17,7 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 	tx, err := conn.Begin()
 	if err != nil {
 		log.Errorf("Ran into issue while initiating tx for creating response: %s\n", err)
-		return internal_errors.ErrGeneralIssue
+		return internal_errors.ErrDBGeneralIssue
 	}
 	defer tx.Rollback()
 
@@ -26,10 +26,10 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 		_ = tx.Rollback()
 		if err.Error() == "sql: no rows in result set" {
 			log.Warn()
-			return internal_errors.ErrDuplicatePresent
+			return internal_errors.ErrDBDuplicatePresent
 		}
 		log.Errorf(`Ran into issue while creating response to form: %s\n`, err)
-		return internal_errors.ErrGeneralIssue
+		return internal_errors.ErrDBGeneralIssue
 	}
 
 	fields := 3
@@ -39,7 +39,7 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 		if err != nil {
 			log.Errorf("Failed to marshal metadata of an answer to question of a response for CreateResponse: %s\n", err)
 			_ = tx.Rollback()
-			return internal_errors.ErrParameterIssue
+			return internal_errors.ErrDBParameterIssue
 		}
 		meta := shared.EncodeBase64(string(text))
 
@@ -50,7 +50,7 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 		err = tx.Commit()
 		if err != nil {
 			log.Errorf("Ran into error while trying to commit CreateResponse: %s\n", err)
-			return internal_errors.ErrGeneralIssue
+			return internal_errors.ErrDBGeneralIssue
 		}
 
 		return nil
@@ -61,18 +61,18 @@ func (db PostgreSQL) CreateResponse(responseID uuid.UUID, formID uuid.UUID, answ
 	if err != nil {
 		_ = tx.Rollback()
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
-			return internal_errors.ErrDuplicatePresent
+			return internal_errors.ErrDBDuplicatePresent
 		}
 		if strings.HasPrefix(err.Error(), "pq: insert or update on table \"response_to_question\" violates foreign key constraint") {
-			return internal_errors.ErrParameterIssue
+			return internal_errors.ErrDBParameterIssue
 		}
 		log.Errorf(`Ran into issue while setting answers for a response to a form: %s\n`, err)
-		return internal_errors.ErrGeneralIssue
+		return internal_errors.ErrDBGeneralIssue
 	}
 	err = tx.Commit()
 	if err != nil {
 		log.Errorf("Ran into error while trying to commit CreateResponse: %s\n", err)
-		return internal_errors.ErrGeneralIssue
+		return internal_errors.ErrDBGeneralIssue
 	}
 
 	return nil

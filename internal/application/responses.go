@@ -12,7 +12,7 @@ import (
 func CreateResponse(formID uuid.UUID, answers []shared.QuestionAnswer) (string, error) {
 	if !IsDBSet() {
 		log.Error("Aborted creation of new form as no database is set!")
-		return "", internal_errors.ErrNoDatabaseProvider
+		return "", internal_errors.ErrDBNoProvider
 	}
 
 	// @TODO check whether the answers to the questions are formally correct
@@ -21,11 +21,11 @@ func CreateResponse(formID uuid.UUID, answers []shared.QuestionAnswer) (string, 
 
 	err := db.CreateResponse(id, formID, answers)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDuplicatePresent) {
+		if errors.Is(err, internal_errors.ErrDBDuplicatePresent) {
 			log.Error("UUID for new response was a duplicate!")
 			return "", err
 		}
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
 			return "", err
 		}
 		log.Errorf("Failed to create response for form: %s\n", err)

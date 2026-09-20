@@ -151,30 +151,30 @@ func (p PostgresFormEditSession) DeleteQuestion(questionID uuid.UUID) {
 
 func (p PostgresFormEditSession) ExecuteSession() error {
 	if p.ended {
-		return internal_errors.ErrSessionClosed
+		return internal_errors.ErrDBSessionClosed
 	}
 
 	err := p.tx.Commit()
 	if err != nil {
 		if errors.Is(err, sql.ErrTxDone) {
-			return internal_errors.ErrSessionClosed
+			return internal_errors.ErrDBSessionClosed
 		}
 		log.Errorf("Ran into error while trying to commit FormEditSession: %s\n", err)
-		return internal_errors.ErrGeneralIssue
+		return internal_errors.ErrDBGeneralIssue
 	}
 	return nil
 }
 
 func (p PostgresFormEditSession) AbortSession() error {
 	if p.ended {
-		return internal_errors.ErrSessionClosed
+		return internal_errors.ErrDBSessionClosed
 	}
 	p.ended = true
 
 	err := p.tx.Rollback()
 	if err != nil {
 		if errors.Is(err, sql.ErrTxDone) {
-			return internal_errors.ErrSessionClosed
+			return internal_errors.ErrDBSessionClosed
 		}
 		log.Errorf("Ran into error while trying to commit FormEditSession: %s\n", err)
 		return err

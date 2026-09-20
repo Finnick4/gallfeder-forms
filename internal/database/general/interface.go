@@ -13,6 +13,9 @@ type Database interface {
 
 	CreateResponse(responseID uuid.UUID, formID uuid.UUID, answers []shared.QuestionAnswer) error
 
+	CreateUser(id uuid.UUID, handle string, password string) error
+	AreCorrectUserCredentials(handle string, password string) bool
+
 	Close() error
 	Load()
 }

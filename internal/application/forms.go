@@ -12,7 +12,7 @@ import (
 func CreateForm(title string, description string) (string, error) {
 	if !IsDBSet() {
 		log.Error("Aborted creation of new form as no database is set!")
-		return "", internal_errors.ErrNoDatabaseProvider
+		return "", internal_errors.ErrDBNoProvider
 	}
 
 	id := uuid.NewV4()
@@ -25,11 +25,11 @@ func CreateForm(title string, description string) (string, error) {
 	}
 
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDuplicatePresent) {
+		if errors.Is(err, internal_errors.ErrDBDuplicatePresent) {
 			log.Error("UUID for new form was a duplicate!") // this *should* not happen
 			return "", err
 		}
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
 			log.Debug("Form name was set to a whitespace!")
 			return "", err
 		}
@@ -43,7 +43,7 @@ func CreateForm(title string, description string) (string, error) {
 func GetForm(id uuid.UUID) (shared.Form, error) {
 	if !IsDBSet() {
 		log.Error("Aborted query of specific form as no database is set!")
-		return shared.Form{}, internal_errors.ErrNoDatabaseProvider
+		return shared.Form{}, internal_errors.ErrDBNoProvider
 	}
 
 	// @TODO check in cache whether this ID actually exists
@@ -59,7 +59,7 @@ func GetForm(id uuid.UUID) (shared.Form, error) {
 func EditForm(form shared.Form, removeDescription bool, questions []shared.QuestionEdit) ([]shared.Question, error) {
 	if !IsDBSet() {
 		log.Error("Aborted editing form as no database is set!")
-		return nil, internal_errors.ErrNoDatabaseProvider
+		return nil, internal_errors.ErrDBNoProvider
 	}
 	s, err := db.StartFormEditSession(form.Id)
 	if err != nil {
@@ -106,7 +106,7 @@ func EditForm(form shared.Form, removeDescription bool, questions []shared.Quest
 
 	err = s.ExecuteSession()
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrSessionClosed) {
+		if errors.Is(err, internal_errors.ErrDBSessionClosed) {
 			log.Error("The edit session was already closed when trying to execute changes to edit form.")
 			return nil, err
 		}

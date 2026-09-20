@@ -26,12 +26,12 @@ func FormGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	form, err := application.GetForm(id)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return
 		}
-		if errors.Is(err, internal_errors.ErrNotFound) {
+		if errors.Is(err, internal_errors.ErrDBValueNotFound) {
 			log.Debug("The queried ID does not exist.")
 			http_responses.DoesntExistHandler(w)
 			return

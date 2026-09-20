@@ -29,7 +29,7 @@ func FormCreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	id, err := application.CreateForm(params.Title, params.Description)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return

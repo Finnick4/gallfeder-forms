@@ -81,7 +81,7 @@ func FormEditHandler(w http.ResponseWriter, r *http.Request) {
 
 	created, err := application.EditForm(form, params.RemoveDescription, questions)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return

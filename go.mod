@@ -11,5 +11,6 @@ require (
 
 require (
 	github.com/go-chi/cors v1.2.2 // indirect
-	golang.org/x/sys v0.13.0 // indirect
+	golang.org/x/crypto v0.57.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 )

@@ -86,11 +86,23 @@ func initialiseDatabase() {
 
 	wg := sync.WaitGroup{}
 
-	_, err := connection.Exec(`CREATE TABLE IF NOT EXISTS "forms" (
+	_, err := connection.Exec(`CREATE TABLE IF NOT EXISTS "users" (
 		"id"				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
-		"title"			VARCHAR(64) NOT NULL,
+		"handle"			VARCHAR(32) NOT NULL UNIQUE,
+		"hashed_password" 	TEXT NOT NULL,
+		"creation_date"		TIMESTAMPTZ NOT NULL DEFAULT NOW()
+	);`)
+	if err != nil {
+		log.Fatalf("Failed to initialise table 'users' for PostgreSQL database! Error: %s\n", err)
+	}
+	go createIndexOnTable("users", "handle", &wg)
+	wg.Add(1)
+
+	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "forms" (
+		"id"				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
+		"title"				VARCHAR(64) NOT NULL,
 		"description"		TEXT,
-		"creation_date"	TIMESTAMPTZ NOT NULL DEFAULT NOW()
+		"creation_date"		TIMESTAMPTZ NOT NULL DEFAULT NOW()
 	);`)
 	if err != nil {
 		log.Fatalf("Failed to initialise table 'forms' for PostgreSQL database! Error: %s\n", err)
