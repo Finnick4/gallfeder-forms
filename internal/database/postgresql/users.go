@@ -48,3 +48,35 @@ func (db PostgreSQL) AreCorrectUserCredentials(handle string, password string) b
 
 	return bcrypt.CompareHashAndPassword([]byte(hashedPW), []byte(password)) == nil
 }
+
+func (db PostgreSQL) AnyUsersExistent() bool {
+	conn := db.getConnection()
+	resp := conn.QueryRow(`SELECT id FROM users LIMIT 1;`)
+
+	var id string
+
+	err := resp.Scan(&id)
+	return err == nil
+}
+
+func (db PostgreSQL) OpenSessionForUser(id uuid.UUID) (uuid.UUID, string, error) {
+	token, err := shared.GenerateToken()
+	if err != nil {
+		return uuid.Nil(), "", internal_errors.ErrDBUnexpectedIssue
+	}
+
+	hashed := shared.Hash512(token)
+	sessionID := uuid.New()
+
+	conn := db.getConnection()
+	_, err = conn.Exec(`INSERT INTO sessions (id, hashed_token, user_id) VALUES ($1, $2, $3);`, sessionID.String(), hashed, id.String())
+	if err != nil {
+		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
+			return db.OpenSessionForUser(id)
+		}
+		log.Errorf("Encountered unexpected issue while creating session for user: %s\n", err)
+		return uuid.Nil(), "", internal_errors.ErrDBUnexpectedIssue
+	}
+
+	return sessionID, token, nil
+}

@@ -98,6 +98,19 @@ func initialiseDatabase() {
 	go createIndexOnTable("users", "handle", &wg)
 	wg.Add(1)
 
+	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "sessions" (
+    	"id" 				VARCHAR(36) PRIMARY KEY,
+		"hashed_token"		TEXT NOT NULL,
+		"user_id"			VARCHAR(36) NOT NULL,
+		"creation_date"		TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	CONSTRAINT "fk_sessions_user_id" FOREIGN KEY("user_id") REFERENCES users("id") ON DELETE CASCADE);`)
+	if err != nil {
+		log.Fatalf("Failed to initialise table 'sessions' for PostgreSQL database! Error: %s\n", err)
+	}
+	go createIndexOnTable("sessions", "user_id", &wg)
+	go createIndexOnTable("sessions", "hashed_token", &wg)
+	wg.Add(2)
+
 	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "forms" (
 		"id"				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
 		"title"				VARCHAR(64) NOT NULL,
