@@ -2,7 +2,9 @@ package postgresql
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"gallfeder-forms/internal/shared"
 	"os"
 	"strings"
 	"sync"
@@ -156,7 +158,17 @@ func initialiseDatabase() {
 		log.Fatalf("Failed to initialise table 'response_to_question' for PostgreSQL database! Error: %s\n", err)
 	}
 
+	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "db_migrations" (
+		"version" INTEGER NOT NULL UNIQUE PRIMARY KEY, 
+		"infotext"	TEXT
+   	);`)
+	if err != nil {
+		log.Fatalf("Failed to initialise table 'response_to_question' for PostgreSQL database! Error: %s\n", err)
+	}
+
 	wg.Wait()
+
+	handleMigrations()
 }
 
 func createIndexOnTable(table string, row string, wg *sync.WaitGroup) {
@@ -171,6 +183,75 @@ func createIndexOnTable(table string, row string, wg *sync.WaitGroup) {
 		log.Fatalf("Failed to create index for PostgreSQL table '%s' on row '%s'! Error: %s\n", table, row, err)
 	}
 	wg.Done()
+}
+
+func handleMigrations() {
+	log.Info("Checking for database migrations!")
+
+	row := connection.QueryRow(`SELECT max(version) FROM db_migrations;`)
+	var migVers int
+
+	err := row.Scan(&migVers)
+	if err != nil {
+		if err.Error() != "sql: no rows in result set" && !strings.HasSuffix(err.Error(), `"max": converting NULL to int is unsupported`) {
+			log.Fatalf("Failed to get highest migration version of the database: %s\n", err)
+			return
+		}
+		migVers = 0
+	}
+
+	migrationsFile, err := os.Open("./migrations/postgresql.json")
+	if err != nil {
+		log.Fatalf("Failed to open migrations file for PostgreSQL: %s\n", err)
+	}
+
+	var migrations []shared.DBMigration
+
+	err = json.NewDecoder(migrationsFile).Decode(&migrations)
+	_ = migrationsFile.Close()
+	if err != nil {
+		log.Fatalf("Failed to decode migrations file for PostgreSQL: %s\n", err)
+	}
+	if migVers >= len(migrations) {
+		log.Info("Database is already up to date. No migrations were applied!")
+		return
+	}
+	log.Infof("The current highest database migration version (%d) is lower than the highest possible (%d). Applying the in between changes now!\n", migVers, len(migrations))
+
+	for i, migration := range migrations[migVers:] {
+		version := migVers + i + 1
+		log.Debugf("Applying migration version %d...", version)
+		tx, err := connection.Begin()
+		if err != nil {
+			log.Fatalf("Failed to open database transaction to apply migration: %s\n", err)
+			return
+		}
+
+		for _, statement := range migration.Statements {
+			_, err := tx.Exec(statement)
+			if err != nil {
+				_ = tx.Rollback()
+				log.Fatalf("Failed execute statement (%s) for migration: %s\n", statement, err)
+				return
+			}
+		}
+
+		_, err = tx.Exec(`INSERT INTO db_migrations (version, infotext) VALUES ($1, $2);`, version, migration.Infotext)
+		if err != nil {
+			_ = tx.Rollback()
+			log.Fatalf("Failed to insert notice of new migration: %s\n", err)
+			return
+		}
+		err = tx.Commit()
+		if err != nil {
+			_ = tx.Rollback()
+			log.Fatalf("Failed to commit migration %d: %s\n", version, err)
+			return
+		}
+		log.Debugf("Successfully applied migration version %d\n", version)
+	}
+
+	log.Info("Applied all necessary migration versions")
 }
 
 func (db PostgreSQL) Close() error {
