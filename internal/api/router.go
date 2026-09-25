@@ -21,9 +21,9 @@ func Handler(r *chi.Mux) {
 	r.Post("/api/sessions", users.SessionOpenLoginHandler)
 
 	r.Route("/api/forms", func(router chi.Router) {
-		router.Post("/", forms.FormCreateHandler)
+		router.With(middleware.GetRequestIssuerInformation).Post("/", forms.FormCreateHandler)
+		router.With(middleware.GetRequestIssuerInformation).Patch("/{formID}", forms.FormEditHandler)
 		router.Get("/{formID}", forms.FormGetHandler)
-		router.Patch("/{formID}", forms.FormEditHandler)
 
 		router.Post("/{formID}/responses", responses.ResponseCreateHandler)
 	})

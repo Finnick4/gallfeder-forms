@@ -13,9 +13,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, description string) error {
+func (db PostgreSQL) CreateFormWithDescription(userID uuid.UUID, id uuid.UUID, title string, description string) error {
 	if strings.TrimSpace(description) == "" {
-		return db.CreateForm(id, title)
+		return db.CreateForm(userID, id, title)
 	}
 	if strings.TrimSpace(title) == "" {
 		return internal_errors.ErrDBParameterIssue
@@ -23,8 +23,8 @@ func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, descr
 
 	conn := db.getConnection()
 	_, err := conn.Exec(`
-	INSERT INTO forms (id, title, description) VALUES ($1, $2, $3);
-	`, id.String(), title, description)
+	INSERT INTO forms (owner_id, id, title, description) VALUES ($1, $2, $3, $4);
+	`, userID.String(), id.String(), title, description)
 
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
@@ -36,14 +36,14 @@ func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, descr
 	return nil
 }
 
-func (db PostgreSQL) CreateForm(id uuid.UUID, title string) error {
+func (db PostgreSQL) CreateForm(userID uuid.UUID, id uuid.UUID, title string) error {
 	if strings.TrimSpace(title) == "" {
 		return internal_errors.ErrDBParameterIssue
 	}
 	conn := db.getConnection()
 	_, err := conn.Exec(`
-	INSERT INTO forms (id, title) VALUES ($1, $2);
-	`, id.String(), title)
+	INSERT INTO forms (owner_id, id, title) VALUES ($1, $2, $3);
+	`, userID.String(), id.String(), title)
 
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {

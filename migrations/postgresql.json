@@ -2,5 +2,14 @@
     {
         "infotext": "Initial migration",
         "statements": []
+    },
+    {
+        "infotext": "Add form ownership",
+        "statements": [
+            "ALTER TABLE forms ADD \"owner_id\" VARCHAR(36);",
+            "UPDATE forms SET owner_id=(SELECT id FROM users WHERE handle='admin') WHERE owner_id IS NULL;",
+            "ALTER TABLE forms ALTER COLUMN owner_id SET NOT NULL;",
+            "ALTER TABLE forms ADD CONSTRAINT \"fk_forms_owner_id\" FOREIGN KEY(\"owner_id\") REFERENCES users(\"id\") ON DELETE CASCADE;"
+        ]
     }
 ]

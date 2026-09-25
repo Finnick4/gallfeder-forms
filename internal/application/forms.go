@@ -9,7 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func CreateForm(title string, description string) (string, error) {
+func CreateForm(creatorID uuid.UUID, title string, description string) (string, error) {
 	if !IsDBSet() {
 		log.Error("Aborted creation of new form as no database is set!")
 		return "", internal_errors.ErrDBNoProvider
@@ -19,9 +19,9 @@ func CreateForm(title string, description string) (string, error) {
 
 	var err error
 	if description == "" {
-		err = db.CreateForm(id, title)
+		err = db.CreateForm(creatorID, id, title)
 	} else {
-		err = db.CreateFormWithDescription(id, title, description)
+		err = db.CreateFormWithDescription(creatorID, id, title, description)
 	}
 
 	if err != nil {

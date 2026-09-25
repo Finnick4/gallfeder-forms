@@ -44,4 +44,7 @@ var (
 	InternalErrorHandler = func(w http.ResponseWriter) {
 		writeError(w, "There was an internal issue!", http.StatusInternalServerError)
 	}
+	NoToken = func(w http.ResponseWriter) {
+		writeError(w, "You are not logged in as there is no token attached to your request!", http.StatusUnauthorized)
+	}
 )

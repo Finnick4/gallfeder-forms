@@ -88,7 +88,34 @@ func (db PostgreSQL) GetUserIDFromHandle(handle string) (uuid.UUID, error) {
 		if err.Error() == "sql: no rows in result set" {
 			return uuid.Nil(), internal_errors.ErrDBValueNotFound
 		}
-		log.Errorf("Encountered unexpected issue while getting user's hashed password to verify credentials: %s\n", err)
+		log.Errorf("Encountered unexpected issue while getting user's id from handle: %s\n", err)
+		return uuid.Nil(), internal_errors.ErrDBUnexpectedIssue
+	}
+
+	id, err := uuid.Parse(uuidStr)
+	if err != nil {
+		log.Errorf("Failed to parse User UUID from database response: %s\n", err)
+		return uuid.Nil(), err
+	}
+
+	return id, nil
+}
+
+func (db PostgreSQL) GetUserIDFromToken(token string) (uuid.UUID, error) {
+	conn := db.getConnection()
+
+	hashed := shared.Hash512(token)
+
+	resp := conn.QueryRow(`SELECT user_id FROM sessions WHERE hashed_token = $1;`, hashed)
+
+	var uuidStr string
+
+	err := resp.Scan(&uuidStr)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return uuid.Nil(), internal_errors.ErrDBValueNotFound
+		}
+		log.Errorf("Encountered unexpected issue while getting user's id from token: %s\n", err)
 		return uuid.Nil(), internal_errors.ErrDBUnexpectedIssue
 	}
 

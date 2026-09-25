@@ -118,8 +118,10 @@ func initialiseDatabase() {
 		"id"				VARCHAR(36) NOT NULL PRIMARY KEY UNIQUE,
 		"title"				VARCHAR(64) NOT NULL,
 		"description"		TEXT,
-		"creation_date"		TIMESTAMPTZ NOT NULL DEFAULT NOW()
-	);`)
+		"creation_date"		TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+		"owner_id" 			VARCHAR(36) NOT NULL,
+	CONSTRAINT "fk_forms_owner_id" FOREIGN KEY("owner_id") REFERENCES users("id") ON DELETE CASCADE);`)
+
 	if err != nil {
 		log.Fatalf("Failed to initialise table 'forms' for PostgreSQL database! Error: %s\n", err)
 	}
@@ -198,6 +200,7 @@ func handleMigrations() {
 			return
 		}
 		migVers = 0
+		// TODO handle initial setup -> migVers == 0
 	}
 
 	migrationsFile, err := os.Open("./migrations/postgresql.json")
@@ -214,6 +217,13 @@ func handleMigrations() {
 	}
 	if migVers >= len(migrations) {
 		log.Info("Database is already up to date. No migrations were applied!")
+		return
+	}
+	if migVers == 0 {
+		_, err = connection.Exec(`INSERT INTO db_migrations (version, infotext) VALUES ($1, $2);`, len(migrations), "Initial Database Setup")
+		if err != nil {
+			log.Fatalf("Failed to insert notice of initial setup migration: %s\n", err)
+		}
 		return
 	}
 	log.Infof("The current highest database migration version (%d) is lower than the highest possible (%d). Applying the in between changes now!\n", migVers, len(migrations))

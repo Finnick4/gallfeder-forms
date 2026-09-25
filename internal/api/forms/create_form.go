@@ -6,6 +6,7 @@ import (
 	param "gallfeder-forms/internal/api/parameters"
 	"gallfeder-forms/internal/application"
 	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/shared"
 	"net/http"
 	"strings"
 
@@ -14,7 +15,11 @@ import (
 
 func FormCreateHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received API request to create new form")
-	// @TODO Auth
+	uinfo := r.Context().Value("user_info").(shared.RequestIssuerInformation)
+	if !uinfo.VerifiedUser {
+		http_responses.NoToken(w)
+		return
+	}
 
 	params, ok := param.GetParameters[param.ParamsFormCreate](r.Body, w)
 	if !ok {
@@ -27,7 +32,7 @@ func FormCreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := application.CreateForm(params.Title, params.Description)
+	id, err := application.CreateForm(uinfo.ID, params.Title, params.Description)
 	if err != nil {
 		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
 			log.Debug("Failed while processing the request due to a parameter issue.")

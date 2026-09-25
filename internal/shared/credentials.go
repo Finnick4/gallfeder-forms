@@ -51,7 +51,7 @@ func GenerateToken() (string, error) {
 }
 
 func CouldBeValidToken(proposed string) bool {
-	if len(proposed) != 128 {
+	if len(proposed) != 64 {
 		return false
 	}
 	bytes, err := hex.DecodeString(proposed)

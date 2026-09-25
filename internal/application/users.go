@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"gallfeder-forms/internal/internal_errors"
 	"gallfeder-forms/internal/shared"
 	"uuid"
@@ -30,4 +31,24 @@ func CreateSessionForUserLogin(handle string, pw string) (string, error) {
 		return "", internal_errors.ErrUnexpectedIssue
 	}
 	return token, nil
+}
+
+func GetUserIDFromToken(token string) (uuid.UUID, error) {
+	if !shared.CouldBeValidToken(token) {
+		return uuid.Nil(), internal_errors.ErrInvalidParameters
+	}
+	if !IsDBSet() {
+		log.Error("Aborted creation of new session for user as no database is set!")
+		return uuid.Nil(), internal_errors.ErrDBNoProvider
+	}
+
+	id, err := db.GetUserIDFromToken(token)
+	if err != nil {
+		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
+			return uuid.Nil(), internal_errors.ErrInvalidParameters
+		}
+		log.Errorf("Encountered unexpected issue while getting user id from token: %s\n", err)
+		return uuid.Nil(), err
+	}
+	return id, nil
 }
