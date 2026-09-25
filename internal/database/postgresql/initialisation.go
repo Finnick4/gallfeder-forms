@@ -99,10 +99,11 @@ func initialiseDatabase() {
 	wg.Add(1)
 
 	_, err = connection.Exec(`CREATE TABLE IF NOT EXISTS "sessions" (
-    	"id" 				VARCHAR(36) PRIMARY KEY,
+    	"id" 				VARCHAR(36) NOT NULL,
 		"hashed_token"		TEXT NOT NULL,
 		"user_id"			VARCHAR(36) NOT NULL,
 		"creation_date"		TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+		PRIMARY KEY ("id", "user_id"),
 	CONSTRAINT "fk_sessions_user_id" FOREIGN KEY("user_id") REFERENCES users("id") ON DELETE CASCADE);`)
 	if err != nil {
 		log.Fatalf("Failed to initialise table 'sessions' for PostgreSQL database! Error: %s\n", err)

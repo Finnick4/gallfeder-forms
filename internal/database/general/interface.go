@@ -16,7 +16,8 @@ type Database interface {
 	CreateUser(id uuid.UUID, handle string, password string) error
 	AreCorrectUserCredentials(handle string, password string) bool
 	AnyUsersExistent() bool
-	OpenSessionForUser(id uuid.UUID) (uuid.UUID, string, error)
+	OpenSessionForUser(userID uuid.UUID, sessionID uuid.UUID, token string) error
+	GetUserIDFromHandle(handle string) (uuid.UUID, error)
 
 	Close() error
 	Load()

@@ -5,13 +5,21 @@ import (
 	"crypto/sha512"
 	"encoding/hex"
 	"gallfeder-forms/internal/internal_errors"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 )
 
+func IsPermittedPassword(pw string) bool {
+	return len(pw) >= 8 && len(pw) <= 72 && !strings.Contains(pw, " ")
+}
+func IsPermittedHandle(handle string) bool {
+	return len(handle) >= 2 && len(handle) <= 32 && !strings.ContainsAny(handle, " \n")
+}
+
 func HashPW(toHash string) (string, error) {
-	if len(toHash) == 0 || len(toHash) > 72 {
+	if !IsPermittedPassword(toHash) {
 		return "", internal_errors.ErrPWInvalid
 	}
 
@@ -32,7 +40,7 @@ func GenerateToken() (string, error) {
 	}
 	var controlByte byte = 0
 	for i, b := range bytes {
-		if i > 31 {
+		if i > 30 {
 			break
 		}
 		controlByte += b
@@ -52,7 +60,7 @@ func CouldBeValidToken(proposed string) bool {
 	}
 	var calcControl byte = 0
 	for i, b := range bytes {
-		if i > 31 {
+		if i > 30 {
 			break
 		}
 		calcControl += b

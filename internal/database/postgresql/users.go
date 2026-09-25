@@ -59,24 +59,44 @@ func (db PostgreSQL) AnyUsersExistent() bool {
 	return err == nil
 }
 
-func (db PostgreSQL) OpenSessionForUser(id uuid.UUID) (uuid.UUID, string, error) {
-	token, err := shared.GenerateToken()
-	if err != nil {
-		return uuid.Nil(), "", internal_errors.ErrDBUnexpectedIssue
-	}
+func (db PostgreSQL) OpenSessionForUser(userID uuid.UUID, sessionID uuid.UUID, token string) error {
 
 	hashed := shared.Hash512(token)
-	sessionID := uuid.New()
 
 	conn := db.getConnection()
-	_, err = conn.Exec(`INSERT INTO sessions (id, hashed_token, user_id) VALUES ($1, $2, $3);`, sessionID.String(), hashed, id.String())
+	_, err := conn.Exec(`INSERT INTO sessions (id, hashed_token, user_id) VALUES ($1, $2, $3);`, sessionID.String(), hashed, userID.String())
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
-			return db.OpenSessionForUser(id)
+			return internal_errors.ErrDBDuplicatePresent
 		}
 		log.Errorf("Encountered unexpected issue while creating session for user: %s\n", err)
-		return uuid.Nil(), "", internal_errors.ErrDBUnexpectedIssue
+		return internal_errors.ErrDBUnexpectedIssue
 	}
 
-	return sessionID, token, nil
+	return nil
+}
+
+func (db PostgreSQL) GetUserIDFromHandle(handle string) (uuid.UUID, error) {
+	conn := db.getConnection()
+
+	resp := conn.QueryRow(`SELECT id FROM users WHERE handle = $1;`, handle)
+
+	var uuidStr string
+
+	err := resp.Scan(&uuidStr)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return uuid.Nil(), internal_errors.ErrDBValueNotFound
+		}
+		log.Errorf("Encountered unexpected issue while getting user's hashed password to verify credentials: %s\n", err)
+		return uuid.Nil(), internal_errors.ErrDBUnexpectedIssue
+	}
+
+	id, err := uuid.Parse(uuidStr)
+	if err != nil {
+		log.Errorf("Failed to parse User UUID from database response: %s\n", err)
+		return uuid.Nil(), err
+	}
+
+	return id, nil
 }
