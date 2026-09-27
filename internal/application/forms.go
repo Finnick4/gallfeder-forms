@@ -2,7 +2,7 @@ package application
 
 import (
 	"errors"
-	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
 	"uuid"
 
@@ -12,7 +12,7 @@ import (
 func CreateForm(creatorID uuid.UUID, title string, description string) (string, error) {
 	if !IsDBSet() {
 		log.Error("Aborted creation of new form as no database is set!")
-		return "", internal_errors.ErrDBNoProvider
+		return "", ErrNoDBProvider
 	}
 
 	id := uuid.NewV4()
@@ -25,16 +25,16 @@ func CreateForm(creatorID uuid.UUID, title string, description string) (string, 
 	}
 
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDBDuplicatePresent) {
+		if errors.Is(err, db_general.ErrDBDuplicatePresent) {
 			log.Error("UUID for new form was a duplicate!") // this *should* not happen
-			return "", err
+			return "", ErrUnexpectedIssue
 		}
-		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
+		if errors.Is(err, db_general.ErrDBParameterIssue) {
 			log.Debug("Form name was set to a whitespace!")
-			return "", err
+			return "", ErrInvalidParameters
 		}
 		log.Errorf("Failed to create form: %s\n", err)
-		return "", err
+		return "", ErrUnexpectedIssue
 	}
 
 	return id.String(), nil
@@ -43,14 +43,20 @@ func CreateForm(creatorID uuid.UUID, title string, description string) (string, 
 func GetForm(id uuid.UUID) (shared.Form, error) {
 	if !IsDBSet() {
 		log.Error("Aborted query of specific form as no database is set!")
-		return shared.Form{}, internal_errors.ErrDBNoProvider
+		return shared.Form{}, ErrNoDBProvider
 	}
 
 	// @TODO check in cache whether this ID actually exists
 
 	form, err := db.GetForm(id)
 	if err != nil {
-		return shared.Form{}, err
+		if errors.Is(err, db_general.ErrDBParameterIssue) {
+			return shared.Form{}, ErrInvalidParameters
+		}
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return shared.Form{}, ErrDoesNotExist
+		}
+		return shared.Form{}, ErrUnexpectedIssue
 	}
 
 	return form, nil
@@ -59,12 +65,12 @@ func GetForm(id uuid.UUID) (shared.Form, error) {
 func EditForm(form shared.Form, removeDescription bool, questions []shared.QuestionEdit) ([]shared.Question, error) {
 	if !IsDBSet() {
 		log.Error("Aborted editing form as no database is set!")
-		return nil, internal_errors.ErrDBNoProvider
+		return nil, ErrNoDBProvider
 	}
 	s, err := db.StartFormEditSession(form.Id)
 	if err != nil {
 		log.Errorf("Encountered unexpected error while starting form edit session: %s\n", err)
-		return nil, err
+		return nil, ErrUnexpectedIssue
 	}
 
 	if form.Title != "" && form.Description != "" && !removeDescription {
@@ -106,12 +112,12 @@ func EditForm(form shared.Form, removeDescription bool, questions []shared.Quest
 
 	err = s.ExecuteSession()
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDBSessionClosed) {
+		if errors.Is(err, db_general.ErrDBSessionClosed) {
 			log.Error("The edit session was already closed when trying to execute changes to edit form.")
-			return nil, err
+			return nil, ErrUnexpectedIssue
 		}
 		log.Errorf("Encountered issue while executing edit form session: %s\n", err)
-		return nil, err
+		return nil, ErrUnexpectedIssue
 	}
 	return created, nil
 }
@@ -119,16 +125,16 @@ func EditForm(form shared.Form, removeDescription bool, questions []shared.Quest
 func GetFormEditors(formID uuid.UUID) (shared.FormEditors, error) {
 	if !IsDBSet() {
 		log.Error("Aborted editing form as no database is set!")
-		return shared.FormEditors{}, internal_errors.ErrDBNoProvider
+		return shared.FormEditors{}, ErrNoDBProvider
 	}
 
 	formEditors, err := db.GetFormEditors(formID)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDBValueNotFound) {
-			return shared.FormEditors{}, internal_errors.ErrInvalidParameters
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return shared.FormEditors{}, ErrInvalidParameters
 		}
 		log.Errorf("Encountered issue while getting form editors for a specific form: %s\n", err)
-		return shared.FormEditors{}, internal_errors.ErrUnexpectedIssue
+		return shared.FormEditors{}, ErrUnexpectedIssue
 	}
 
 	return formEditors, nil

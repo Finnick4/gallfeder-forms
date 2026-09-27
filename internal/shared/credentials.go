@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"crypto/sha512"
 	"encoding/hex"
-	"gallfeder-forms/internal/internal_errors"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -20,13 +19,13 @@ func IsPermittedHandle(handle string) bool {
 
 func HashPW(toHash string) (string, error) {
 	if !IsPermittedPassword(toHash) {
-		return "", internal_errors.ErrPWInvalid
+		return "", ErrPWInvalid
 	}
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(toHash), 14)
 	if err != nil {
 		log.Errorf("Encountered unexpected issue while hashing password: %s\n", err)
-		return "", internal_errors.ErrUnexpectedIssue
+		return "", ErrUnexpectedIssue
 	}
 	return string(hashed), nil
 }
@@ -36,7 +35,7 @@ func GenerateToken() (string, error) {
 	_, err := rand.Read(bytes)
 	if err != nil {
 		log.Errorf("Encountered issue while reading random bytes to create token: %s\n", err)
-		return "", internal_errors.ErrUnexpectedIssue
+		return "", ErrUnexpectedIssue
 	}
 	var controlByte byte = 0
 	for i, b := range bytes {

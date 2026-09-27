@@ -5,7 +5,6 @@ import (
 	"gallfeder-forms/internal/api/http_responses"
 	param "gallfeder-forms/internal/api/parameters"
 	"gallfeder-forms/internal/application"
-	"gallfeder-forms/internal/internal_errors"
 	"gallfeder-forms/internal/shared"
 	"net/http"
 	"strings"
@@ -33,7 +32,7 @@ func FormEditHandler(w http.ResponseWriter, r *http.Request) {
 
 	editors, err := application.GetFormEditors(id)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrInvalidParameters) {
+		if errors.Is(err, application.ErrInvalidParameters) {
 			log.Debug("Couldn't process the request due to a parameter issue.")
 			http_responses.ParameterIssueSpecificHandler(w, "formID")
 			return
@@ -103,7 +102,7 @@ func FormEditHandler(w http.ResponseWriter, r *http.Request) {
 
 	created, err := application.EditForm(form, params.RemoveDescription, questions)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
+		if errors.Is(err, application.ErrInvalidParameters) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return

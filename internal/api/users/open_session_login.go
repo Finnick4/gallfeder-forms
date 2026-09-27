@@ -5,7 +5,6 @@ import (
 	"gallfeder-forms/internal/api/http_responses"
 	param "gallfeder-forms/internal/api/parameters"
 	"gallfeder-forms/internal/application"
-	"gallfeder-forms/internal/internal_errors"
 	"gallfeder-forms/internal/shared"
 	"net/http"
 
@@ -31,7 +30,7 @@ func SessionOpenLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := application.CreateSessionForUserLogin(params.UserHandle, params.Password)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrInvalidParameters) {
+		if errors.Is(err, application.ErrInvalidParameters) {
 			http_responses.ParameterIssueHandler(w)
 			log.Debug("Could not open a session for user as there was a parameter issue!")
 			return

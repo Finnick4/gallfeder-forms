@@ -1,4 +1,4 @@
-package general
+package db_general
 
 import (
 	"gallfeder-forms/internal/shared"

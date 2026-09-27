@@ -1,7 +1,7 @@
 package postgresql
 
 import (
-	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
 	"strings"
 	"uuid"
@@ -15,16 +15,16 @@ func (db PostgreSQL) CreateUser(id uuid.UUID, handle string, password string) er
 
 	hashedPW, err := shared.HashPW(password)
 	if err != nil {
-		return internal_errors.ErrPWInvalid
+		return shared.ErrPWInvalid
 	}
 
 	_, err = conn.Exec(`INSERT INTO users (id, handle, hashed_password) VALUES ($1, $2, $3);`, id.String(), handle, hashedPW)
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
-			return internal_errors.ErrDBDuplicatePresent
+			return db_general.ErrDBDuplicatePresent
 		}
 		log.Errorf(`Ran into issue while creating user: %s\n`, err)
-		return internal_errors.ErrDBGeneralIssue
+		return db_general.ErrDBGeneralIssue
 	}
 
 	return nil
@@ -67,10 +67,10 @@ func (db PostgreSQL) OpenSessionForUser(userID uuid.UUID, sessionID uuid.UUID, t
 	_, err := conn.Exec(`INSERT INTO sessions (id, hashed_token, user_id) VALUES ($1, $2, $3);`, sessionID.String(), hashed, userID.String())
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
-			return internal_errors.ErrDBDuplicatePresent
+			return db_general.ErrDBDuplicatePresent
 		}
 		log.Errorf("Encountered unexpected issue while creating session for user: %s\n", err)
-		return internal_errors.ErrDBUnexpectedIssue
+		return db_general.ErrDBUnexpectedIssue
 	}
 
 	return nil
@@ -86,10 +86,10 @@ func (db PostgreSQL) GetUserIDFromHandle(handle string) (uuid.UUID, error) {
 	err := resp.Scan(&uuidStr)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
-			return uuid.Nil(), internal_errors.ErrDBValueNotFound
+			return uuid.Nil(), db_general.ErrDBValueNotFound
 		}
 		log.Errorf("Encountered unexpected issue while getting user's id from handle: %s\n", err)
-		return uuid.Nil(), internal_errors.ErrDBUnexpectedIssue
+		return uuid.Nil(), db_general.ErrDBUnexpectedIssue
 	}
 
 	id, err := uuid.Parse(uuidStr)
@@ -113,10 +113,10 @@ func (db PostgreSQL) GetUserIDFromToken(token string) (uuid.UUID, error) {
 	err := resp.Scan(&uuidStr)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
-			return uuid.Nil(), internal_errors.ErrDBValueNotFound
+			return uuid.Nil(), db_general.ErrDBValueNotFound
 		}
 		log.Errorf("Encountered unexpected issue while getting user's id from token: %s\n", err)
-		return uuid.Nil(), internal_errors.ErrDBUnexpectedIssue
+		return uuid.Nil(), db_general.ErrDBUnexpectedIssue
 	}
 
 	id, err := uuid.Parse(uuidStr)

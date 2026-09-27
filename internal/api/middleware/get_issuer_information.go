@@ -5,7 +5,6 @@ import (
 	"errors"
 	"gallfeder-forms/internal/api/http_responses"
 	"gallfeder-forms/internal/application"
-	"gallfeder-forms/internal/internal_errors"
 	"gallfeder-forms/internal/shared"
 	"net/http"
 )
@@ -25,7 +24,7 @@ func GetRequestIssuerInformation(next http.Handler) http.Handler {
 		var err error
 		info.ID, err = application.GetUserIDFromToken(token)
 		if err != nil {
-			if errors.Is(err, internal_errors.ErrInvalidParameters) {
+			if errors.Is(err, application.ErrInvalidParameters) {
 				http_responses.NoTokenHandler(w)
 				return
 			}

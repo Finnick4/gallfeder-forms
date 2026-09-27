@@ -5,7 +5,6 @@ import (
 	"gallfeder-forms/internal/api/http_responses"
 	param "gallfeder-forms/internal/api/parameters"
 	"gallfeder-forms/internal/application"
-	"gallfeder-forms/internal/internal_errors"
 	"net/http"
 	"uuid"
 
@@ -32,7 +31,7 @@ func ResponseCreateHandler(w http.ResponseWriter, r *http.Request) {
 	responseID, err := application.CreateResponse(id, params.Answers)
 
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
+		if errors.Is(err, application.ErrInvalidParameters) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return

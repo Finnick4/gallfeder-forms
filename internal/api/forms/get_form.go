@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gallfeder-forms/internal/api/http_responses"
 	"gallfeder-forms/internal/application"
-	"gallfeder-forms/internal/internal_errors"
 	"net/http"
 	"uuid"
 
@@ -26,12 +25,12 @@ func FormGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	form, err := application.GetForm(id)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDBParameterIssue) {
+		if errors.Is(err, application.ErrInvalidParameters) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return
 		}
-		if errors.Is(err, internal_errors.ErrDBValueNotFound) {
+		if errors.Is(err, application.ErrDoesNotExist) {
 			log.Debug("The queried ID does not exist.")
 			http_responses.DoesntExistHandler(w)
 			return
