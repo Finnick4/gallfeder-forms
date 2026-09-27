@@ -17,7 +17,7 @@ func FormCreateHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received API request to create new form")
 	uinfo := r.Context().Value("user_info").(shared.RequestIssuerInformation)
 	if !uinfo.VerifiedUser {
-		http_responses.NoToken(w)
+		http_responses.NoTokenHandler(w)
 		return
 	}
 

@@ -115,3 +115,21 @@ func EditForm(form shared.Form, removeDescription bool, questions []shared.Quest
 	}
 	return created, nil
 }
+
+func GetFormEditors(formID uuid.UUID) (shared.FormEditors, error) {
+	if !IsDBSet() {
+		log.Error("Aborted editing form as no database is set!")
+		return shared.FormEditors{}, internal_errors.ErrDBNoProvider
+	}
+
+	formEditors, err := db.GetFormEditors(formID)
+	if err != nil {
+		if errors.Is(err, internal_errors.ErrDBValueNotFound) {
+			return shared.FormEditors{}, internal_errors.ErrInvalidParameters
+		}
+		log.Errorf("Encountered issue while getting form editors for a specific form: %s\n", err)
+		return shared.FormEditors{}, internal_errors.ErrUnexpectedIssue
+	}
+
+	return formEditors, nil
+}

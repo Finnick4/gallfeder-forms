@@ -8,3 +8,12 @@ type Form struct {
 	Description string     `json:"description"`
 	Questions   []Question `json:"questions"`
 }
+
+type FormEditors struct {
+	FormID  uuid.UUID
+	OwnerID uuid.UUID
+}
+
+func (e FormEditors) CanEditForm(userID uuid.UUID) bool {
+	return e.OwnerID == userID
+}

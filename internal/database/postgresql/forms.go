@@ -151,3 +151,31 @@ func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (general.FormEditSes
 
 	return session, nil
 }
+
+func (db PostgreSQL) GetFormEditors(id uuid.UUID) (shared.FormEditors, error) {
+	conn := db.getConnection()
+
+	resp := conn.QueryRow(`SELECT owner_id FROM forms WHERE id = $1;`, id.String())
+
+	var ownerUUIDStr string
+
+	err := resp.Scan(&ownerUUIDStr)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return shared.FormEditors{}, internal_errors.ErrDBValueNotFound
+		}
+		log.Errorf("Encountered unexpected issue while owner of specific form to get form editors: %s\n", err)
+		return shared.FormEditors{}, internal_errors.ErrDBUnexpectedIssue
+	}
+
+	ownerID, err := uuid.Parse(ownerUUIDStr)
+	if err != nil {
+		log.Errorf("Failed to parse owner UUID from database response for getting form editors: %s\n", err)
+		return shared.FormEditors{}, internal_errors.ErrDBUnexpectedIssue
+	}
+
+	return shared.FormEditors{
+		FormID:  id,
+		OwnerID: ownerID,
+	}, nil
+}

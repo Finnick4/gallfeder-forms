@@ -14,7 +14,7 @@ func GetRequestIssuerInformation(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := r.Context().Value("token").(string)
 		if token == "" || !shared.CouldBeValidToken(token) {
-			http_responses.NoToken(w)
+			http_responses.NoTokenHandler(w)
 			return
 		}
 
@@ -26,7 +26,7 @@ func GetRequestIssuerInformation(next http.Handler) http.Handler {
 		info.ID, err = application.GetUserIDFromToken(token)
 		if err != nil {
 			if errors.Is(err, internal_errors.ErrInvalidParameters) {
-				http_responses.NoToken(w)
+				http_responses.NoTokenHandler(w)
 				return
 			}
 			http_responses.InternalErrorHandler(w)
