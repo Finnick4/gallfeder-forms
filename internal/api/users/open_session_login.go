@@ -30,6 +30,11 @@ func SessionOpenLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	token, err := application.CreateSessionForUserLogin(params.UserHandle, params.Password)
 	if err != nil {
+		if errors.Is(err, application.ErrInvalidPassword) {
+			http_responses.ParameterIssueHandler(w)
+			log.Debug("Could not open a session for user as the credentials were incorrect!")
+			return
+		}
 		if errors.Is(err, application.ErrInvalidParameters) {
 			http_responses.ParameterIssueHandler(w)
 			log.Debug("Could not open a session for user as there was a parameter issue!")

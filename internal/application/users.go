@@ -19,6 +19,10 @@ func CreateSessionForUserLogin(handle string, pw string) (string, error) {
 		return "", ErrUnexpectedIssue
 	}
 
+	if !db.AreCorrectUserCredentials(handle, pw) {
+		return "", ErrInvalidPassword
+	}
+
 	userID, err := db.GetUserIDFromHandle(handle)
 	if err != nil {
 		return "", ErrInvalidParameters
