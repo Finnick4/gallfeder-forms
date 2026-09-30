@@ -61,7 +61,8 @@ body {
     margin: 0;
 }
 
-div.page.form {
+div.page.form,
+div.page.login {
     --width: min(95vw, 50rem);
     width: var(--width);
     margin: 0 calc((100vw - var(--width)) / 2);
@@ -90,9 +91,20 @@ div.page.form {
         gap: 2rem
     }
 }
+div.page.login {
 
-div.page.form.responded {
-    background-color: red;
+    .section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem
+    }
+
+    h2 {
+        grid-column: 2;
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin: calc(var(--padding-inline-input) + var(--border-width)) 0;
+    }
 }
 
 
@@ -118,7 +130,7 @@ div.question {
     }
 }
 
-input.edit,textarea {
+input.usable,textarea {
     border: var(--element-border);
     background-color: var(--element-color);
     border-radius: calc(var(--border-radius) - var(--padding-section));
@@ -127,16 +139,16 @@ input.edit,textarea {
             background-color .1s ease
 }
 
-input.edit.has-issue {
+input.usable.has-issue {
     background-color: var(--issue);
     border: var(--issue-border);
 }
 
-input.edit.has-issue:focus-visible {
+input.usable.has-issue:focus-visible {
     background-color: var(--issue-highlight);
 }
 
-input.edit.edit-title {
+input.usable.edit-title {
     font-size: 1.5rem;
     width: calc(100% - 2*var(--border-width) - 2*var(--padding-element));
 }
@@ -147,19 +159,19 @@ h1 {
 div.question.editable {
     gap: calc(0.75rem - (1.5*(var(--border-width) + var(--padding-inline-input))));
 
-    input.edit {
+    input.usable {
         padding: var(--padding-inline-input);
     }
-    input.edit.edit-question-text {
+    input.usable.edit-question-text {
         margin-bottom: .5rem;
     }
 
-    input.edit:focus-visible {
+    input.usable:focus-visible {
         outline: solid var(--accent) var(--border-width);
         background-color: var(--element-color-highlight);
     }
 
-    input.edit:disabled {
+    input.usable:disabled {
         cursor: not-allowed;
         background-color: var(--element-color-muted);
     }

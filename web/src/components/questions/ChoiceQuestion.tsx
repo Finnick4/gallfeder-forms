@@ -94,7 +94,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
             ref={elem}
         >
             <input
-                className="edit-question-text edit"
+                className="edit-question-text usable"
                 type="text"
                 defaultValue={q.meta.question}
                 onBlur={e => callEditOnQuestionText(q.meta.question, e.target.value)}
@@ -111,7 +111,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                                onChange={() => callUpdateWithOption(opt)}
                         />
                         <input
-                            className="edit-label-text edit"
+                            className="edit-label-text usable"
                             type="text"
                             defaultValue={opt.text}
                             onBlur={e => callEditOnLabelText(opt, {text: e.target.value})}

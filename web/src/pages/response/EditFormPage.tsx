@@ -158,7 +158,7 @@ export const EditFormPage = () => {
             <div className="form-response-head section">
                 <input
                     type="text"
-                    className="edit edit-title"
+                    className="usable edit-title"
                     defaultValue={formVers.changed.title}
                     ref={titleEdit}
                     onFocus={() => setFocussed("")}
