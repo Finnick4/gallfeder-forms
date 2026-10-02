@@ -23,6 +23,8 @@ func Handler(r *chi.Mux) {
 	r.Route("/api/forms", func(router chi.Router) {
 		router.With(middleware.GetRequestIssuerInformation).Post("/", forms.FormCreateHandler)
 		router.With(middleware.GetRequestIssuerInformation).Patch("/{formID}", forms.FormEditHandler)
+
+		router.With(middleware.GetRequestIssuerInformation).Get("/editable", forms.FormGetEditableHandler)
 		router.Get("/{formID}", forms.FormGetHandler)
 
 		router.Post("/{formID}/responses", responses.ResponseCreateHandler)

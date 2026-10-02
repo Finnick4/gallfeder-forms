@@ -10,6 +10,7 @@ type Database interface {
 	CreateForm(userID uuid.UUID, id uuid.UUID, title string) error
 	GetForm(id uuid.UUID) (shared.Form, error)
 	GetFormEditors(id uuid.UUID) (shared.FormEditors, error)
+	GetFormOverviewsOfOwner(userID uuid.UUID) ([]shared.FormOverview, error)
 	StartFormEditSession(formID uuid.UUID) (FormEditSession, error)
 
 	CreateResponse(responseID uuid.UUID, formID uuid.UUID, answers []shared.QuestionAnswer) error

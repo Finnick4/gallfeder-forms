@@ -123,6 +123,52 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	return form, nil
 }
 
+func (db PostgreSQL) GetFormOverviewsOfOwner(userID uuid.UUID) ([]shared.FormOverview, error) {
+	conn := db.getConnection()
+
+	rows, err := conn.Query(`
+SELECT forms.id, title, COALESCE(description, ''), COUNT(DISTINCT questions.id), COUNT(DISTINCT responses.id) 
+FROM forms
+	LEFT JOIN questions ON forms.id = questions.form_id
+	LEFT JOIN responses ON forms.id = responses.form_id
+WHERE owner_id=$1
+GROUP BY forms.id, title, description, creation_date
+ORDER BY creation_date DESC;`, userID.String())
+
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, db_general.ErrDBValueNotFound
+		}
+		log.Errorf(`Ran into issue while getting form overviews for user: %s\n`, err)
+		return nil, db_general.ErrDBGeneralIssue
+	}
+
+	var formOverviews []shared.FormOverview
+
+	for rows.Next() {
+		var fo shared.FormOverview
+		var fID string
+		err = rows.Scan(&fID, &fo.Title, &fo.Description, &fo.Questions, &fo.Responses)
+		if err != nil {
+			log.Errorf(`Ran into issue while scanning form for form overview for specific user: %s\n`, err)
+			_ = rows.Close()
+			return nil, db_general.ErrDBGeneralIssue
+		}
+
+		fo.Id, err = uuid.Parse(fID)
+		if err != nil {
+			log.Errorf(`Encountered invalid form id in database while trying to parse just this: %s\n`, err)
+			_ = rows.Close()
+			return nil, db_general.ErrDBGeneralIssue
+		}
+
+		formOverviews = append(formOverviews, fo)
+	}
+
+	_ = rows.Close()
+	return formOverviews, nil
+}
+
 func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (db_general.FormEditSession, error) {
 	conn := db.getConnection()
 	tx, err := conn.Begin()

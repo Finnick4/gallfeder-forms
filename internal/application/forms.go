@@ -62,6 +62,22 @@ func GetForm(id uuid.UUID) (shared.Form, error) {
 	return form, nil
 }
 
+func GetEditableFormsOverviewsForUserID(userID uuid.UUID) ([]shared.FormOverview, error) {
+	if !IsDBSet() {
+		log.Error("Aborted getting editable forms for user as no database is set!")
+		return nil, ErrNoDBProvider
+	}
+
+	overviews, err := db.GetFormOverviewsOfOwner(userID)
+	if err != nil {
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return nil, ErrDoesNotExist
+		}
+		return nil, ErrUnexpectedIssue
+	}
+	return overviews, nil
+}
+
 func EditForm(form shared.Form, removeDescription bool, questions []shared.QuestionEdit) ([]shared.Question, error) {
 	if !IsDBSet() {
 		log.Error("Aborted editing form as no database is set!")
