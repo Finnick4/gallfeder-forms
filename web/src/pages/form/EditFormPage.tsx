@@ -1,10 +1,11 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import type {Form, Question, UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
 import FittingTextArea from "../../components/FittingTextArea.tsx";
+import {isLoggedIn} from "../../shared/checks.ts";
 
 type FormVersions = {
     original: Form,
@@ -13,6 +14,13 @@ type FormVersions = {
 
 export const EditFormPage = () => {
     const {formID} = useParams()
+    const nav = useNavigate();
+
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            nav("/login")
+        }
+    }, []);
 
     const [formVers, setFormVersions] = useState<FormVersions>({
         original: {

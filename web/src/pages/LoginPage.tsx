@@ -1,5 +1,6 @@
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
+import {isLoggedIn} from "../shared/checks.ts";
 
 
 export const LoginPage = () => {
@@ -8,6 +9,11 @@ export const LoginPage = () => {
     const btnRef = useRef<HTMLButtonElement>(null);
     const nav = useNavigate();
 
+    useEffect(() => {
+        if (isLoggedIn()) {
+            nav("/")
+        }
+    }, []);
     const tryLogIn = () => {
         if (handleRef.current == null || passwordRef.current == null || btnRef.current == null) {
             return
