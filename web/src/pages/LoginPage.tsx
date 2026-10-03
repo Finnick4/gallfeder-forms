@@ -1,10 +1,12 @@
 import {useRef} from "react";
+import {useNavigate} from "react-router-dom";
 
 
 export const LoginPage = () => {
     const handleRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const btnRef = useRef<HTMLButtonElement>(null);
+    const nav = useNavigate();
 
     const tryLogIn = () => {
         if (handleRef.current == null || passwordRef.current == null || btnRef.current == null) {
@@ -17,6 +19,7 @@ export const LoginPage = () => {
 
         fetch(`http://localhost:8080/api/sessions`, {
             method: "POST",
+            credentials: "include",
             body: JSON.stringify({
                 "handle": handleRef.current.value,
                 "password": passwordRef.current.value
@@ -34,6 +37,7 @@ export const LoginPage = () => {
                     btnRef.current.classList.remove("disabled");
                 }
 
+                nav("/");
                 return r.json();
             });
 

@@ -1,3 +1,5 @@
+
+
 :root {
     font-size: 1rem;
 
@@ -35,17 +37,17 @@
     --issue-border: solid hsl(0, 100%, 80%) var(--border-width);
 
     --border-width: .1rem;
-    --border-radius: 1.75rem;
+    --border-radius: 2rem;
 
-    --padding-button: .75rem;
     --padding-section: 1.5rem;
     --padding-element: 1rem;
+    --padding-button: .75rem;
+    --padding-data: .5rem;
     --padding-inline-input: .25rem;
     --fonts: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, Helvetica, Arial, sans-serif;
     font-family: var(--fonts), sans-serif;
 
 }
-
 @media (prefers-color-scheme: dark) {
     :root {
 
@@ -61,12 +63,31 @@ body {
     margin: 0;
 }
 
-div.page.form,
-div.page.login {
+div.page {
     --width: min(95vw, 50rem);
     width: var(--width);
     margin: 0 calc((100vw - var(--width)) / 2);
 
+    .section {
+        margin: .5rem 0;
+        background-color: var(--bg-color-section);
+        border: var(--bg-section-border);
+
+        padding: var(--padding-section);
+        border-radius: var(--border-radius);
+    }
+}
+
+.editable-forms-overview {
+    .head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+
+
+div.page.form {
     .section.form-response-head {
         h1 {
             margin: 0;
@@ -77,22 +98,14 @@ div.page.login {
         gap: .5rem;
     }
 
-    .section {
-        margin: .5rem 0;
-        background-color: var(--bg-color-section);
-        border: var(--bg-section-border);
-
-        padding: var(--padding-section);
-        border-radius: var(--border-radius);
-    }
     .section.questions {
         display: flex;
         flex-direction: column;
         gap: 2rem
     }
 }
-div.page.login {
 
+div.page.login {
     .section {
         display: flex;
         flex-direction: column;
@@ -223,6 +236,10 @@ div.question.choice {
     }
 }
 
+button.inline {
+    padding: var(--padding-inline-input);
+}
+
 button {
     font-size: 1rem;
     padding: var(--padding-button);
@@ -259,4 +276,47 @@ textarea {
 .description p.line {
     font-size: 1.125rem;
     margin: .5rem 0;
+}
+
+div.form-overviews {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+}
+
+a.form-overview {
+    text-decoration: none;
+    color: var(--text);
+    border: var(--element-border);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+    background-color: var(--element-color);
+    transition:
+            background-color ease .1s,
+            transform ease .1s;
+
+    div.illustration {
+        border-radius: calc(var(--border-radius) - var(--padding-section));
+        overflow: hidden;
+        background-color: var(--bg-color);
+        aspect-ratio: 8/4;
+    }
+
+    div.data {
+        padding: var(--padding-data);
+        .title {
+            height: 2.25rem;
+            text-overflow: ellipsis;
+        }
+
+        .stats {
+            font-size: .9rem;
+            color: var(--text-muted);
+        }
+    }
+}
+
+a.form-overview:focus,
+a.form-overview:hover {
+    background-color: var(--element-color-highlight);
+    transform: scale(105%);
 }
