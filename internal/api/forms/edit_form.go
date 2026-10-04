@@ -5,7 +5,6 @@ import (
 	"gallfeder-forms/internal/api/http_responses"
 	param "gallfeder-forms/internal/api/parameters"
 	"gallfeder-forms/internal/application"
-	"gallfeder-forms/internal/internal_errors"
 	"gallfeder-forms/internal/shared"
 	"net/http"
 	"strings"
@@ -17,13 +16,35 @@ import (
 
 func FormEditHandler(w http.ResponseWriter, r *http.Request) {
 	log.Debug("Received API request to edit form")
-	// @TODO Auth
+	uinfo := r.Context().Value("user_info").(shared.RequestIssuerInformation)
+	if !uinfo.VerifiedUser {
+		http_responses.NoTokenHandler(w)
+		return
+	}
 
 	formID := chi.URLParam(r, "formID")
 	id, err := uuid.Parse(formID)
 	if err != nil {
 		log.Debug("Couldn't process the request due to a parameter issue.")
 		http_responses.ParameterIssueSpecificHandler(w, "formID")
+		return
+	}
+
+	editors, err := application.GetFormEditors(id)
+	if err != nil {
+		if errors.Is(err, application.ErrInvalidParameters) {
+			log.Debug("Couldn't process the request due to a parameter issue.")
+			http_responses.ParameterIssueSpecificHandler(w, "formID")
+			return
+		}
+		log.Errorf("Unhandled error within FormEditHandler: %s\n", err)
+		http_responses.InternalErrorHandler(w)
+		return
+	}
+
+	if !editors.CanEditForm(uinfo.ID) {
+		log.Debug("Couldn't process the request as the sender does not bear sufficient permissions.")
+		http_responses.NotEditorHandler(w)
 		return
 	}
 
@@ -81,7 +102,7 @@ func FormEditHandler(w http.ResponseWriter, r *http.Request) {
 
 	created, err := application.EditForm(form, params.RemoveDescription, questions)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, application.ErrInvalidParameters) {
 			log.Debug("Failed while processing the request due to a parameter issue.")
 			http_responses.ParameterIssueHandler(w)
 			return

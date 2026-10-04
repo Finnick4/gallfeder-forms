@@ -1,4 +1,4 @@
-package general
+package db_general
 
 import (
 	"gallfeder-forms/internal/shared"
@@ -6,12 +6,22 @@ import (
 )
 
 type Database interface {
-	CreateFormWithDescription(id uuid.UUID, title string, description string) error
-	CreateForm(id uuid.UUID, title string) error
+	CreateFormWithDescription(userID uuid.UUID, id uuid.UUID, title string, description string) error
+	CreateForm(userID uuid.UUID, id uuid.UUID, title string) error
 	GetForm(id uuid.UUID) (shared.Form, error)
+	GetFormEditors(id uuid.UUID) (shared.FormEditors, error)
+	GetFormOverviewsOfOwner(userID uuid.UUID) ([]shared.FormOverview, error)
 	StartFormEditSession(formID uuid.UUID) (FormEditSession, error)
 
 	CreateResponse(responseID uuid.UUID, formID uuid.UUID, answers []shared.QuestionAnswer) error
+
+	CreateUser(id uuid.UUID, handle string, password string) error
+	AreCorrectUserCredentials(handle string, password string) bool
+	AnyUsersExistent() bool
+
+	OpenSessionForUser(userID uuid.UUID, sessionID uuid.UUID, token string) error
+	GetUserIDFromHandle(handle string) (uuid.UUID, error)
+	GetUserIDFromToken(token string) (uuid.UUID, error)
 
 	Close() error
 	Load()

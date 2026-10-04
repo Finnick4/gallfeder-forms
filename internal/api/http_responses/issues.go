@@ -44,4 +44,10 @@ var (
 	InternalErrorHandler = func(w http.ResponseWriter) {
 		writeError(w, "There was an internal issue!", http.StatusInternalServerError)
 	}
+	NoTokenHandler = func(w http.ResponseWriter) {
+		writeError(w, "You are not logged in as there is no token attached to your request!", http.StatusUnauthorized)
+	}
+	NotEditorHandler = func(w http.ResponseWriter) {
+		writeError(w, "You are not permitted to perform this action on this form!", http.StatusForbidden)
+	}
 )

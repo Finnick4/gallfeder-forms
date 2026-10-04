@@ -3,8 +3,7 @@ package postgresql
 import (
 	"encoding/json"
 	"errors"
-	"gallfeder-forms/internal/database/general"
-	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
 	"strings"
 	"time"
@@ -13,51 +12,51 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (db PostgreSQL) CreateFormWithDescription(id uuid.UUID, title string, description string) error {
+func (db PostgreSQL) CreateFormWithDescription(userID uuid.UUID, id uuid.UUID, title string, description string) error {
 	if strings.TrimSpace(description) == "" {
-		return db.CreateForm(id, title)
+		return db.CreateForm(userID, id, title)
 	}
 	if strings.TrimSpace(title) == "" {
-		return internal_errors.ErrParameterIssue
+		return db_general.ErrDBParameterIssue
 	}
 
 	conn := db.getConnection()
 	_, err := conn.Exec(`
-	INSERT INTO forms (id, title, description) VALUES ($1, $2, $3);
-	`, id.String(), title, description)
+	INSERT INTO forms (owner_id, id, title, description) VALUES ($1, $2, $3, $4);
+	`, userID.String(), id.String(), title, description)
 
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
-			return internal_errors.ErrDuplicatePresent
+			return db_general.ErrDBDuplicatePresent
 		}
 		log.Errorf(`Ran into issue while creating form without description: %s\n`, err)
-		return internal_errors.ErrGeneralIssue
+		return db_general.ErrDBGeneralIssue
 	}
 	return nil
 }
 
-func (db PostgreSQL) CreateForm(id uuid.UUID, title string) error {
+func (db PostgreSQL) CreateForm(userID uuid.UUID, id uuid.UUID, title string) error {
 	if strings.TrimSpace(title) == "" {
-		return internal_errors.ErrParameterIssue
+		return db_general.ErrDBParameterIssue
 	}
 	conn := db.getConnection()
 	_, err := conn.Exec(`
-	INSERT INTO forms (id, title) VALUES ($1, $2);
-	`, id.String(), title)
+	INSERT INTO forms (owner_id, id, title) VALUES ($1, $2, $3);
+	`, userID.String(), id.String(), title)
 
 	if err != nil {
 		if strings.HasPrefix(err.Error(), "pq: duplicate key value violates unique constraint") {
-			return internal_errors.ErrDuplicatePresent
+			return db_general.ErrDBDuplicatePresent
 		}
 		log.Errorf(`Ran into issue while creating form without description: %s\n`, err)
-		return internal_errors.ErrGeneralIssue
+		return db_general.ErrDBGeneralIssue
 	}
 	return nil
 }
 
 func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	if id.String() == "" {
-		return shared.Form{}, internal_errors.ErrParameterIssue
+		return shared.Form{}, db_general.ErrDBParameterIssue
 	}
 
 	conn := db.getConnection()
@@ -69,10 +68,10 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	err := row.Scan(&form.Title, &form.Description)
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
-			return shared.Form{}, internal_errors.ErrNotFound
+			return shared.Form{}, db_general.ErrDBValueNotFound
 		}
 		log.Errorf(`Ran into issue while getting form: %s\n`, err)
-		return shared.Form{}, internal_errors.ErrGeneralIssue
+		return shared.Form{}, db_general.ErrDBGeneralIssue
 	}
 
 	rows, err := conn.Query(`SELECT id, index, type, meta FROM questions WHERE form_id=$1;`, id.String())
@@ -80,7 +79,7 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	if err != nil {
 		if err.Error() != "sql: no rows in result set" {
 			log.Errorf(`Ran into issue while getting questions of form: %s\n`, err)
-			return shared.Form{}, internal_errors.ErrGeneralIssue
+			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 		form.Questions = nil
 		return form, nil
@@ -93,7 +92,7 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 		if err != nil {
 			log.Errorf(`Ran into issue while scanning questions of form: %s\n`, err)
 			_ = rows.Close()
-			return shared.Form{}, internal_errors.ErrGeneralIssue
+			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 
 		q.FormID = id
@@ -101,20 +100,20 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 		if err != nil {
 			log.Errorf(`Encountered invalid question id in database while trying to parse just this: %s\n`, err)
 			_ = rows.Close()
-			return shared.Form{}, internal_errors.ErrGeneralIssue
+			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 
 		decoded, err := shared.DecodeBase64(qmeta)
 		if err != nil {
 			log.Errorf(`Encountered invalidly encoded question metadata in database while trying to decode just this: %s\n`, err)
 			_ = rows.Close()
-			return shared.Form{}, internal_errors.ErrGeneralIssue
+			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 		err = json.Unmarshal([]byte(decoded), &q.Meta)
 		if err != nil {
 			log.Errorf(`Encountered invalidly marshaled question metadata in database while trying to unmarshal just this: %s\n`, err)
 			_ = rows.Close()
-			return shared.Form{}, internal_errors.ErrGeneralIssue
+			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 
 		form.Questions = append(form.Questions, q)
@@ -124,12 +123,58 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	return form, nil
 }
 
-func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (general.FormEditSession, error) {
+func (db PostgreSQL) GetFormOverviewsOfOwner(userID uuid.UUID) ([]shared.FormOverview, error) {
+	conn := db.getConnection()
+
+	rows, err := conn.Query(`
+SELECT forms.id, title, COALESCE(description, ''), COUNT(DISTINCT questions.id), COUNT(DISTINCT responses.id) 
+FROM forms
+	LEFT JOIN questions ON forms.id = questions.form_id
+	LEFT JOIN responses ON forms.id = responses.form_id
+WHERE owner_id=$1
+GROUP BY forms.id, title, description, creation_date
+ORDER BY creation_date DESC;`, userID.String())
+
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return nil, db_general.ErrDBValueNotFound
+		}
+		log.Errorf(`Ran into issue while getting form overviews for user: %s\n`, err)
+		return nil, db_general.ErrDBGeneralIssue
+	}
+
+	var formOverviews []shared.FormOverview
+
+	for rows.Next() {
+		var fo shared.FormOverview
+		var fID string
+		err = rows.Scan(&fID, &fo.Title, &fo.Description, &fo.Questions, &fo.Responses)
+		if err != nil {
+			log.Errorf(`Ran into issue while scanning form for form overview for specific user: %s\n`, err)
+			_ = rows.Close()
+			return nil, db_general.ErrDBGeneralIssue
+		}
+
+		fo.Id, err = uuid.Parse(fID)
+		if err != nil {
+			log.Errorf(`Encountered invalid form id in database while trying to parse just this: %s\n`, err)
+			_ = rows.Close()
+			return nil, db_general.ErrDBGeneralIssue
+		}
+
+		formOverviews = append(formOverviews, fo)
+	}
+
+	_ = rows.Close()
+	return formOverviews, nil
+}
+
+func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (db_general.FormEditSession, error) {
 	conn := db.getConnection()
 	tx, err := conn.Begin()
 	if err != nil {
 		log.Errorf("Ran into issue while initiating tx for editing a form: %s\n", err)
-		return PostgresFormEditSession{}, internal_errors.ErrGeneralIssue
+		return PostgresFormEditSession{}, db_general.ErrDBGeneralIssue
 	}
 
 	session := PostgresFormEditSession{
@@ -140,7 +185,7 @@ func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (general.FormEditSes
 	time.AfterFunc(time.Second*5, func() {
 		err := session.AbortSession()
 		if err != nil {
-			if errors.Is(err, internal_errors.ErrSessionClosed) {
+			if errors.Is(err, db_general.ErrDBSessionClosed) {
 				return
 			}
 			log.Errorf("Encountered unexpected error while automatically to close FormEditSession: %s\n", err)
@@ -150,4 +195,32 @@ func (db PostgreSQL) StartFormEditSession(formID uuid.UUID) (general.FormEditSes
 	})
 
 	return session, nil
+}
+
+func (db PostgreSQL) GetFormEditors(id uuid.UUID) (shared.FormEditors, error) {
+	conn := db.getConnection()
+
+	resp := conn.QueryRow(`SELECT owner_id FROM forms WHERE id = $1;`, id.String())
+
+	var ownerUUIDStr string
+
+	err := resp.Scan(&ownerUUIDStr)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return shared.FormEditors{}, db_general.ErrDBValueNotFound
+		}
+		log.Errorf("Encountered unexpected issue while owner of specific form to get form editors: %s\n", err)
+		return shared.FormEditors{}, db_general.ErrDBUnexpectedIssue
+	}
+
+	ownerID, err := uuid.Parse(ownerUUIDStr)
+	if err != nil {
+		log.Errorf("Failed to parse owner UUID from database response for getting form editors: %s\n", err)
+		return shared.FormEditors{}, db_general.ErrDBUnexpectedIssue
+	}
+
+	return shared.FormEditors{
+		FormID:  id,
+		OwnerID: ownerID,
+	}, nil
 }

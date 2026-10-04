@@ -2,39 +2,39 @@ package application
 
 import (
 	"errors"
-	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
 	"uuid"
 
 	log "github.com/sirupsen/logrus"
 )
 
-func CreateForm(title string, description string) (string, error) {
+func CreateForm(creatorID uuid.UUID, title string, description string) (string, error) {
 	if !IsDBSet() {
 		log.Error("Aborted creation of new form as no database is set!")
-		return "", internal_errors.ErrNoDatabaseProvider
+		return "", ErrNoDBProvider
 	}
 
 	id := uuid.NewV4()
 
 	var err error
 	if description == "" {
-		err = db.CreateForm(id, title)
+		err = db.CreateForm(creatorID, id, title)
 	} else {
-		err = db.CreateFormWithDescription(id, title, description)
+		err = db.CreateFormWithDescription(creatorID, id, title, description)
 	}
 
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDuplicatePresent) {
+		if errors.Is(err, db_general.ErrDBDuplicatePresent) {
 			log.Error("UUID for new form was a duplicate!") // this *should* not happen
-			return "", err
+			return "", ErrUnexpectedIssue
 		}
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, db_general.ErrDBParameterIssue) {
 			log.Debug("Form name was set to a whitespace!")
-			return "", err
+			return "", ErrInvalidParameters
 		}
 		log.Errorf("Failed to create form: %s\n", err)
-		return "", err
+		return "", ErrUnexpectedIssue
 	}
 
 	return id.String(), nil
@@ -43,28 +43,50 @@ func CreateForm(title string, description string) (string, error) {
 func GetForm(id uuid.UUID) (shared.Form, error) {
 	if !IsDBSet() {
 		log.Error("Aborted query of specific form as no database is set!")
-		return shared.Form{}, internal_errors.ErrNoDatabaseProvider
+		return shared.Form{}, ErrNoDBProvider
 	}
 
 	// @TODO check in cache whether this ID actually exists
 
 	form, err := db.GetForm(id)
 	if err != nil {
-		return shared.Form{}, err
+		if errors.Is(err, db_general.ErrDBParameterIssue) {
+			return shared.Form{}, ErrInvalidParameters
+		}
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return shared.Form{}, ErrDoesNotExist
+		}
+		return shared.Form{}, ErrUnexpectedIssue
 	}
 
 	return form, nil
 }
 
+func GetEditableFormsOverviewsForUserID(userID uuid.UUID) ([]shared.FormOverview, error) {
+	if !IsDBSet() {
+		log.Error("Aborted getting editable forms for user as no database is set!")
+		return nil, ErrNoDBProvider
+	}
+
+	overviews, err := db.GetFormOverviewsOfOwner(userID)
+	if err != nil {
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return nil, ErrDoesNotExist
+		}
+		return nil, ErrUnexpectedIssue
+	}
+	return overviews, nil
+}
+
 func EditForm(form shared.Form, removeDescription bool, questions []shared.QuestionEdit) ([]shared.Question, error) {
 	if !IsDBSet() {
 		log.Error("Aborted editing form as no database is set!")
-		return nil, internal_errors.ErrNoDatabaseProvider
+		return nil, ErrNoDBProvider
 	}
 	s, err := db.StartFormEditSession(form.Id)
 	if err != nil {
 		log.Errorf("Encountered unexpected error while starting form edit session: %s\n", err)
-		return nil, err
+		return nil, ErrUnexpectedIssue
 	}
 
 	if form.Title != "" && form.Description != "" && !removeDescription {
@@ -106,12 +128,30 @@ func EditForm(form shared.Form, removeDescription bool, questions []shared.Quest
 
 	err = s.ExecuteSession()
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrSessionClosed) {
+		if errors.Is(err, db_general.ErrDBSessionClosed) {
 			log.Error("The edit session was already closed when trying to execute changes to edit form.")
-			return nil, err
+			return nil, ErrUnexpectedIssue
 		}
 		log.Errorf("Encountered issue while executing edit form session: %s\n", err)
-		return nil, err
+		return nil, ErrUnexpectedIssue
 	}
 	return created, nil
+}
+
+func GetFormEditors(formID uuid.UUID) (shared.FormEditors, error) {
+	if !IsDBSet() {
+		log.Error("Aborted editing form as no database is set!")
+		return shared.FormEditors{}, ErrNoDBProvider
+	}
+
+	formEditors, err := db.GetFormEditors(formID)
+	if err != nil {
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return shared.FormEditors{}, ErrInvalidParameters
+		}
+		log.Errorf("Encountered issue while getting form editors for a specific form: %s\n", err)
+		return shared.FormEditors{}, ErrUnexpectedIssue
+	}
+
+	return formEditors, nil
 }

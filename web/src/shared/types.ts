@@ -45,6 +45,18 @@ export type Form = {
     "questions": Question[]
 }
 
+export type FormOverview = {
+    "id": UUID
+    "title": string
+    "description": string
+    "questions": number
+    "responses": number
+}
+
+export type HTTPResponse<T> = {
+    "code": number
+    "data": T
+}
 
 export type FormEditChanges = {
     "title": string

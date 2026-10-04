@@ -2,7 +2,7 @@ package application
 
 import (
 	"errors"
-	"gallfeder-forms/internal/internal_errors"
+	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
 	"uuid"
 
@@ -12,7 +12,7 @@ import (
 func CreateResponse(formID uuid.UUID, answers []shared.QuestionAnswer) (string, error) {
 	if !IsDBSet() {
 		log.Error("Aborted creation of new form as no database is set!")
-		return "", internal_errors.ErrNoDatabaseProvider
+		return "", ErrNoDBProvider
 	}
 
 	// @TODO check whether the answers to the questions are formally correct
@@ -21,11 +21,11 @@ func CreateResponse(formID uuid.UUID, answers []shared.QuestionAnswer) (string, 
 
 	err := db.CreateResponse(id, formID, answers)
 	if err != nil {
-		if errors.Is(err, internal_errors.ErrDuplicatePresent) {
+		if errors.Is(err, db_general.ErrDBDuplicatePresent) {
 			log.Error("UUID for new response was a duplicate!")
 			return "", err
 		}
-		if errors.Is(err, internal_errors.ErrParameterIssue) {
+		if errors.Is(err, db_general.ErrDBParameterIssue) {
 			return "", err
 		}
 		log.Errorf("Failed to create response for form: %s\n", err)
