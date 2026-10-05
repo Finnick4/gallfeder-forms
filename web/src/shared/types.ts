@@ -18,6 +18,7 @@ export type QuestionAnswer = {
     questionID: UUID
     type: QuestionTypes
     selectedChoices?: ChoiceQuestionOption[]
+    writtenText?: string
 }
 
 export type SendableQuestionAnswer = {

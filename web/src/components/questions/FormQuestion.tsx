@@ -1,6 +1,7 @@
 import {QuestionTypes} from "../../shared/types.ts";
 import {ChoiceQuestion} from "./ChoiceQuestion.tsx";
 import type {FormQuestionProperties} from "../../shared/properties.ts";
+import {TextInputQuestion} from "./TextInputQuestion.tsx";
 
 
 
@@ -9,8 +10,7 @@ export const FormQuestion = ({question, respondableSettings, editableSettings}: 
         return (<ChoiceQuestion question={question} respondableSettings={respondableSettings} editableSettings={editableSettings}></ChoiceQuestion>);
     }
     if (question.type == QuestionTypes.Input) {
-        console.error("Text input components are not yet implemented!");
-        return (<h1>Text Input</h1>);
+        return (<TextInputQuestion question={question} respondableSettings={respondableSettings} editableSettings={editableSettings}></TextInputQuestion>);
     }
 
     console.error("Failed to deduce question type of parsed question for a FormQuestion component!");

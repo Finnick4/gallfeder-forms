@@ -15,4 +15,5 @@ type QuestionAnswer struct {
 
 type QuestionAnswerMetadata struct {
 	SelectedChoices []ChoiceQuestionOption `json:"selectedChoices"`
+	WrittenText     string                 `json:"writtenText"`
 }

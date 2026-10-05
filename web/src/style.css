@@ -64,7 +64,7 @@ body {
 }
 
 div.page {
-    --width: min(95vw, 50rem);
+    --width: min(95vw, 80rem);
     width: var(--width);
     margin: 0 calc((100vw - var(--width)) / 2);
 
@@ -88,6 +88,8 @@ div.page {
 
 
 div.page.form {
+    --width: min(95vw, 50rem);
+
     .section.form-response-head {
         h1 {
             margin: 0;
@@ -143,7 +145,9 @@ div.question {
     }
 }
 
-input.usable,textarea {
+input.usable,
+.question input[type="text"],
+textarea {
     border: var(--element-border);
     background-color: var(--element-color);
     border-radius: calc(var(--border-radius) - var(--padding-section));
@@ -185,9 +189,12 @@ div.question.editable {
     }
 
     input.usable:disabled {
-        cursor: not-allowed;
         background-color: var(--element-color-muted);
     }
+}
+
+input:disabled {
+    cursor: not-allowed;
 }
 
 div.question.choice label:has(input.edit-label-text) input[type="radio"] {

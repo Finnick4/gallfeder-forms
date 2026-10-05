@@ -200,7 +200,6 @@ func handleMigrations() {
 			return
 		}
 		migVers = 0
-		// TODO handle initial setup -> migVers == 0
 	}
 
 	migrationsFile, err := os.Open("./migrations/postgresql.json")

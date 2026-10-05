@@ -144,6 +144,7 @@ export const EditFormPage = () => {
 
         fetch(`http://localhost:8080/api/forms/${formID}`, {
             method: "PATCH",
+            credentials: "include",
             body: JSON.stringify(differences)
         }).then(r => {
             if (r.status == 200) {
@@ -187,7 +188,7 @@ export const EditFormPage = () => {
                         currentlyFocussed: currentlyFocussed,
                         notifyFocus: () => {
                             console.log("now focussed: "+ q.id)
-                            setFocussed(q.id)
+                            setFocussed(q.id);
                         },
                     }}
                     respondableSettings={undefined}
