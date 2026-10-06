@@ -5,6 +5,7 @@ import (
 	"gallfeder-forms/internal/api/http_responses"
 	param "gallfeder-forms/internal/api/parameters"
 	"gallfeder-forms/internal/application"
+	"gallfeder-forms/internal/shared"
 	"net/http"
 	"uuid"
 
@@ -28,7 +29,27 @@ func ResponseCreateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseID, err := application.CreateResponse(id, params.Answers)
+	answers := make([]shared.QuestionAnswer, len(params.Answers))
+	i := 0
+
+	for _, answer := range params.Answers {
+		if answer.QuestionID == uuid.Nil() {
+			continue
+		}
+		if answer.Meta.WrittenText == "" && len(answer.Meta.SelectedChoices) == 0 {
+			continue
+		}
+		answers[i] = answer
+		i++
+	}
+
+	if i == 0 {
+		log.Debug("Failed while processing the request due to a parameter issue: No non nil answers were present.")
+		http_responses.ParameterIssueHandler(w)
+		return
+	}
+
+	responseID, err := application.CreateResponse(id, answers[:i])
 
 	if err != nil {
 		if errors.Is(err, application.ErrInvalidParameters) {
