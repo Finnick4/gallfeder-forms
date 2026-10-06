@@ -101,7 +101,10 @@ export const ResponsePage = () => {
         return {
             questionID: q.id,
             type: q.type,
-            selectedChoices: [],
+            meta: {
+                selectedChoices: [],
+                writtenText: ""
+            }
         }
     }
 
@@ -112,7 +115,10 @@ export const ResponsePage = () => {
                     <h1>Thank you for responding!</h1>
                     <p>Thank you for taking your time and responding to this form.</p>
                     <button
-                        onClick={() => setStatus(ResponseStatus.Respondable)}
+                        onClick={() => {
+                            setAnswers([]);
+                            setStatus(ResponseStatus.Respondable);
+                        }}
                         className="secondary"
                     >Submit a new response</button>
                 </div>

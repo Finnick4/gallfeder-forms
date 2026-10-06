@@ -16,15 +16,15 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
             console.warn("Tried to change the answer of an irrespondable choice question.");
             return;
         }
-        respondableSettings.currentAnswer.selectedChoices = [opt];
+        respondableSettings.currentAnswer.meta.selectedChoices = [opt];
         respondableSettings.answerChangeCallback(respondableSettings.currentAnswer);
     }
     const isSelected = (opt: ChoiceQuestionOption) => {
-        if (respondableSettings == undefined || respondableSettings.currentAnswer.selectedChoices == undefined) {
+        if (respondableSettings == undefined || respondableSettings.currentAnswer.meta.selectedChoices == undefined) {
             return false;
         }
 
-        return respondableSettings.currentAnswer.selectedChoices.filter(e => e.text == opt.text).length != 0;
+        return respondableSettings.currentAnswer.meta.selectedChoices.filter(e => e.text == opt.text).length != 0;
     }
 
     const callEditOnLabelText = (previousOpt: ChoiceQuestionOption, changedOpt: ChoiceQuestionOption) => {

@@ -17,6 +17,9 @@ export type Question = {
 export type QuestionAnswer = {
     questionID: UUID
     type: QuestionTypes
+    meta: QuestionAnswerMetadata
+}
+export type QuestionAnswerMetadata = {
     selectedChoices?: ChoiceQuestionOption[]
     writtenText?: string
 }

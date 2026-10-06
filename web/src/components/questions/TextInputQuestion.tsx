@@ -15,7 +15,7 @@ export const TextInputQuestion = ({question, respondableSettings, editableSettin
             console.warn("Tried to change the answer of an irrespondable choice question.");
             return;
         }
-        respondableSettings.currentAnswer.writtenText = inputElem.current.value;
+        respondableSettings.currentAnswer.meta.writtenText = inputElem.current.value;
         respondableSettings.answerChangeCallback(respondableSettings.currentAnswer);
     }
 
