@@ -5,7 +5,8 @@ import "uuid"
 type QuestionType int
 
 const (
-	QuestionTypeChoice QuestionType = iota
+	QuestionTypeInvalid QuestionType = iota
+	QuestionTypeChoice
 	QuestionTypeString
 )
 
@@ -15,8 +16,22 @@ type QuestionMetaData struct {
 	MaximumChoices int                    `json:"maximumChoices"`
 }
 
+type QuestionResponseMetaData struct {
+	Question              string                          `json:"question"`
+	ChoiceOptionsResponse []ChoiceQuestionOptionResponses `json:"choiceOptionsResponse"`
+	MaximumChoices        int                             `json:"maximumChoices"`
+	SubmittedTexts        []string                        `json:"submittedTexts"`
+	Responses             int                             `json:"responses"`
+	ChosenOptions         int                             `json:"chosenOptions"`
+}
+
 type ChoiceQuestionOption struct {
 	Text string `json:"text"`
+}
+
+type ChoiceQuestionOptionResponses struct {
+	Text        string `json:"text"`
+	TimesChosen int    `json:"timesChosen"`
 }
 
 type Question struct {
@@ -25,6 +40,14 @@ type Question struct {
 	Index      int              `json:"index"`
 	Type       QuestionType     `json:"type"`
 	Meta       QuestionMetaData `json:"meta"`
+}
+
+type QuestionResponses struct {
+	QuestionID uuid.UUID                `json:"id"`
+	FormID     uuid.UUID                `json:"formID"`
+	Index      int                      `json:"index"`
+	Type       QuestionType             `json:"type"`
+	Meta       QuestionResponseMetaData `json:"meta"`
 }
 
 type QuestionEdit struct {

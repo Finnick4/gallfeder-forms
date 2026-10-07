@@ -14,6 +14,7 @@ type Database interface {
 	StartFormEditSession(formID uuid.UUID) (FormEditSession, error)
 
 	CreateResponse(responseID uuid.UUID, formID uuid.UUID, answers []shared.QuestionAnswer) error
+	GetFormResponses(id uuid.UUID) (shared.FormResponses, error)
 
 	CreateUser(id uuid.UUID, handle string, password string) error
 	AreCorrectUserCredentials(handle string, password string) bool

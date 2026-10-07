@@ -8,6 +8,12 @@ type Form struct {
 	Description string     `json:"description"`
 	Questions   []Question `json:"questions"`
 }
+type FormResponses struct {
+	Id                uuid.UUID           `json:"id"`
+	Title             string              `json:"title"`
+	Description       string              `json:"description"`
+	QuestionResponses []QuestionResponses `json:"questionResponses"`
+}
 
 type FormOverview struct {
 	Id          uuid.UUID `json:"id"`
