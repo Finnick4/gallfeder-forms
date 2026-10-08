@@ -206,40 +206,7 @@ func (db PostgreSQL) getResponsesForChoiceQuestion(q shared.Question) (shared.Qu
 		}
 	}
 
-	conn := db.getConnection()
-	rows, err := conn.Query(`SELECT meta FROM response_to_question WHERE question_id=$1`, q.QuestionID.String())
-	if err != nil {
-		if err.Error() == "sql: no rows in result set" {
-			return shared.QuestionResponses{}, db_general.ErrDBValueNotFound
-		}
-		log.Errorf("Unexpected issue while getting responses for a choice question: %s\n", err)
-		return shared.QuestionResponses{}, db_general.ErrDBUnexpectedIssue
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var meta string
-		err = rows.Scan(&meta)
-		if err != nil {
-			log.Errorf("Unexpected issue while scanning for metadata of response for a choice question: %s\n", err)
-			return shared.QuestionResponses{}, db_general.ErrDBUnexpectedIssue
-		}
-
-		decoded, err := shared.DecodeBase64(meta)
-		if err != nil {
-			log.Errorf(`Encountered invalidly encoded response metadata in database while trying to decode just this: %s\n`, err)
-			_ = rows.Close()
-			return shared.QuestionResponses{}, db_general.ErrDBGeneralIssue
-		}
-		var resp shared.QuestionAnswerMetadata
-		err = json.Unmarshal([]byte(decoded), &resp)
-		if err != nil {
-			log.Errorf(`Encountered invalidly marshaled response metadata in database while trying to unmarshal just this: %s\n`, err)
-			_ = rows.Close()
-			return shared.QuestionResponses{}, db_general.ErrDBGeneralIssue
-		}
-
+	err := db.iterateOverResponsesToQuestion(q.QuestionID, func(resp shared.QuestionAnswerMetadata) error {
 		choices := 0
 		for _, selchoice := range resp.SelectedChoices {
 			for i, respOption := range qresp.Meta.ChoiceOptionsResponse {
@@ -254,8 +221,12 @@ func (db PostgreSQL) getResponsesForChoiceQuestion(q shared.Question) (shared.Qu
 		if choices != 0 {
 			qresp.Meta.Responses++
 		}
-	}
+		return nil
+	})
 
+	if err != nil {
+		return shared.QuestionResponses{}, err
+	}
 	return qresp, nil
 }
 
@@ -278,14 +249,29 @@ func (db PostgreSQL) getResponsesForTextQuestion(q shared.Question) (shared.Ques
 		},
 	}
 
+	err := db.iterateOverResponsesToQuestion(q.QuestionID, func(resp shared.QuestionAnswerMetadata) error {
+		if resp.WrittenText != "" {
+			qresp.Meta.Responses++
+			qresp.Meta.SubmittedTexts = append(qresp.Meta.SubmittedTexts, resp.WrittenText)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return shared.QuestionResponses{}, err
+	}
+	return qresp, nil
+}
+
+func (db PostgreSQL) iterateOverResponsesToQuestion(id uuid.UUID, fn func(shared.QuestionAnswerMetadata) error) error {
 	conn := db.getConnection()
-	rows, err := conn.Query(`SELECT meta FROM response_to_question WHERE question_id=$1`, q.QuestionID.String())
+	rows, err := conn.Query(`SELECT meta FROM response_to_question WHERE question_id=$1`, id.String())
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
-			return shared.QuestionResponses{}, db_general.ErrDBValueNotFound
+			return db_general.ErrDBValueNotFound
 		}
-		log.Errorf("Unexpected issue while getting responses for a text question: %s\n", err)
-		return shared.QuestionResponses{}, db_general.ErrDBUnexpectedIssue
+		log.Errorf("Unexpected issue while getting responses to question to iterate over them: %s\n", err)
+		return db_general.ErrDBUnexpectedIssue
 	}
 
 	defer rows.Close()
@@ -294,31 +280,31 @@ func (db PostgreSQL) getResponsesForTextQuestion(q shared.Question) (shared.Ques
 		var meta string
 		err = rows.Scan(&meta)
 		if err != nil {
-			log.Errorf("Unexpected issue while scanning for metadata of response for a text question: %s\n", err)
-			return shared.QuestionResponses{}, db_general.ErrDBUnexpectedIssue
+			log.Errorf("Unexpected issue while scanning for metadata of response to question to iterate over them: %s\n", err)
+			return db_general.ErrDBUnexpectedIssue
 		}
 
 		decoded, err := shared.DecodeBase64(meta)
 		if err != nil {
 			log.Errorf(`Encountered invalidly encoded response metadata in database while trying to decode just this: %s\n`, err)
 			_ = rows.Close()
-			return shared.QuestionResponses{}, db_general.ErrDBGeneralIssue
+			return db_general.ErrDBGeneralIssue
 		}
 		var resp shared.QuestionAnswerMetadata
 		err = json.Unmarshal([]byte(decoded), &resp)
 		if err != nil {
 			log.Errorf(`Encountered invalidly marshaled response metadata in database while trying to unmarshal just this: %s\n`, err)
 			_ = rows.Close()
-			return shared.QuestionResponses{}, db_general.ErrDBGeneralIssue
+			return db_general.ErrDBGeneralIssue
 		}
 
-		if resp.WrittenText != "" {
-			qresp.Meta.Responses++
-			qresp.Meta.SubmittedTexts = append(qresp.Meta.SubmittedTexts, resp.WrittenText)
+		err = fn(resp)
+		if err != nil {
+			return err
 		}
 	}
 
-	return qresp, nil
+	return nil
 }
 
 func (db PostgreSQL) GetFormOverviewsOfOwner(userID uuid.UUID) ([]shared.FormOverview, error) {
