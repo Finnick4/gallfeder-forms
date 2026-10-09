@@ -36,6 +36,7 @@
     --issue-muted: hsl(0, 50%, 85%);
     --issue-border: solid hsl(0, 100%, 80%) var(--border-width);
 
+    --header-height: 4rem;
     --border-width: .1rem;
     --border-radius: 2rem;
 
@@ -247,6 +248,7 @@ button.inline {
     padding: var(--padding-inline-input);
 }
 
+a.button,
 button {
     font-size: 1rem;
     padding: var(--padding-button);
@@ -258,6 +260,7 @@ button {
             background-color .1s ease;
 }
 
+a.button:hover,
 button:hover {
     translate: 0 -3px;
     background: var(--secondary-highlight);
@@ -291,9 +294,12 @@ div.form-overviews {
     gap: 1rem;
 }
 
-a.form-overview {
+a {
     text-decoration: none;
     color: var(--text);
+}
+
+a.form-overview {
     border: var(--element-border);
     border-radius: calc(var(--border-radius) - var(--padding-section));
     background-color: var(--element-color);
@@ -326,4 +332,36 @@ a.form-overview:focus,
 a.form-overview:hover {
     background-color: var(--element-color-highlight);
     transform: scale(105%);
+}
+
+nav.header-bar {
+    display: flex;
+    background-color: var(--bg-color-section);
+    position: fixed;
+    top: 0;
+    padding: var(--padding-button);
+    width: calc(100% - 2*var(--padding-button));
+    height: var(--header-height);
+    border-bottom: var(--bg-section-border);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    gap: 1rem;
+    align-items: center;
+
+    h3 {
+        margin: 0;
+    }
+
+    a.back {
+        background-color: var(--element-color);
+        padding: var(--padding-element);
+        border: var(--element-border);
+        aspect-ratio: 1/1;
+        text-align: center;
+
+        border-radius: calc(var(--border-radius) - var(--padding-element));
+    }
+}
+
+div:has(nav.header-bar) div.page {
+    margin-top: calc(var(--header-height) + var(--border-width) + .5rem + 2*var(--padding-button));
 }
