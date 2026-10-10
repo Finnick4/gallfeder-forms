@@ -1,4 +1,5 @@
 import type {FormOverview} from "../../shared/types.ts";
+import {AButton} from "../AButton.tsx";
 
 interface Properties {
     form: FormOverview
@@ -7,7 +8,7 @@ interface Properties {
 const FormOverviewElement = ({form}: Properties) => {
 
     return (
-        <a
+        <AButton
             className="form-overview"
             href={`/form/${form.id}/edit`}
         >
@@ -19,7 +20,7 @@ const FormOverviewElement = ({form}: Properties) => {
                     <span className="responses">&#128499;{form.responses}</span>
                 </div>
             </div>
-        </a>
+        </AButton>
     );
 }
 

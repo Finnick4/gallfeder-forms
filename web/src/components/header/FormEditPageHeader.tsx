@@ -1,4 +1,5 @@
 import type {Form} from "../../shared/types.ts";
+import {AButton} from "../AButton.tsx";
 
 interface Properties {
     form: Form
@@ -8,7 +9,7 @@ interface Properties {
 export const FormEditPageHeader = ({form, signalEditTitle}: Properties) => {
     return (
         <nav className="header-bar">
-            <a className="back button" href="/">⬅</a>
+            <AButton className="back" href="/">⬅</AButton>
             <h3 onDoubleClick={signalEditTitle}>{form.title}</h3>
         </nav>
     );

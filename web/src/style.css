@@ -294,12 +294,13 @@ div.form-overviews {
     gap: 1rem;
 }
 
-a {
+a.button {
     text-decoration: none;
     color: var(--text);
 }
 
 a.form-overview {
+    padding: 0;
     border: var(--element-border);
     border-radius: calc(var(--border-radius) - var(--padding-section));
     background-color: var(--element-color);
@@ -332,6 +333,7 @@ a.form-overview:focus,
 a.form-overview:hover {
     background-color: var(--element-color-highlight);
     transform: scale(105%);
+    translate: 0;
 }
 
 nav.header-bar {
