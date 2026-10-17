@@ -34,3 +34,18 @@ func CreateResponse(formID uuid.UUID, answers []shared.QuestionAnswer) (string, 
 
 	return id.String(), nil
 }
+
+func GetResponsesToForm(formID uuid.UUID) (shared.FormResponses, error) {
+	if !IsDBSet() {
+		log.Error("Aborted creation of new form as no database is set!")
+		return shared.FormResponses{}, ErrNoDBProvider
+	}
+
+	responses, err := db.GetFormResponses(formID)
+	if err != nil {
+		log.Errorf("Encountered issue while getting responses to a form: %s", err)
+		return shared.FormResponses{}, ErrUnexpectedIssue
+	}
+
+	return responses, nil
+}

@@ -12,6 +12,7 @@ type FormResponses struct {
 	Id                uuid.UUID           `json:"id"`
 	Title             string              `json:"title"`
 	Description       string              `json:"description"`
+	TotalResponses    int                 `json:"totalResponses"`
 	QuestionResponses []QuestionResponses `json:"questionResponses"`
 }
 

@@ -141,9 +141,27 @@ func (db PostgreSQL) GetFormResponses(id uuid.UUID) (shared.FormResponses, error
 		Id:                id,
 		Title:             form.Title,
 		Description:       form.Description,
+		TotalResponses:    0,
 		QuestionResponses: make([]shared.QuestionResponses, len(form.Questions)),
 	}
-	wg.Add(len(form.Questions))
+	wg.Add(len(form.Questions) + 1)
+
+	go func() {
+		conn := db.getConnection()
+		row := conn.QueryRow(`SELECT COALESCE(COUNT(DISTINCT id), 0) FROM responses WHERE form_id=$1;`, id.String())
+
+		var responses int
+		innerErr := row.Scan(&responses)
+		if err != nil {
+			log.Errorf(`Ran into issue while getting number of responses for form: %s\n`, innerErr)
+			responses = 0
+		}
+
+		mtx.Lock()
+		responseForm.TotalResponses = responses
+		mtx.Unlock()
+		wg.Done()
+	}()
 	for i, question := range form.Questions {
 		go func() {
 			switch question.Type {
