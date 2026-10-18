@@ -43,6 +43,9 @@ func GetResponsesToForm(formID uuid.UUID) (shared.FormResponses, error) {
 
 	responses, err := db.GetFormResponses(formID)
 	if err != nil {
+		if errors.Is(err, db_general.ErrDBValueNotFound) {
+			return shared.FormResponses{}, ErrDoesNotExist
+		}
 		log.Errorf("Encountered issue while getting responses to a form: %s", err)
 		return shared.FormResponses{}, ErrUnexpectedIssue
 	}
