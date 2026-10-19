@@ -40,7 +40,14 @@ export type ChoiceQuestionOption = {
     text: string
 }
 
+export type ChoiceQuestionOptionResponses = {
+    "text": string
+    "timesChosen": number
+}
+
 export type UUID = string;
+
+export const NIL_UUID: UUID = "00000000-0000-0000-0000-000000000000"
 
 export type Form = {
     "id": UUID
@@ -55,6 +62,48 @@ export type FormOverview = {
     "description": string
     "questions": number
     "responses": number
+}
+
+export type FormResponses = {
+    "id": UUID
+    "title": string
+    "description": string
+    "totalResponses": number
+    "questionResponses": QuestionResponses[]
+}
+
+export const makeFormFromResponses = (resp: FormResponses): Form => {
+    return {
+        id: resp.id,
+        title: resp.title,
+        description: resp.description,
+        questions: resp.questionResponses.map(r => {
+            return {
+                id: r.questionID,
+                formID: r.formID,
+                index: r.index,
+                type: r.type,
+                meta: r.meta
+            }
+        })
+    }
+}
+
+export type QuestionResponses = {
+    "questionID": UUID
+    "formID": UUID
+    "index": number
+    "type": QuestionTypes
+    "meta": QuestionResponseMetadata
+}
+
+export type QuestionResponseMetadata = {
+    "question": string
+    "choiceOptionsResponse": ChoiceQuestionOptionResponses[]
+    "maximumChoices": number
+    "submittedTexts": string[]
+    "responses": number
+    "chosenOptions": number
 }
 
 export type HTTPResponse<T> = {

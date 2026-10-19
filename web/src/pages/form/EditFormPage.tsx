@@ -1,8 +1,7 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import type {Form, Question, UUID} from "../../shared/types.ts";
+import {type Form, type HTTPResponse, NIL_UUID, type Question, type UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
-import type {FormGetResponse} from "../../shared/http_responses.ts";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
 import FittingTextArea from "../../components/FittingTextArea.tsx";
 import {isLoggedIn} from "../../shared/checks.ts";
@@ -25,13 +24,13 @@ export const EditFormPage = () => {
 
     const [formVers, setFormVersions] = useState<FormVersions>({
         original: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: NIL_UUID,
             title: "Loading...",
             description: "This is loading...",
             questions: []
         },
         changed: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: NIL_UUID,
             title: "Loading...",
             description: "This is loading...",
             questions: []
@@ -53,7 +52,7 @@ export const EditFormPage = () => {
                     return {
                         code: 404,
                         data: {
-                            id: "00000000-0000-0000-0000-000000000000",
+                            id: NIL_UUID,
                             title: "This form does not exist!",
                             description: "The form you are trying to view does not exist.",
                             questions: []
@@ -65,7 +64,7 @@ export const EditFormPage = () => {
                     return {
                         code: 400,
                         data: {
-                            id: "00000000-0000-0000-0000-000000000000",
+                            id: NIL_UUID,
                             title: "This form does not exist!",
                             description: "The form id is invalid.",
                             questions: []
@@ -76,14 +75,14 @@ export const EditFormPage = () => {
                 return {
                     code: r.status,
                     data: {
-                        id: "00000000-0000-0000-0000-000000000000",
+                        id: NIL_UUID,
                         title: "There was an issue getting the form!",
                         description: `As such, the form cannot be responded to. Code: ${r.status}`,
                         questions: []
                     }
                 }
             })
-            .then((resp: FormGetResponse) => {
+            .then((resp: HTTPResponse<Form>) => {
                 setFormVersions({
                     original: structuredClone(resp.data),
                     changed: structuredClone(resp.data)
