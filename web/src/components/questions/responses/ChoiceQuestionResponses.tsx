@@ -1,5 +1,6 @@
-import type {FormQuestionResponsesProperties} from "../../../shared/properties.ts";
+import type {FormQuestionResponsesProperties, NumberChartAssignment} from "../../../shared/properties.ts";
 import {useRef} from "react";
+import {NumberCharts, NumberChartTypes} from "../../charts/NumberCharts.tsx";
 
 export const ChoiceQuestionResponses = ({question}: FormQuestionResponsesProperties) => {
     const elem = useRef<HTMLDivElement>(null);
@@ -10,16 +11,13 @@ export const ChoiceQuestionResponses = ({question}: FormQuestionResponsesPropert
             ref={elem}
         >
             <h2>{question.meta.question}</h2>
-            <div className="options">
-            {question.meta.choiceOptionsResponse.map((opt) => {
-                return (
-                    <div className="option">
-                        <div className="text">{opt.text}</div>
-                        <div className="times-chosen">{opt.timesChosen}</div>
-                    </div>
-                );
-            })}
-            </div>
+            <NumberCharts
+                chartType={NumberChartTypes.Table}
+                assignments={question.meta.choiceOptionsResponse.map(opt => {
+                    return {value: opt.timesChosen, key: opt.text} as NumberChartAssignment;
+                })}
+            >
+            </NumberCharts>
         </div>
     );
 }

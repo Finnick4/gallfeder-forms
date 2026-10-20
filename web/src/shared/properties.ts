@@ -20,3 +20,8 @@ export interface EditableQuestionDataset {
     currentlyFocussed: UUID;
     notifyFocus: () => void;
 }
+
+export interface NumberChartAssignment {
+    key: string
+    value: number
+}
