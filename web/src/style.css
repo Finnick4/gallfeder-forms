@@ -337,7 +337,8 @@ a.form-overview:hover {
 }
 
 nav.header-bar {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
     background-color: var(--bg-color-section);
     position: fixed;
     top: 0;
@@ -349,18 +350,32 @@ nav.header-bar {
     gap: 1rem;
     align-items: center;
 
+    div.left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
     h3 {
         margin: 0;
     }
 
-    a.back {
+    a.button {
         background-color: var(--element-color);
         padding: var(--padding-element);
         border: var(--element-border);
-        aspect-ratio: 1/1;
         text-align: center;
-
         border-radius: calc(var(--border-radius) - var(--padding-element));
+
+    }
+
+    a.back {
+        aspect-ratio: 1/1;
+    }
+
+    div.center {
+        display: flex;
+        gap: .5rem;
     }
 }
 

@@ -8,7 +8,7 @@ export const FormQuestionResponses = ({question}: FormQuestionResponsesPropertie
     }
 
     console.error("Failed to deduce question type of parsed question for a FormQuestionResponses component!");
-    return (<div>
+    return (<div className="question">
         <h2>{question.meta.question}</h2>
         <div>This question could not be interpreted (Type {question.type})!</div>
     </div>);

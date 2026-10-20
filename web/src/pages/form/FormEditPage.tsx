@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import {type Form, type HTTPResponse, NIL_UUID, type Question, type UUID} from "../../shared/types.ts";
+import {type Form, type Question, type UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
 import FittingTextArea from "../../components/FittingTextArea.tsx";
@@ -12,7 +12,11 @@ type FormVersions = {
     changed: Form,
 }
 
-export const EditFormPage = () => {
+interface Properties {
+    form: Form
+}
+
+export const FormEditPage = ({form}: Properties) => {
     const {formID} = useParams()
     const nav = useNavigate();
 
@@ -23,78 +27,13 @@ export const EditFormPage = () => {
     }, []);
 
     const [formVers, setFormVersions] = useState<FormVersions>({
-        original: {
-            id: NIL_UUID,
-            title: "Loading...",
-            description: "This is loading...",
-            questions: []
-        },
-        changed: {
-            id: NIL_UUID,
-            title: "Loading...",
-            description: "This is loading...",
-            questions: []
-        }
+        original: structuredClone(form),
+        changed: structuredClone(form)
     });
     const [currentlyFocussed, setFocussed] = useState<UUID>("");
 
     const titleEdit = useRef<HTMLInputElement>(null);
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
-
-    useEffect(() => {
-        fetch(`http://localhost:8080/api/forms/${formID}`)
-            .then(r => {
-                if (r.ok) {
-                    return r.json();
-                }
-                if (r.status == 404) {
-                    console.log("The provided form does not exist!");
-                    return {
-                        code: 404,
-                        data: {
-                            id: NIL_UUID,
-                            title: "This form does not exist!",
-                            description: "The form you are trying to view does not exist.",
-                            questions: []
-                        }
-                    }
-                }
-                if (r.status == 400) {
-                    console.log("The provided form id is invalid!");
-                    return {
-                        code: 400,
-                        data: {
-                            id: NIL_UUID,
-                            title: "This form does not exist!",
-                            description: "The form id is invalid.",
-                            questions: []
-                        }
-                    };
-                }
-
-                return {
-                    code: r.status,
-                    data: {
-                        id: NIL_UUID,
-                        title: "There was an issue getting the form!",
-                        description: `As such, the form cannot be responded to. Code: ${r.status}`,
-                        questions: []
-                    }
-                }
-            })
-            .then((resp: HTTPResponse<Form>) => {
-                setFormVersions({
-                    original: structuredClone(resp.data),
-                    changed: structuredClone(resp.data)
-                });
-                if (titleEdit.current != null) {
-                    titleEdit.current.value = resp.data.title;
-                }
-                if (descriptionEdit.current != null) {
-                    descriptionEdit.current.value = resp.data.description.replaceAll("\\n", "\n");
-                }
-            });
-    }, []);
 
     const notifyQuestionEdit =  (question: Question) => {
         setFormVersions((prev) => {
@@ -211,4 +150,4 @@ export const EditFormPage = () => {
     );
 }
 
-export default EditFormPage
+export default FormEditPage

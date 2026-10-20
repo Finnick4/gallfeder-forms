@@ -128,3 +128,8 @@ export type QuestionEditChanges = {
     "metadata"?:          QuestionMetadata
 }
 
+// @ts-ignore
+export enum FormModifySubpages {
+    Edit,
+    Responses,
+}

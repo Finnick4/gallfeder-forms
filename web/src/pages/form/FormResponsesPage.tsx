@@ -2,11 +2,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {
     type FormResponses,
-    type HTTPResponse, makeFormFromResponses,
+    type HTTPResponse,
     NIL_UUID
 } from "../../shared/types.ts";
 import {isLoggedIn} from "../../shared/checks.ts";
-import {FormEditPageHeader} from "../../components/header/FormEditPageHeader.tsx";
 import {FormQuestionResponses} from "../../components/questions/responses/FormQuestionResponses.tsx";
 
 
@@ -81,22 +80,19 @@ export const FormResponsesPage = () => {
     }, []);
 
     return (
-        <div>
-            <FormEditPageHeader form={makeFormFromResponses(formResponses)} signalEditTitle={() => {}}></FormEditPageHeader>
-            <div className="page form responses">
-                <div className="form-response-head section">
-                    <h1>{formResponses.title}</h1>
-                    <div className="data">
-                        <div className="stat">Responses: {formResponses.totalResponses}</div>
-                    </div>
+        <div className="page form responses">
+            <div className="form-response-head section">
+                <h1>{formResponses.title}</h1>
+                <div className="data">
+                    <div className="stat">Responses: {formResponses.totalResponses}</div>
                 </div>
-                <div className="questions section">
-                    {formResponses.questionResponses.map(q => <FormQuestionResponses
-                        question={structuredClone(q)}
-                        key={q.questionID}/>)}
-                </div>
-
             </div>
+            <div className="questions section">
+                {formResponses.questionResponses.map(q => <FormQuestionResponses
+                    question={structuredClone(q)}
+                    key={q.questionID}/>)}
+            </div>
+
         </div>
     );
 }
