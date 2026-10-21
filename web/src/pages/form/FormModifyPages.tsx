@@ -65,17 +65,17 @@ export const FormModifyPages = ({subpage}: Properties) => {
             });
     }, []);
 
-    const page = (() => {
+    const getPage = () => {
         switch (subpage) {
             case FormModifySubpages.Edit: return (<FormEditPage form={form}></FormEditPage>);
             case FormModifySubpages.Responses: return (<FormResponsesPage></FormResponsesPage>);
         }
-    })();
+    };
 
     return (
         <div>
             <FormEditPageHeader form={form} signalEditTitle={() => {}}></FormEditPageHeader>
-            {page}
+            {getPage()}
         </div>
     );
 
