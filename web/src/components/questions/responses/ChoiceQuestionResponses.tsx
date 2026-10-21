@@ -12,7 +12,7 @@ export const ChoiceQuestionResponses = ({question}: FormQuestionResponsesPropert
         >
             <h2>{question.meta.question}</h2>
             <NumberCharts
-                chartType={NumberChartTypes.Table}
+                chartType={NumberChartTypes.BarChart}
                 assignments={question.meta.choiceOptionsResponse.map(opt => {
                     return {value: opt.timesChosen, key: opt.text} as NumberChartAssignment;
                 })}

@@ -337,6 +337,7 @@ a.form-overview:hover {
 }
 
 nav.header-bar {
+    z-index: 50;
     display: grid;
     grid-template-columns: repeat(3, auto);
     background-color: var(--bg-color-section);
