@@ -1,11 +1,10 @@
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
 import {type Form, type Question, type UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
 import FittingTextArea from "../../components/FittingTextArea.tsx";
 import {isLoggedIn} from "../../shared/checks.ts";
-import {FormEditPageHeader} from "../../components/header/FormEditPageHeader.tsx";
 
 type FormVersions = {
     original: Form,
@@ -17,7 +16,6 @@ interface Properties {
 }
 
 export const FormEditPage = ({form}: Properties) => {
-    const {formID} = useParams()
     const nav = useNavigate();
 
     useEffect(() => {
@@ -34,6 +32,20 @@ export const FormEditPage = ({form}: Properties) => {
 
     const titleEdit = useRef<HTMLInputElement>(null);
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
+
+    useEffect(() => {
+        setFormVersions({
+            original: structuredClone(form),
+            changed: structuredClone(form)
+        });
+        if (titleEdit.current) {
+            titleEdit.current.value = form.title;
+        }
+        if (descriptionEdit.current) {
+            descriptionEdit.current.value = form.description;
+        }
+    }, [form])
+
 
     const notifyQuestionEdit =  (question: Question) => {
         setFormVersions((prev) => {
@@ -81,7 +93,7 @@ export const FormEditPage = ({form}: Properties) => {
         const old = structuredClone(formVers.original);
         const changed = structuredClone(formVers.changed);
 
-        fetch(`http://localhost:8080/api/forms/${formID}`, {
+        fetch(`http://localhost:8080/api/forms/${formVers.original.id}`, {
             method: "PATCH",
             credentials: "include",
             body: JSON.stringify(differences)
@@ -103,9 +115,6 @@ export const FormEditPage = ({form}: Properties) => {
 
     return (
         <div>
-            <FormEditPageHeader form={formVers.original} signalEditTitle={() => {
-                titleEdit.current?.focus();
-            }}></FormEditPageHeader>
             <div className="page form edit">
                 <div className="form-response-head section">
                     <input

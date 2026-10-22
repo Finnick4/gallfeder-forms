@@ -18,7 +18,12 @@ const NumberBarChart = ({assignments}: Properties ) => {
             <XAxis dataKey="key" />
             <YAxis width="auto" allowDecimals={false} />
             <Tooltip />
-            <Bar fill="var(--primary)" dataKey="value"  />
+            <Bar
+                fill="var(--primary)"
+                stroke="var(--primary-border-color)"
+                strokeWidth="var(--border-width)"
+                dataKey="value"
+            />
         </BarChart>
     );
 }

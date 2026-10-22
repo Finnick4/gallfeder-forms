@@ -19,17 +19,20 @@
     --primary: hsl(196, 87%, 55%);
     --primary-highlight: hsl(196, 87%, 65%);
     --primary-muted: hsl(196, 87%, 45%);
-    --primary-border: solid hsl(196, 65%, 50%) var(--border-width);
+    --primary-border-color: hsl(196, 65%, 50%);
+    --primary-border: solid var(--primary-border-color) var(--border-width);
 
     --secondary: hsl(209, 100%, 80%);
     --secondary-highlight: hsl(209, 100%, 85%);
     --secondary-muted: hsl(209, 100%, 75%);
-    --secondary-border: solid hsl(209, 75%, 76%) var(--border-width);
+    --secondary-border-color: hsl(209, 75%, 76%);
+    --secondary-border: solid var(--secondary-border-color) var(--border-width);
 
     --accent: hsl(193, 89%, 55%);
     --accent-highlight: hsl(193, 89%, 65%);
     --accent-muted: hsl(193, 89%, 45%);
-    --accent-border: solid hsl(193, 75%, 50%) var(--border-width);
+    --accent-border-color: hsl(193, 75%, 50%);
+    --accent-border: solid var(--accent-border-color) var(--border-width);
 
     --issue: hsl(0, 80%, 95%);
     --issue-highlight: hsl(0, 80%, 93%);
