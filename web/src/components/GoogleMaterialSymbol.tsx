@@ -1,6 +1,6 @@
 
 interface Properties {
-    iconName: "arrow_back" | "how_to_vote" | "question_mark"
+    iconName: "arrow_back" | "bar_chart" | "how_to_vote" | "question_mark" | "table"
     filled?: boolean
 }
 

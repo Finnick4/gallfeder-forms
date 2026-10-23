@@ -1,5 +1,5 @@
 import {ChoiceQuestionResponses} from "./ChoiceQuestionResponses.tsx";
-import {QuestionTypes} from "../../../shared/types.ts";
+import {QuestionTypes} from "../../../shared/enums.ts";
 import type {FormQuestionResponsesProperties} from "../../../shared/properties.ts";
 
 export const FormQuestionResponses = ({question}: FormQuestionResponsesProperties) => {

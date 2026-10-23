@@ -1,10 +1,5 @@
+import type {QuestionTypes} from "./enums.ts";
 
-// @ts-ignore
-export enum QuestionTypes {
-    Invalid,
-    Choice,
-    Input,
-}
 
 export type Question = {
     id: UUID
@@ -126,10 +121,4 @@ export type QuestionEditChanges = {
     "questionType"?:      QuestionTypes
     "overwriteMetadata"?: boolean
     "metadata"?:          QuestionMetadata
-}
-
-// @ts-ignore
-export enum FormModifySubpages {
-    Edit,
-    Responses,
 }

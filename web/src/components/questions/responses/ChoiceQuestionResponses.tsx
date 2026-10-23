@@ -1,6 +1,7 @@
 import type {FormQuestionResponsesProperties, NumberChartAssignment} from "../../../shared/properties.ts";
 import {useRef} from "react";
-import {NumberCharts, NumberChartTypes} from "../../charts/NumberCharts.tsx";
+import {NumberCharts} from "../../charts/NumberCharts.tsx";
+import {NumberChartTypes} from "../../../shared/enums.ts";
 
 export const ChoiceQuestionResponses = ({question}: FormQuestionResponsesProperties) => {
     const elem = useRef<HTMLDivElement>(null);

@@ -2,8 +2,9 @@ import {useEffect, useState} from "react";
 import FormEditPage from "./FormEditPage.tsx";
 import FormResponsesPage from "./FormResponsesPage.tsx";
 import {FormEditPageHeader} from "../../components/header/FormEditPageHeader.tsx";
-import {type Form, FormModifySubpages, type HTTPResponse, NIL_UUID} from "../../shared/types.ts";
+import {type Form, type HTTPResponse, NIL_UUID} from "../../shared/types.ts";
 import {useParams} from "react-router-dom";
+import {FormModifySubpages} from "../../shared/enums.ts";
 
 
 interface Properties {

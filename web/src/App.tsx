@@ -3,7 +3,7 @@ import ResponsePage from "./pages/form/ResponsePage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import OverviewPage from "./pages/OverviewPage.tsx";
 import {FormModifyPages} from "./pages/form/FormModifyPages.tsx";
-import {FormModifySubpages} from "./shared/types.ts";
+import {FormModifySubpages} from "./shared/enums.ts";
 
 function App() {
     return (
