@@ -59,10 +59,9 @@
     }
 }
 
-#root {
-
+.material-symbols-outlined {
+    font-size: 1rem;
 }
-
 body {
     background-color: var(--bg-color);
     margin: 0;
@@ -327,8 +326,14 @@ a.form-overview {
         }
 
         .stats {
+            display: flex;
+            gap: .5rem;
             font-size: .9rem;
             color: var(--text-muted);
+
+            .material-symbols-outlined {
+                font-size: .9rem;
+            }
         }
     }
 }
