@@ -1,4 +1,4 @@
-import type {QuestionTypes} from "./enums.ts";
+import {NumberChartTypes, type QuestionTypes} from "./enums.ts";
 
 
 export type Question = {
@@ -122,3 +122,24 @@ export type QuestionEditChanges = {
     "overwriteMetadata"?: boolean
     "metadata"?:          QuestionMetadata
 }
+
+export type AllowedGoogleMaterialSymbol = "arrow_back" | "bar_chart" | "how_to_vote" | "question_mark" | "table"
+
+export interface ChartTypeSelectorEntry<T> {
+    name: string
+    icon: AllowedGoogleMaterialSymbol
+    chartType: T
+}
+
+export const NUMBER_CHART_TYPES_SELECTOR_ENTRIES: ChartTypeSelectorEntry<NumberChartTypes>[] = [
+    {
+        name: "Table",
+        icon: "table",
+        chartType: NumberChartTypes.Table
+    },
+    {
+        name: "Bar chart",
+        icon: "bar_chart",
+        chartType: NumberChartTypes.BarChart
+    }
+]
