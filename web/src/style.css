@@ -63,6 +63,7 @@
 .icon {
     font-size: 1rem;
     vertical-align: center;
+    transition: font-variation-settings .25s ease;
 }
 body {
     background-color: var(--bg-color);
