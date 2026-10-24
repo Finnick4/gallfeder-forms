@@ -454,3 +454,7 @@ div.chart-tooltip {
         background-color: var(--element-color-highlight);
     }
 }
+
+.chart {
+    max-height: 30rem;
+}

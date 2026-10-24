@@ -1,7 +1,8 @@
 // @ts-ignore
 export enum NumberChartTypes {
     Table,
-    BarChart
+    BarChart,
+    PieChart,
 }
 
 // @ts-ignore

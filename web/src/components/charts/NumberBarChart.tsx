@@ -1,22 +1,10 @@
 import type {NumberChartAssignment} from "../../shared/properties.ts";
-import {Bar, BarChart, CartesianGrid, Tooltip, type TooltipContentProps, XAxis, YAxis} from "recharts";
+import {Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis} from "recharts";
+import {CustomTooltip} from "./CustomTooltip.tsx";
 
 interface Properties {
     assignments: NumberChartAssignment[]
 }
-
-const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
-    const firstPayload = payload?.[0];
-    const isVisible = active && firstPayload != null;
-    return (
-        <div className="chart-tooltip">
-            {isVisible && (
-                <div className="label">{`${label}: ${firstPayload.value}`}</div>
-            )}
-        </div>
-    );
-};
-
 
 const NumberBarChart = ({assignments}: Properties ) => {
     return (
@@ -25,6 +13,7 @@ const NumberBarChart = ({assignments}: Properties ) => {
             responsive
             data={assignments}
             dataKey={"value"}
+            className="chart barchart"
         >
             <CartesianGrid />
             <XAxis dataKey="key" />
@@ -34,11 +23,6 @@ const NumberBarChart = ({assignments}: Properties ) => {
                     fill: "var(--secondary-muted)",
                     opacity: .25
                 }}
-                contentStyle={{
-                    backgroundColor: "var(--element-color)",
-                    border: "var(--element-border)",
-                    borderRadius: 8,
-                }}
                 content={CustomTooltip}
             />
             <Bar
@@ -47,6 +31,8 @@ const NumberBarChart = ({assignments}: Properties ) => {
                 strokeWidth="var(--border-width)"
                 dataKey="value"
                 radius={[8, 8, 0, 0]}
+                animationBegin={100}
+                animationDuration={500}
             />
         </BarChart>
     );

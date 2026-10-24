@@ -2,6 +2,7 @@ import {NumberTable} from "./NumberTable.tsx";
 import type {NumberChartAssignment} from "../../shared/properties.ts";
 import NumberBarChart from "./NumberBarChart.tsx";
 import {NumberChartTypes} from "../../shared/enums.ts";
+import {NumberPieChart} from "./NumberPieChart.tsx";
 
 interface Properties {
     chartType: NumberChartTypes
@@ -11,8 +12,10 @@ interface Properties {
 export const NumberCharts = ({chartType, assignments}: Properties) => {
     switch (chartType) {
         case NumberChartTypes.Table:
-            return (<NumberTable assignments={assignments}></NumberTable>);
+            return (<NumberTable assignments={assignments} />);
         case NumberChartTypes.BarChart:
-            return (<NumberBarChart assignments={assignments}></NumberBarChart>);
+            return (<NumberBarChart assignments={assignments} />);
+        case NumberChartTypes.PieChart:
+            return (<NumberPieChart assignments={assignments} />);
     }
 }
