@@ -24,4 +24,5 @@ export interface EditableQuestionDataset {
 export interface NumberChartAssignment {
     key: string
     value: number
+    fill?: string
 }
