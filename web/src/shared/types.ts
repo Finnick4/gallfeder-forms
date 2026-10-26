@@ -1,10 +1,5 @@
+import {NumberChartTypes, type QuestionTypes} from "./enums.ts";
 
-// @ts-ignore
-export enum QuestionTypes {
-    Invalid,
-    Choice,
-    Input,
-}
 
 export type Question = {
     id: UUID
@@ -40,7 +35,14 @@ export type ChoiceQuestionOption = {
     text: string
 }
 
+export type ChoiceQuestionOptionResponses = {
+    "text": string
+    "timesChosen": number
+}
+
 export type UUID = string;
+
+export const NIL_UUID: UUID = "00000000-0000-0000-0000-000000000000"
 
 export type Form = {
     "id": UUID
@@ -55,6 +57,59 @@ export type FormOverview = {
     "description": string
     "questions": number
     "responses": number
+}
+
+export type FormResponses = {
+    "id": UUID
+    "title": string
+    "description": string
+    "totalResponses": number
+    "questionResponses": QuestionResponses[]
+}
+
+export const makeFormFromResponses = (resp: FormResponses): Form => {
+    return {
+        id: resp.id,
+        title: resp.title,
+        description: resp.description,
+        questions: resp.questionResponses.map(r => {
+            return {
+                id: r.questionID,
+                formID: r.formID,
+                index: r.index,
+                type: r.type,
+                meta: r.meta
+            }
+        })
+    }
+}
+
+export type QuestionResponses = {
+    "questionID": UUID
+    "formID": UUID
+    "index": number
+    "type": QuestionTypes
+    "meta": QuestionResponseMetadata
+}
+
+export type QuestionResponseMetadata = {
+    "question": string
+    "choiceOptionsResponse": ChoiceQuestionOptionResponses[]
+    "maximumChoices": number
+    "submittedTextsAnalysis": TextAnalysis
+    "responses": number
+    "chosenOptions": number
+}
+
+export type TextAnalysis = {
+    "samples": number
+    "totalWords": number
+    "wordOccurrences": WordOccurrence[]
+}
+
+export type WordOccurrence = {
+    "word": string
+    "occurrence": number
 }
 
 export type HTTPResponse<T> = {
@@ -79,3 +134,28 @@ export type QuestionEditChanges = {
     "metadata"?:          QuestionMetadata
 }
 
+export type AllowedGoogleMaterialSymbol = "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "swap_vert" | "table"
+
+export interface ChartTypeSelectorEntry<T> {
+    name: string
+    icon: AllowedGoogleMaterialSymbol
+    chartType: T
+}
+
+export const NUMBER_CHART_TYPES_SELECTOR_ENTRIES: ChartTypeSelectorEntry<NumberChartTypes>[] = [
+    {
+        name: "Table",
+        icon: "table",
+        chartType: NumberChartTypes.Table
+    },
+    {
+        name: "Bar chart",
+        icon: "bar_chart",
+        chartType: NumberChartTypes.BarChart
+    },
+    {
+        name: "Pie chart",
+        icon: "pie_chart",
+        chartType: NumberChartTypes.PieChart
+    },
+]

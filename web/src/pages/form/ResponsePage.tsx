@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-import type {Form, Question, QuestionAnswer} from "../../shared/types.ts";
+import {type Form, NIL_UUID, type Question, type QuestionAnswer} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 
@@ -14,7 +14,7 @@ export const ResponsePage = () => {
     const {formID} = useParams();
 
     const [form, setForm] = useState<Form>({
-        id: "00000000-0000-0000-0000-000000000000",
+        id: NIL_UUID,
         title: "Loading...",
         description: "This is loading...",
         questions: []
@@ -46,7 +46,7 @@ export const ResponsePage = () => {
                     return {
                         code: 404,
                         data: {
-                            id: "00000000-0000-0000-0000-000000000000",
+                            id: NIL_UUID,
                             title: "This form does not exist!",
                             description: "The form you are trying to view does not exist.",
                             questions: []
@@ -58,7 +58,7 @@ export const ResponsePage = () => {
                     return {
                         code: 400,
                         data: {
-                            id: "00000000-0000-0000-0000-000000000000",
+                            id: NIL_UUID,
                             title: "This form does not exist!",
                             description: "The form id is invalid.",
                             questions: []
@@ -69,7 +69,7 @@ export const ResponsePage = () => {
                 return {
                     code: r.status,
                     data: {
-                        id: "00000000-0000-0000-0000-000000000000",
+                        id: NIL_UUID,
                         title: "There was an issue getting the form!",
                         description: `As such, the form cannot be responded to. Code: ${r.status}`,
                         questions: []

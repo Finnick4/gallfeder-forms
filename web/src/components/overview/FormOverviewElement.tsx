@@ -1,4 +1,6 @@
 import type {FormOverview} from "../../shared/types.ts";
+import {AButton} from "../AButton.tsx";
+import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 
 interface Properties {
     form: FormOverview
@@ -7,7 +9,7 @@ interface Properties {
 const FormOverviewElement = ({form}: Properties) => {
 
     return (
-        <a
+        <AButton
             className="form-overview"
             href={`/form/${form.id}/edit`}
         >
@@ -15,11 +17,11 @@ const FormOverviewElement = ({form}: Properties) => {
             <div className="data">
                 <div className="title">{form.title}</div>
                 <div className="stats">
-                    <span className="questions">&#128505;{form.questions}</span>
-                    <span className="responses">&#128499;{form.responses}</span>
+                    <span className="questions"><GoogleMaterialSymbol iconName={"question_mark"} /> {form.questions}</span>
+                    <span className="responses"><GoogleMaterialSymbol iconName={"how_to_vote"} /> {form.responses}</span>
                 </div>
             </div>
-        </a>
+        </AButton>
     );
 }
 

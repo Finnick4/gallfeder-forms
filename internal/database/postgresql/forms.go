@@ -6,6 +6,7 @@ import (
 	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
 	"strings"
+	"sync"
 	"time"
 	"uuid"
 
@@ -121,6 +122,207 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 
 	_ = rows.Close()
 	return form, nil
+}
+
+func (db PostgreSQL) GetFormResponses(id uuid.UUID) (shared.FormResponses, error) {
+	if id == uuid.Nil() {
+		return shared.FormResponses{}, db_general.ErrDBParameterIssue
+	}
+
+	form, err := db.GetForm(id)
+	if err != nil {
+		return shared.FormResponses{}, err
+	}
+
+	mtx := sync.Mutex{}
+	var escErr error
+	var wg sync.WaitGroup
+	responseForm := shared.FormResponses{
+		Id:                id,
+		Title:             form.Title,
+		Description:       form.Description,
+		TotalResponses:    0,
+		QuestionResponses: make([]shared.QuestionResponses, len(form.Questions)),
+	}
+	wg.Add(len(form.Questions) + 1)
+
+	go func() {
+		conn := db.getConnection()
+		row := conn.QueryRow(`SELECT COALESCE(COUNT(DISTINCT id), 0) FROM responses WHERE form_id=$1;`, id.String())
+
+		var responses int
+		innerErr := row.Scan(&responses)
+		if err != nil {
+			log.Errorf(`Ran into issue while getting number of responses for form: %s\n`, innerErr)
+			responses = 0
+		}
+
+		mtx.Lock()
+		responseForm.TotalResponses = responses
+		mtx.Unlock()
+		wg.Done()
+	}()
+	for i, question := range form.Questions {
+		go func() {
+			switch question.Type {
+			case shared.QuestionTypeChoice:
+				qresp, err := db.getResponsesForChoiceQuestion(question)
+				mtx.Lock()
+				if err != nil {
+					escErr = err
+				}
+				responseForm.QuestionResponses[i] = qresp
+				mtx.Unlock()
+				break
+			case shared.QuestionTypeString:
+				qresp, err := db.getResponsesForTextQuestion(question)
+				mtx.Lock()
+				if err != nil {
+					escErr = err
+				}
+				responseForm.QuestionResponses[i] = qresp
+				mtx.Unlock()
+				break
+			default:
+				log.Warn("Found question with invalid type in database!")
+			}
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+	if escErr != nil {
+		return shared.FormResponses{}, db_general.ErrDBUnexpectedIssue
+	}
+
+	return responseForm, nil
+}
+
+func (db PostgreSQL) getResponsesForChoiceQuestion(q shared.Question) (shared.QuestionResponses, error) {
+	if q.Type != shared.QuestionTypeChoice {
+		return shared.QuestionResponses{}, db_general.ErrDBGeneralIssue
+	}
+
+	qresp := shared.QuestionResponses{
+		QuestionID: q.QuestionID,
+		FormID:     q.FormID,
+		Index:      q.Index,
+		Type:       q.Type,
+		Meta: shared.QuestionResponseMetaData{
+			Question:              q.Meta.Question,
+			MaximumChoices:        q.Meta.MaximumChoices,
+			ChosenOptions:         0,
+			Responses:             0,
+			ChoiceOptionsResponse: make([]shared.ChoiceQuestionOptionResponses, len(q.Meta.ChoiceOptions)),
+		},
+	}
+
+	for i, option := range q.Meta.ChoiceOptions {
+		qresp.Meta.ChoiceOptionsResponse[i] = shared.ChoiceQuestionOptionResponses{
+			Text:        option.Text,
+			TimesChosen: 0,
+		}
+	}
+
+	err := db.iterateOverResponsesToQuestion(q.QuestionID, func(resp shared.QuestionAnswerMetadata) error {
+		choices := 0
+		for _, selchoice := range resp.SelectedChoices {
+			for i, respOption := range qresp.Meta.ChoiceOptionsResponse {
+				if respOption.Text == selchoice.Text {
+					choices++
+					qresp.Meta.ChoiceOptionsResponse[i].TimesChosen++
+					break
+				}
+			}
+		}
+		qresp.Meta.ChosenOptions += choices
+		if choices != 0 {
+			qresp.Meta.Responses++
+		}
+		return nil
+	})
+
+	if err != nil {
+		return shared.QuestionResponses{}, err
+	}
+	return qresp, nil
+}
+
+func (db PostgreSQL) getResponsesForTextQuestion(q shared.Question) (shared.QuestionResponses, error) {
+	if q.Type != shared.QuestionTypeString {
+		return shared.QuestionResponses{}, db_general.ErrDBGeneralIssue
+	}
+
+	qresp := shared.QuestionResponses{
+		QuestionID: q.QuestionID,
+		FormID:     q.FormID,
+		Index:      q.Index,
+		Type:       q.Type,
+		Meta: shared.QuestionResponseMetaData{
+			Question:              q.Meta.Question,
+			MaximumChoices:        q.Meta.MaximumChoices,
+			Responses:             0,
+			ChoiceOptionsResponse: nil,
+			SubmittedTexts:        make([]string, 0),
+		},
+	}
+
+	err := db.iterateOverResponsesToQuestion(q.QuestionID, func(resp shared.QuestionAnswerMetadata) error {
+		if resp.WrittenText != "" {
+			qresp.Meta.Responses++
+			qresp.Meta.SubmittedTexts = append(qresp.Meta.SubmittedTexts, resp.WrittenText)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return shared.QuestionResponses{}, err
+	}
+	return qresp, nil
+}
+
+func (db PostgreSQL) iterateOverResponsesToQuestion(id uuid.UUID, fn func(shared.QuestionAnswerMetadata) error) error {
+	conn := db.getConnection()
+	rows, err := conn.Query(`SELECT meta FROM response_to_question WHERE question_id=$1`, id.String())
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return db_general.ErrDBValueNotFound
+		}
+		log.Errorf("Unexpected issue while getting responses to question to iterate over them: %s\n", err)
+		return db_general.ErrDBUnexpectedIssue
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var meta string
+		err = rows.Scan(&meta)
+		if err != nil {
+			log.Errorf("Unexpected issue while scanning for metadata of response to question to iterate over them: %s\n", err)
+			return db_general.ErrDBUnexpectedIssue
+		}
+
+		decoded, err := shared.DecodeBase64(meta)
+		if err != nil {
+			log.Errorf(`Encountered invalidly encoded response metadata in database while trying to decode just this: %s\n`, err)
+			_ = rows.Close()
+			return db_general.ErrDBGeneralIssue
+		}
+		var resp shared.QuestionAnswerMetadata
+		err = json.Unmarshal([]byte(decoded), &resp)
+		if err != nil {
+			log.Errorf(`Encountered invalidly marshaled response metadata in database while trying to unmarshal just this: %s\n`, err)
+			_ = rows.Close()
+			return db_general.ErrDBGeneralIssue
+		}
+
+		err = fn(resp)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (db PostgreSQL) GetFormOverviewsOfOwner(userID uuid.UUID) ([]shared.FormOverview, error) {

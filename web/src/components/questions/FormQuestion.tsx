@@ -1,9 +1,7 @@
-import {QuestionTypes} from "../../shared/types.ts";
+import {QuestionTypes} from "../../shared/enums.ts";
 import {ChoiceQuestion} from "./ChoiceQuestion.tsx";
 import type {FormQuestionProperties} from "../../shared/properties.ts";
 import {TextInputQuestion} from "./TextInputQuestion.tsx";
-
-
 
 export const FormQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
     if (question.type == QuestionTypes.Choice) {
