@@ -10,14 +10,14 @@
     --element-color-muted: hsl(180, 15%, 96%);
     --element-color: hsl(180, 15%, 98%);
     --element-color-highlight: hsl(180, 80%, 100%);
-    --element-border: solid hsl(180, 15%, 94%) var(--border-width);
+    --element-border: solid hsl(180, 15%, 92%) var(--border-width);
 
-    --table-border-color: hsl(192, 25%, 69%);
+    --table-border-color: hsl(180, 15%, 85%);
     --table-border: solid var(--table-border-color) var(--border-width);
 
 
     --text: hsl(180, 4%, 5%);
-    --text-muted: hsl(180, 4%, 15%);
+    --text-muted: hsl(180, 4%, 20%);
 
     --primary: hsl(196, 87%, 55%);
     --primary-highlight: hsl(196, 87%, 65%);
@@ -258,7 +258,7 @@ button.inline {
 }
 
 a.button,
-button {
+button:not(.cell) {
     font-size: 1rem;
     padding: var(--padding-button);
     background: var(--secondary);
@@ -270,7 +270,7 @@ button {
 }
 
 a.button:hover,
-button:hover {
+button:hover:not(.cell) {
     translate: 0 -3px;
     background: var(--secondary-highlight);
     cursor: pointer;
@@ -404,7 +404,7 @@ div:has(nav.header-bar) div.page {
     display: grid;
     grid-template-columns: auto auto;
     width: fit-content;
-    border: var(--table-border);
+    border: var(--element-border);
     border-radius: calc(var(--border-radius) - var(--padding-section));
 
     --gap-outside: .5rem;
@@ -422,6 +422,15 @@ div:has(nav.header-bar) div.page {
         .cell {
             padding: 0 calc(var(--gap-inside) / 2);
             color: var(--text-muted);
+        }
+        button.cell {
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+        button.cell:focus,
+        button.cell:hover {
+            color: var(--text);
         }
 
         :first-child {
@@ -457,7 +466,6 @@ div:has(nav.header-bar) div.page {
     .row.head {
         .cell {
             font-weight: bold;
-            color: var(--text);
         }
     }
 }

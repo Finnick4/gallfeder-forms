@@ -134,7 +134,7 @@ export type QuestionEditChanges = {
     "metadata"?:          QuestionMetadata
 }
 
-export type AllowedGoogleMaterialSymbol = "arrow_back" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "table"
+export type AllowedGoogleMaterialSymbol = "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "swap_vert" | "table"
 
 export interface ChartTypeSelectorEntry<T> {
     name: string
