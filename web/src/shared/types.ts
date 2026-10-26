@@ -96,9 +96,20 @@ export type QuestionResponseMetadata = {
     "question": string
     "choiceOptionsResponse": ChoiceQuestionOptionResponses[]
     "maximumChoices": number
-    "submittedTexts": string[]
+    "submittedTextsAnalysis": TextAnalysis
     "responses": number
     "chosenOptions": number
+}
+
+export type TextAnalysis = {
+    "samples": number
+    "totalWords": number
+    "wordOccurrences": WordOccurrence[]
+}
+
+export type WordOccurrence = {
+    "word": string
+    "occurrence": number
 }
 
 export type HTTPResponse<T> = {

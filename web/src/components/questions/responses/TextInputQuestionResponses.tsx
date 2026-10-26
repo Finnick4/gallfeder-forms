@@ -1,16 +1,14 @@
 import type {FormQuestionResponsesProperties, NumberChartAssignment} from "../../../shared/properties.ts";
 import {NumberCharts} from "../../charts/NumberCharts.tsx";
 import {NumberChartTypes} from "../../../shared/enums.ts";
-import {getWordCountFromTextResponses} from "../../../shared/word_analysis.ts";
 
 export const TextInputQuestionResponses = ({question}: FormQuestionResponsesProperties) => {
-    const wordCount = getWordCountFromTextResponses(question.meta.submittedTexts)
     const assignments: NumberChartAssignment[] = [];
-    for (const wordCountElement of wordCount) {
+    for (const wordCountElement of question.meta.submittedTextsAnalysis.wordOccurrences) {
         assignments.push({
-            key: wordCountElement[0],
-            value: wordCountElement[1]
-        } as NumberChartAssignment)
+            key: wordCountElement.word,
+            value: wordCountElement.occurrence,
+        } as NumberChartAssignment);
     }
 
     return (

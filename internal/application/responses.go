@@ -55,7 +55,7 @@ func GetResponsesToForm(formID uuid.UUID) (shared.FormResponses, error) {
 	for i, q := range responses.QuestionResponses {
 		if q.Type == shared.QuestionTypeString {
 			wg.Go(func() {
-				responses.QuestionResponses[i].Meta.SubmittedTextsAnalysis = shared.AnalyseStrings(q.Meta.SubmittedTexts).Polish(10)
+				responses.QuestionResponses[i].Meta.SubmittedTextsAnalysis = shared.AnalyseStrings(q.Meta.SubmittedTexts).Polish(20)
 				responses.QuestionResponses[i].Meta.SubmittedTexts = []string{}
 			})
 		}

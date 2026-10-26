@@ -79,6 +79,9 @@ func AnalyseString(str string) InternalTextAnalysis {
 		WordOccurrences: make(map[string]int),
 	}
 	addWordOccurrence := func(word string) {
+		if word == "" {
+			return
+		}
 		a.TotalWords++
 		a.WordOccurrences[word]++
 	}

@@ -29,6 +29,8 @@ func GetResponses(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		log.Errorf("Encountered unexpected issue: %s", err)
+		http_responses.InternalErrorHandler(w)
+		return
 	}
 
 	http_responses.WriteResponse(resp, w)
