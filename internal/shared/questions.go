@@ -17,12 +17,13 @@ type QuestionMetaData struct {
 }
 
 type QuestionResponseMetaData struct {
-	Question              string                          `json:"question"`
-	ChoiceOptionsResponse []ChoiceQuestionOptionResponses `json:"choiceOptionsResponse"`
-	MaximumChoices        int                             `json:"maximumChoices"`
-	SubmittedTexts        []string                        `json:"submittedTexts"`
-	Responses             int                             `json:"responses"`
-	ChosenOptions         int                             `json:"chosenOptions"`
+	Question               string                          `json:"question"`
+	ChoiceOptionsResponse  []ChoiceQuestionOptionResponses `json:"choiceOptionsResponse"`
+	MaximumChoices         int                             `json:"maximumChoices"`
+	SubmittedTexts         []string                        `json:"submittedTexts"`
+	SubmittedTextsAnalysis TextAnalysis                    `json:"submittedTextsAnalysis"`
+	Responses              int                             `json:"responses"`
+	ChosenOptions          int                             `json:"chosenOptions"`
 }
 
 type ChoiceQuestionOption struct {

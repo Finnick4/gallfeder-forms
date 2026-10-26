@@ -4,6 +4,7 @@ import (
 	"errors"
 	"gallfeder-forms/internal/database/db_general"
 	"gallfeder-forms/internal/shared"
+	"sync"
 	"uuid"
 
 	log "github.com/sirupsen/logrus"
@@ -49,6 +50,17 @@ func GetResponsesToForm(formID uuid.UUID) (shared.FormResponses, error) {
 		log.Errorf("Encountered issue while getting responses to a form: %s", err)
 		return shared.FormResponses{}, ErrUnexpectedIssue
 	}
+
+	wg := sync.WaitGroup{}
+	for i, q := range responses.QuestionResponses {
+		if q.Type == shared.QuestionTypeString {
+			wg.Go(func() {
+				responses.QuestionResponses[i].Meta.SubmittedTextsAnalysis = shared.AnalyseStrings(q.Meta.SubmittedTexts).Polish(10)
+				responses.QuestionResponses[i].Meta.SubmittedTexts = []string{}
+			})
+		}
+	}
+	wg.Wait()
 
 	return responses, nil
 }
