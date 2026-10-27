@@ -6,27 +6,18 @@ import {
     Tooltip
 } from "recharts";
 import {CustomTooltip} from "./CustomTooltip.tsx";
+import {ChartColorer} from "../../shared/ChartColorer.ts";
 
 
 interface Properties {
     assignments: NumberChartAssignment[]
 }
-const COLORS = [
-    "#ffb627",
-    "#0091f7",
-    "#9bc53d",
-    "#f20089",
-    "#fa7921",
-    "#8ecae6",
-    "#e55934",
-    "#f4afab",
-];
 
 export const NumberPieChart = ({assignments}: Properties ) => {
-    let assignedColors = 0;
+    const color = new ChartColorer();
     for (const assignment of assignments) {
         if (assignment.fill == undefined) {
-            assignment.fill = COLORS[assignedColors++ % COLORS.length];
+            assignment.fill = color.getColor();
         }
     }
 
@@ -47,6 +38,7 @@ export const NumberPieChart = ({assignments}: Properties ) => {
                 animationBegin={100}
                 animationDuration={500}
                 style={{width: "50%"}}
+                stroke={"none"}
             />
             <Tooltip
                 cursor={{

@@ -15,7 +15,9 @@ const NumberBarChart = ({assignments}: Properties ) => {
             dataKey={"value"}
             className="chart barchart"
         >
-            <CartesianGrid />
+            <CartesianGrid
+                verticalFill={["var(--element-color-muted)", "var(--element-color)"]}
+            />
             <XAxis dataKey="key" />
             <YAxis width="auto" allowDecimals={false} />
             <Tooltip
