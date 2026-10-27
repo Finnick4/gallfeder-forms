@@ -414,6 +414,7 @@ div:has(nav.header-bar) div.page {
     width: fit-content;
     border: var(--element-border);
     border-radius: calc(var(--border-radius) - var(--padding-section));
+    max-height: fit-content;
 
     --gap-outside: .5rem;
     --gap-inside: .75rem;
