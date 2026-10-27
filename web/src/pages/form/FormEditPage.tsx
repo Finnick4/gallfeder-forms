@@ -42,7 +42,7 @@ export const FormEditPage = ({form}: Properties) => {
             titleEdit.current.value = form.title;
         }
         if (descriptionEdit.current) {
-            descriptionEdit.current.value = form.description;
+            descriptionEdit.current.value = form.description.replaceAll("\\n", "\n");
         }
     }, [form])
 
