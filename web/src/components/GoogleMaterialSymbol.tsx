@@ -9,9 +9,9 @@ export const GoogleMaterialSymbol = ({iconName, filled}: Properties) => {
     return (
         <span
             className="material-symbols-outlined icon"
-            style={{fontVariationSettings: `'FILL' ${filled ? 1 : 0}`}}
+            style={{fontVariationSettings: `'FILL' ${filled ? 1 : 0}`, rotate: iconName == "vertical_bar_chart" ? "z 90deg" : "none"}}
         >
-            {iconName}
+            {iconName == "vertical_bar_chart" ? "bar_chart" : iconName}
         </span>
     );
 }

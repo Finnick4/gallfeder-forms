@@ -433,6 +433,7 @@ div:has(nav.header-bar) div.page {
             color: var(--text-muted);
         }
         button.cell {
+            cursor: pointer;
             background: none;
             border: none;
             font-size: 1rem;

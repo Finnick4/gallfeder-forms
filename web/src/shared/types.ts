@@ -134,7 +134,7 @@ export type QuestionEditChanges = {
     "metadata"?:          QuestionMetadata
 }
 
-export type AllowedGoogleMaterialSymbol = "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "swap_vert" | "table"
+export type AllowedGoogleMaterialSymbol = "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "swap_vert" | "table" | "vertical_bar_chart"
 
 export interface ChartTypeSelectorEntry<T> {
     name: string
@@ -152,6 +152,11 @@ export const NUMBER_CHART_TYPES_SELECTOR_ENTRIES: ChartTypeSelectorEntry<NumberC
         name: "Bar chart",
         icon: "bar_chart",
         chartType: NumberChartTypes.BarChart
+    },
+    {
+        name: "Vertical bar chart",
+        icon: "vertical_bar_chart",
+        chartType: NumberChartTypes.VerticalBarChart
     },
     {
         name: "Pie chart",

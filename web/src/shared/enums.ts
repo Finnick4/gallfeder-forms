@@ -3,6 +3,7 @@ export enum NumberChartTypes {
     Table,
     BarChart,
     PieChart,
+    VerticalBarChart
 }
 
 // @ts-ignore

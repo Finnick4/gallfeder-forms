@@ -15,6 +15,8 @@ export const NumberCharts = ({chartType, assignments}: Properties) => {
             return (<NumberTable assignments={assignments} />);
         case NumberChartTypes.BarChart:
             return (<NumberBarChart assignments={assignments} />);
+        case NumberChartTypes.VerticalBarChart:
+            return (<NumberBarChart assignments={assignments} isVertical={true} />);
         case NumberChartTypes.PieChart:
             return (<NumberPieChart assignments={assignments} />);
     }

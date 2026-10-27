@@ -4,9 +4,10 @@ import {CustomTooltip} from "./CustomTooltip.tsx";
 
 interface Properties {
     assignments: NumberChartAssignment[]
+    isVertical?: boolean
 }
 
-const NumberBarChart = ({assignments}: Properties ) => {
+const NumberBarChart = ({assignments, isVertical = false}: Properties ) => {
     return (
         <BarChart
             style={{ width: '100%', aspectRatio: 1.618 }}
@@ -14,12 +15,24 @@ const NumberBarChart = ({assignments}: Properties ) => {
             data={assignments}
             dataKey={"value"}
             className="chart barchart"
+            layout={isVertical ? "vertical" : "horizontal"}
         >
             <CartesianGrid
-                verticalFill={["var(--element-color-muted)", "var(--element-color)"]}
+                horizontalFill={isVertical ? ["var(--element-color-muted)", "var(--element-color)"] : []}
+                verticalFill={isVertical ? [] : ["var(--element-color-muted)", "var(--element-color)"]}
             />
-            <XAxis dataKey="key" />
-            <YAxis width="auto" allowDecimals={false} />
+            {
+                isVertical ?
+                    <>
+                    <XAxis type="number" height="auto" allowDecimals={false} />
+                    <YAxis type="category" dataKey="key" />
+                    </>
+                :
+                    <>
+                    <XAxis dataKey="key"/>
+                    <YAxis width="auto" allowDecimals={false}/>
+                    </>
+            }
             <Tooltip
                 cursor={{
                     fill: "var(--secondary-muted)",
@@ -32,7 +45,7 @@ const NumberBarChart = ({assignments}: Properties ) => {
                 stroke="var(--primary-border-color)"
                 strokeWidth="var(--border-width)"
                 dataKey="value"
-                radius={[8, 8, 0, 0]}
+                radius={isVertical ? [0, 8, 8, 0] : [8, 8, 0, 0]}
                 animationBegin={100}
                 animationDuration={500}
             />
