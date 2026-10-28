@@ -69,7 +69,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                 ref={elem}
                 onClick={focusElement}
             >
-                <h2>{q.meta.question}</h2>
+                <h2>{q.meta.question == "" ? "Unset question" : q.meta.question}</h2>
                 {opts.map((opt: ChoiceQuestionOption) => {
                     return (
                         <label key={opt.text}>

@@ -529,3 +529,25 @@ div.chart-tooltip {
 .chart {
     max-height: 30rem;
 }
+
+.add-question {
+    .head {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--text);
+        margin-bottom: .5rem;
+        .icon {
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.question-type-selector {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+
+    .entry {
+        width: max(6rem, calc(25% - .4rem));
+    }
+}

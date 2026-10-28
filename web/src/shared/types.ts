@@ -1,4 +1,4 @@
-import {NumberChartTypes, type QuestionTypes} from "./enums.ts";
+import {NumberChartTypes, QuestionTypes} from "./enums.ts";
 
 
 export type Question = {
@@ -134,33 +134,46 @@ export type QuestionEditChanges = {
     "metadata"?:          QuestionMetadata
 }
 
-export type AllowedGoogleMaterialSymbol = "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "swap_vert" | "table" | "vertical_bar_chart"
+export type AllowedGoogleMaterialSymbol = "add_circle" | "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "radio_button_checked" | "swap_vert" | "table" | "text_fields" | "vertical_bar_chart"
 
-export interface ChartTypeSelectorEntry<T> {
+export interface TypeSelectorEntry<T> {
     name: string
     icon: AllowedGoogleMaterialSymbol
-    chartType: T
+    storedType: T
 }
 
-export const NUMBER_CHART_TYPES_SELECTOR_ENTRIES: ChartTypeSelectorEntry<NumberChartTypes>[] = [
+export const NUMBER_CHART_TYPES_SELECTOR_ENTRIES: ReadonlyArray<TypeSelectorEntry<NumberChartTypes>> = [
     {
         name: "Table",
         icon: "table",
-        chartType: NumberChartTypes.Table
+        storedType: NumberChartTypes.Table
     },
     {
         name: "Bar chart",
         icon: "bar_chart",
-        chartType: NumberChartTypes.BarChart
+        storedType: NumberChartTypes.BarChart
     },
     {
         name: "Vertical bar chart",
         icon: "vertical_bar_chart",
-        chartType: NumberChartTypes.VerticalBarChart
+        storedType: NumberChartTypes.VerticalBarChart
     },
     {
         name: "Pie chart",
         icon: "pie_chart",
-        chartType: NumberChartTypes.PieChart
+        storedType: NumberChartTypes.PieChart
+    },
+]
+
+export const QUESTION_TYPES_SELECTOR_ENTRIES: ReadonlyArray<TypeSelectorEntry<QuestionTypes>> = [
+    {
+        name: "Choice",
+        icon: "radio_button_checked",
+        storedType: QuestionTypes.Choice
+    },
+    {
+        name: "Text input",
+        icon: "text_fields",
+        storedType: QuestionTypes.Input
     },
 ]

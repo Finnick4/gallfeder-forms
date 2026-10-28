@@ -1,9 +1,9 @@
 import {useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
-import type {ChartTypeSelectorEntry} from "../../shared/types.ts";
+import type {TypeSelectorEntry} from "../../shared/types.ts";
 
 interface Properties<T> {
-    entries: ChartTypeSelectorEntry<T>[]
+    entries: TypeSelectorEntry<T>[] | ReadonlyArray<TypeSelectorEntry<T>>
     defaultSelected?: T
     onChange?: (selected: T) => void
 }
@@ -12,24 +12,25 @@ export const ChartTypeSelector = <T,>({entries, defaultSelected, onChange}: Prop
     if (entries.length == 0) {
         return (<div className="chart-type-selector">No entries parsed!</div>);
     }
-    const defaultState = defaultSelected ? entries.find(e => e.chartType == defaultSelected)! : entries[0];
-    const [selected, setSelected] = useState<T>(defaultState.chartType);
+    const defaultState = defaultSelected ? entries.find(e => e.storedType == defaultSelected)! : entries[0];
+    const [selected, setSelected] = useState<T>(defaultState.storedType);
     
-    const changeSelection = (entry: ChartTypeSelectorEntry<T>) => {
-        setSelected(entry.chartType);
+    const changeSelection = (entry: TypeSelectorEntry<T>) => {
+        setSelected(entry.storedType);
         if (onChange) {
-            onChange(entry.chartType);
+            onChange(entry.storedType);
         }
     }
 
     return (
         <div className="chart-type-selector">
-            {entries.map(entry => <button 
-                className={`chart-selection-type ${selected == entry.chartType ? "selected" : ""}`}
+            {entries.map((entry, index) => <button
+                key={index}
+                className={`chart-selection-type ${selected == entry.storedType ? "selected" : ""}`}
                 onClick={() => changeSelection(entry)}
                 title={entry.name}
             >
-                <GoogleMaterialSymbol iconName={entry.icon} filled={selected == entry.chartType} />
+                <GoogleMaterialSymbol iconName={entry.icon} filled={selected == entry.storedType} />
             </button>)}
         </div>
     );

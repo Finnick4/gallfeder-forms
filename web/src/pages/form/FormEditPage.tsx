@@ -82,6 +82,27 @@ export const FormEditPage = ({form}: Properties) => {
         }
     }
 
+    let createdQuestions = 0;
+    const addQuestion = (qt: QuestionTypes) => {
+        const q = {
+            formID: formVers.changed.id,
+            id: `created-${createdQuestions++}`,
+            index: 0,
+            type: qt,
+            meta: {
+                question: ""
+            }
+        };
+        setFormVersions((prev) => {
+            if (prev.changed.questions.findIndex(quest => quest.id == q.id) != -1) {
+                return prev;
+            }
+            prev.changed.questions.push(q);
+            return prev;
+        });
+        setFocussed(q.id);
+    }
+
     const save = () => {
         if (formVers.changed.title.length >= 64 || formVers.changed.title.length == 0) {
             console.log("Did not initialise saving anything as the currrent title is invalid!");
@@ -104,11 +125,11 @@ export const FormEditPage = ({form}: Properties) => {
                 console.log("Saved successfully!");
                 return;
             }
-            console.log("Failed to save: " + r.status);
+            console.error("Failed to save: " + r.status);
             setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
             return;
         }).catch(reason => {
-            console.log("Failed to save: " + reason);
+            console.error("Failed to save: " + reason);
             setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
             return;
         });
@@ -141,11 +162,11 @@ export const FormEditPage = ({form}: Properties) => {
                                 questionEditedCallback: notifyQuestionEdit,
                                 currentlyFocussed: currentlyFocussed,
                                 notifyFocus: () => {
-                                    console.log("now focussed: " + q.id);
                                     setFocussed(q.id);
                                 },
                             }}
                             respondableSettings={undefined}
+                            addQuestionCallback={addQuestion}
                             key={q.id}
                         />)
                         :
