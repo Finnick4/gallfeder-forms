@@ -76,6 +76,7 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 	}
 
 	rows, err := conn.Query(`SELECT id, index, type, meta FROM questions WHERE form_id=$1;`, id.String())
+	defer rows.Close()
 
 	if err != nil {
 		if err.Error() != "sql: no rows in result set" {
@@ -92,7 +93,6 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 		err = rows.Scan(&qid, &q.Index, &q.Type, &qmeta)
 		if err != nil {
 			log.Errorf(`Ran into issue while scanning questions of form: %s\n`, err)
-			_ = rows.Close()
 			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 
@@ -100,27 +100,23 @@ func (db PostgreSQL) GetForm(id uuid.UUID) (shared.Form, error) {
 		q.QuestionID, err = uuid.Parse(qid)
 		if err != nil {
 			log.Errorf(`Encountered invalid question id in database while trying to parse just this: %s\n`, err)
-			_ = rows.Close()
 			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 
 		decoded, err := shared.DecodeBase64(qmeta)
 		if err != nil {
 			log.Errorf(`Encountered invalidly encoded question metadata in database while trying to decode just this: %s\n`, err)
-			_ = rows.Close()
 			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 		err = json.Unmarshal([]byte(decoded), &q.Meta)
 		if err != nil {
 			log.Errorf(`Encountered invalidly marshaled question metadata in database while trying to unmarshal just this: %s\n`, err)
-			_ = rows.Close()
 			return shared.Form{}, db_general.ErrDBGeneralIssue
 		}
 
 		form.Questions = append(form.Questions, q)
 	}
 
-	_ = rows.Close()
 	return form, nil
 }
 
@@ -294,25 +290,24 @@ func (db PostgreSQL) iterateOverResponsesToQuestion(id uuid.UUID, fn func(shared
 
 	defer rows.Close()
 
+	var meta, decoded string
+	var resp shared.QuestionAnswerMetadata
+
 	for rows.Next() {
-		var meta string
 		err = rows.Scan(&meta)
 		if err != nil {
 			log.Errorf("Unexpected issue while scanning for metadata of response to question to iterate over them: %s\n", err)
 			return db_general.ErrDBUnexpectedIssue
 		}
 
-		decoded, err := shared.DecodeBase64(meta)
+		decoded, err = shared.DecodeBase64(meta)
 		if err != nil {
 			log.Errorf(`Encountered invalidly encoded response metadata in database while trying to decode just this: %s\n`, err)
-			_ = rows.Close()
 			return db_general.ErrDBGeneralIssue
 		}
-		var resp shared.QuestionAnswerMetadata
 		err = json.Unmarshal([]byte(decoded), &resp)
 		if err != nil {
 			log.Errorf(`Encountered invalidly marshaled response metadata in database while trying to unmarshal just this: %s\n`, err)
-			_ = rows.Close()
 			return db_general.ErrDBGeneralIssue
 		}
 
@@ -336,7 +331,6 @@ FROM forms
 WHERE owner_id=$1
 GROUP BY forms.id, title, description, creation_date
 ORDER BY creation_date DESC;`, userID.String())
-
 	if err != nil {
 		if err.Error() == "sql: no rows in result set" {
 			return nil, db_general.ErrDBValueNotFound
@@ -344,6 +338,7 @@ ORDER BY creation_date DESC;`, userID.String())
 		log.Errorf(`Ran into issue while getting form overviews for user: %s\n`, err)
 		return nil, db_general.ErrDBGeneralIssue
 	}
+	defer rows.Close()
 
 	var formOverviews []shared.FormOverview
 
@@ -353,21 +348,18 @@ ORDER BY creation_date DESC;`, userID.String())
 		err = rows.Scan(&fID, &fo.Title, &fo.Description, &fo.Questions, &fo.Responses)
 		if err != nil {
 			log.Errorf(`Ran into issue while scanning form for form overview for specific user: %s\n`, err)
-			_ = rows.Close()
 			return nil, db_general.ErrDBGeneralIssue
 		}
 
 		fo.Id, err = uuid.Parse(fID)
 		if err != nil {
 			log.Errorf(`Encountered invalid form id in database while trying to parse just this: %s\n`, err)
-			_ = rows.Close()
 			return nil, db_general.ErrDBGeneralIssue
 		}
 
 		formOverviews = append(formOverviews, fo)
 	}
 
-	_ = rows.Close()
 	return formOverviews, nil
 }
 

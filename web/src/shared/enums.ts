@@ -14,6 +14,7 @@ export enum FormModifySubpages {
 
 // @ts-ignore
 export enum QuestionTypes {
+    InternalNotice = -1,
     Invalid,
     Choice,
     Input,

@@ -1,10 +1,11 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useRef, useState} from "react";
-import {type Form, type Question, type UUID} from "../../shared/types.ts";
+import {type Form, NIL_UUID, type Question, type UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
 import FittingTextArea from "../../components/FittingTextArea.tsx";
 import {isLoggedIn} from "../../shared/checks.ts";
+import {QuestionTypes} from "../../shared/enums.ts";
 
 type FormVersions = {
     original: Form,
@@ -133,18 +134,35 @@ export const FormEditPage = ({form}: Properties) => {
                         onLeave={editDescription}></FittingTextArea>
                 </div>
                 <div className="questions section">
-                    {formVers.changed.questions.map(q => <FormQuestion
-                        question={structuredClone(q)}
-                        editableSettings={{
-                            questionEditedCallback: notifyQuestionEdit,
-                            currentlyFocussed: currentlyFocussed,
-                            notifyFocus: () => {
-                                console.log("now focussed: " + q.id);
-                                setFocussed(q.id);
-                            },
-                        }}
-                        respondableSettings={undefined}
-                        key={q.id}/>)}
+                    {formVers.changed.questions ?
+                        formVers.changed.questions.map(q => <FormQuestion
+                            question={structuredClone(q)}
+                            editableSettings={{
+                                questionEditedCallback: notifyQuestionEdit,
+                                currentlyFocussed: currentlyFocussed,
+                                notifyFocus: () => {
+                                    console.log("now focussed: " + q.id);
+                                    setFocussed(q.id);
+                                },
+                            }}
+                            respondableSettings={undefined}
+                            key={q.id}
+                        />)
+                        :
+                        <FormQuestion
+                            question={{
+                                id: NIL_UUID,
+                                formID: formVers.original.id,
+                                type: QuestionTypes.InternalNotice,
+                                index: 0,
+                                meta: {
+                                    question: "There are no questions!"
+                                }
+                            }}
+                            respondableSettings={undefined}
+                            editableSettings={undefined}
+                        />
+                    }
                 </div>
                 <div className="control section">
                     <button

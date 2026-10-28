@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {type Form, NIL_UUID, type Question, type QuestionAnswer} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
+import {QuestionTypes} from "../../shared/enums.ts";
 
 // @ts-ignore
 enum ResponseStatus {
@@ -10,7 +11,7 @@ enum ResponseStatus {
     Responded,
 }
 
-export const ResponsePage = () => {
+export const FormResponsePage = () => {
     const {formID} = useParams();
 
     const [form, setForm] = useState<Form>({
@@ -135,14 +136,31 @@ export const ResponsePage = () => {
                 </div>
             </div>
             <div className="questions section">
-                {form.questions.map(q => <FormQuestion
-                    question={q}
-                    respondableSettings={{
-                        currentAnswer: getCurrentAnswer(q),
-                        answerChangeCallback: notifyAnswerChange
-                    }}
-                    editableSettings={undefined}
-                    key={q.id} />)}
+                {form.questions ?
+                    form.questions.map(q => <FormQuestion
+                        question={q}
+                        respondableSettings={{
+                            currentAnswer: getCurrentAnswer(q),
+                            answerChangeCallback: notifyAnswerChange
+                        }}
+                        editableSettings={undefined}
+                        key={q.id}
+                    />)
+                    :
+                    <FormQuestion
+                        question={{
+                            id: NIL_UUID,
+                            formID: form.id,
+                            type: QuestionTypes.InternalNotice,
+                            index: 0,
+                            meta: {
+                                question: "There are no questions yet!"
+                            }
+                        }}
+                        respondableSettings={undefined}
+                        editableSettings={undefined}
+                    />
+                }
             </div>
             <div className="control section">
                 <button className="submit primary" onClick={submit}>Submit</button>
@@ -150,5 +168,3 @@ export const ResponsePage = () => {
         </div>
     );
 }
-
-export default ResponsePage
