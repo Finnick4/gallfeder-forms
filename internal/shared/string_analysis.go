@@ -103,6 +103,13 @@ func AnalyseString(str string) InternalTextAnalysis {
 }
 
 func AnalyseStrings(strs []string) InternalTextAnalysis {
+	if len(strs) == 0 {
+		return InternalTextAnalysis{
+			Samples:         0,
+			TotalWords:      0,
+			WordOccurrences: make(map[string]int),
+		}
+	}
 	if len(strs) == 1 {
 		return AnalyseString(strs[0])
 	}
