@@ -73,6 +73,13 @@ func (i InternalTextAnalysis) Merge(toMerge InternalTextAnalysis) InternalTextAn
 }
 
 func AnalyseString(str string) InternalTextAnalysis {
+	if len(str) == 0 {
+		return InternalTextAnalysis{
+			Samples:         0,
+			TotalWords:      0,
+			WordOccurrences: make(map[string]int),
+		}
+	}
 	a := InternalTextAnalysis{
 		Samples:         1,
 		TotalWords:      0,
