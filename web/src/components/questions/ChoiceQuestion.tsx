@@ -1,15 +1,38 @@
 import type {FormQuestionProperties} from "../../shared/properties.ts";
 import {type ChoiceQuestionOption, type Question} from "../../shared/types.ts";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
+import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 
 export const ChoiceQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
     const [q, setQuestion] = useState<Question>(structuredClone(question));
     const elem = useRef<HTMLDivElement>(null);
+    const qInputElem = useRef<HTMLInputElement>(null);
 
     const isRespondable = respondableSettings != undefined;
     const isFocussed = editableSettings?.currentlyFocussed == q.id;
+    const showAddPrompt = q.meta.choiceOptions == undefined || q.meta.choiceOptions.findIndex(opt => opt.text == "") == -1;
+
+    useEffect(() => {
+        if (isFocussed) {
+            qInputElem.current?.focus();
+        }
+    }, [isFocussed]);
 
     const opts = q.meta.choiceOptions ? structuredClone(q.meta.choiceOptions) : [];
+
+    const addOption = () => {
+        setQuestion((prev) => {
+            if (prev.meta.choiceOptions == null) {
+                prev.meta.choiceOptions = [{text: ""}];
+                return prev;
+            }
+            if (prev.meta.choiceOptions.findIndex(opt => opt.text == "") != -1) {
+                return prev;
+            }
+            prev.meta.choiceOptions.push({text: ""});
+            return structuredClone(prev);
+        });
+    }
 
     const callUpdateWithOption = (opt: ChoiceQuestionOption) => {
         if (respondableSettings == undefined) {
@@ -97,6 +120,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                 className="edit-question-text usable"
                 type="text"
                 defaultValue={q.meta.question}
+                ref={qInputElem}
                 onBlur={e => callEditOnQuestionText(q.meta.question, e.target.value)}
             ></input>
 
@@ -119,6 +143,16 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                     </label>
                 );
             })}
+            {
+                showAddPrompt ?
+                <button
+                    className="option"
+                    onClick={addOption}
+                >
+                    <GoogleMaterialSymbol iconName="add" />
+                    <div className="edit-label-text">Add option</div>
+                </button> : <></>
+            }
         </div>
     );
 }

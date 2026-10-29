@@ -10,9 +10,10 @@ import {QUESTION_TYPES_SELECTOR_ENTRIES} from "../../shared/types.ts";
 
 interface Properties extends FormQuestionProperties{
     addQuestionCallback?: (t: QuestionTypes) => void;
+    forceAddQuestionSection?: boolean
 }
 
-export const FormQuestion = ({question, respondableSettings, editableSettings, addQuestionCallback}: Properties) => {
+export const FormQuestion = ({question, respondableSettings, editableSettings, addQuestionCallback, forceAddQuestionSection = false}: Properties) => {
     let qElem: ReactElement = <h3>Invalid question type</h3>;
     if (question.type == QuestionTypes.Choice) {
         qElem = <ChoiceQuestion
@@ -40,7 +41,7 @@ export const FormQuestion = ({question, respondableSettings, editableSettings, a
 
     return (<>
         {qElem}
-        {isFocussed && addQuestionCallback ?
+        {(isFocussed || forceAddQuestionSection) && addQuestionCallback ?
             <div className="add-question">
                 <div className="head"><GoogleMaterialSymbol iconName="add_circle" /> Add question</div>
                 <QuestionTypeSelector entries={QUESTION_TYPES_SELECTOR_ENTRIES} onClick={addQuestionCallback} />

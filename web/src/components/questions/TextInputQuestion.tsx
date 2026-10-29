@@ -1,13 +1,20 @@
 import type {FormQuestionProperties} from "../../shared/properties.ts";
 import {type Question} from "../../shared/types.ts";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 export const TextInputQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
     const [q, setQuestion] = useState<Question>(structuredClone(question));
     const inputElem = useRef<HTMLInputElement>(null)
+    const qInputElem = useRef<HTMLInputElement>(null);
 
     const isRespondable = respondableSettings != undefined;
     const isFocussed = editableSettings?.currentlyFocussed == q.id;
+
+    useEffect(() => {
+        if (isFocussed) {
+            qInputElem.current?.focus();
+        }
+    }, [isFocussed]);
 
     const callUpdate = () => {
         console.log("Update!!!")
@@ -44,7 +51,7 @@ export const TextInputQuestion = ({question, respondableSettings, editableSettin
                 className="question text-input"
                 onClick={focusElement}
             >
-                <h2>{q.meta.question}</h2>
+                <h2>{q.meta.question == "" ? "Unset question" : q.meta.question}</h2>
                 <input type="text"
                        ref={inputElem}
                        disabled={!isRespondable}
@@ -62,6 +69,7 @@ export const TextInputQuestion = ({question, respondableSettings, editableSettin
                 className="edit-question-text usable"
                 type="text"
                 defaultValue={q.meta.question}
+                ref={qInputElem}
                 onBlur={e => callEditOnQuestionText(q.meta.question, e.target.value)}
             ></input>
 

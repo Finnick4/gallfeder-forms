@@ -8,9 +8,9 @@ import {
 export const getDifferencesBetweenForms = (old: Form, current: Form): FormEditChanges | undefined => {
     const questionEdits: QuestionEditChanges[] = [];
 
-    for (const oldQuestion of old.questions) {
+    for (const oldQuestion of old.questions ? old.questions : []) {
         let newVersion: Question | undefined = undefined;
-        for (const newQuestion of current.questions) {
+        for (const newQuestion of current.questions ? current.questions : []) {
             if (newQuestion.id == oldQuestion.id) {
                 newVersion = newQuestion;
                 break;
@@ -30,9 +30,9 @@ export const getDifferencesBetweenForms = (old: Form, current: Form): FormEditCh
         }
     }
 
-    for (const currentQuestion of current.questions) {
+    for (const currentQuestion of current.questions ? current.questions : []) {
         let foundVersion: Question | undefined = undefined;
-        for (const legacyQuestion of old.questions) {
+        for (const legacyQuestion of old.questions ? old.questions : []) {
             if (legacyQuestion.id == currentQuestion.id) {
                 foundVersion = legacyQuestion;
                 break;

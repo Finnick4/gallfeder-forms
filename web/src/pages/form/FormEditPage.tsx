@@ -30,6 +30,8 @@ export const FormEditPage = ({form}: Properties) => {
         changed: structuredClone(form)
     });
     const [currentlyFocussed, setFocussed] = useState<UUID>("");
+    const [createdQuestions, setCreatedQuestions] = useState<number>(0);
+
 
     const titleEdit = useRef<HTMLInputElement>(null);
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
@@ -82,11 +84,10 @@ export const FormEditPage = ({form}: Properties) => {
         }
     }
 
-    let createdQuestions = 0;
     const addQuestion = (qt: QuestionTypes) => {
         const q = {
             formID: formVers.changed.id,
-            id: `created-${createdQuestions++}`,
+            id: `created-${createdQuestions}`,
             index: 0,
             type: qt,
             meta: {
@@ -94,6 +95,10 @@ export const FormEditPage = ({form}: Properties) => {
             }
         };
         setFormVersions((prev) => {
+            if (prev.changed.questions == null) {
+                prev.changed.questions = [q];
+                return prev;
+            }
             if (prev.changed.questions.findIndex(quest => quest.id == q.id) != -1) {
                 return prev;
             }
@@ -101,11 +106,12 @@ export const FormEditPage = ({form}: Properties) => {
             return prev;
         });
         setFocussed(q.id);
+        setCreatedQuestions(createdQuestions + 1);
     }
 
     const save = () => {
         if (formVers.changed.title.length >= 64 || formVers.changed.title.length == 0) {
-            console.log("Did not initialise saving anything as the currrent title is invalid!");
+            console.log("Did not initialise saving anything as the current title is invalid!");
             return;
         }
         const differences = getDifferencesBetweenForms(formVers.original, formVers.changed);
@@ -181,6 +187,8 @@ export const FormEditPage = ({form}: Properties) => {
                                 }
                             }}
                             respondableSettings={undefined}
+                            addQuestionCallback={addQuestion}
+                            forceAddQuestionSection
                             editableSettings={undefined}
                         />
                     }
