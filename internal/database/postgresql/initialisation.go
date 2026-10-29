@@ -32,7 +32,7 @@ func (db PostgreSQL) connectToDatabase() {
 	if connection != nil {
 		err := db.Close()
 		if err != nil {
-			log.Error("Encountered error while trying to close PostgreSQL database: %s", err)
+			log.Errorf("Encountered error while trying to close PostgreSQL database: %s", err)
 		}
 	}
 	user, ok := os.LookupEnv("POSTGRES_USER")
