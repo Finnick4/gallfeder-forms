@@ -6,6 +6,7 @@ import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
 import FittingTextArea from "../../components/FittingTextArea.tsx";
 import {isLoggedIn} from "../../shared/checks.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
+import {GoogleMaterialSymbol} from "../../components/GoogleMaterialSymbol.tsx";
 
 type FormVersions = {
     original: Form,
@@ -14,9 +15,10 @@ type FormVersions = {
 
 interface Properties {
     form: Form
+    updateForm?: (updated: Form) => void
 }
 
-export const FormEditPage = ({form}: Properties) => {
+export const FormEditPage = ({form, updateForm}: Properties) => {
     const nav = useNavigate();
 
     useEffect(() => {
@@ -31,7 +33,7 @@ export const FormEditPage = ({form}: Properties) => {
     });
     const [currentlyFocussed, setFocussed] = useState<UUID>("");
     const [createdQuestions, setCreatedQuestions] = useState<number>(0);
-
+    const [isTryingToSave, setTryingToSave] = useState<boolean>(false);
 
     const titleEdit = useRef<HTMLInputElement>(null);
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
@@ -72,7 +74,7 @@ export const FormEditPage = ({form}: Properties) => {
     const editDescription = (updatedDescription: string) => {
         setFormVersions(prev => {
             prev.changed.description = updatedDescription;
-            return prev;
+            return structuredClone(prev);
         });
     }
 
@@ -114,8 +116,10 @@ export const FormEditPage = ({form}: Properties) => {
             console.log("Did not initialise saving anything as the current title is invalid!");
             return;
         }
+        setTryingToSave(true);
         const differences = getDifferencesBetweenForms(formVers.original, formVers.changed);
         if (differences == undefined) {
+            setTryingToSave(false);
             return;
         }
         const old = structuredClone(formVers.original);
@@ -126,8 +130,12 @@ export const FormEditPage = ({form}: Properties) => {
             credentials: "include",
             body: JSON.stringify(differences)
         }).then(r => {
+            setTryingToSave(false);
             if (r.status == 200) {
                 setFormVersions({original: structuredClone(changed), changed: structuredClone(changed)});
+                if (updateForm) {
+                    updateForm(changed);
+                }
                 console.log("Saved successfully!");
                 return;
             }
@@ -136,6 +144,7 @@ export const FormEditPage = ({form}: Properties) => {
             return;
         }).catch(reason => {
             console.error("Failed to save: " + reason);
+            setTryingToSave(false);
             setFormVersions({original: structuredClone(old), changed: structuredClone(old)});
             return;
         });
@@ -152,13 +161,15 @@ export const FormEditPage = ({form}: Properties) => {
                         ref={titleEdit}
                         onFocus={() => setFocussed("")}
                         onChange={e => editTitleInput(e.target)}
-                        onBlur={e => editTitle(e.target.value)}></input>
+                        onBlur={e => editTitle(e.target.value)}
+                    />
                     <FittingTextArea
                         className="description"
                         ref={descriptionEdit}
                         onFocus={() => setFocussed("")}
                         initialValue={formVers.changed.description}
-                        onLeave={editDescription}></FittingTextArea>
+                        onLeave={editDescription}
+                    />
                 </div>
                 <div className="questions section">
                     {formVers.changed.questions ?
@@ -197,8 +208,9 @@ export const FormEditPage = ({form}: Properties) => {
                     <button
                         className="save primary"
                         onClick={save}
+                        disabled={isTryingToSave}
                         onFocus={() => setFocussed("")}
-                    >Save changes
+                    ><GoogleMaterialSymbol iconName={isTryingToSave ? "progress_activity" : "save"} /> Save changes
                     </button>
                 </div>
             </div>

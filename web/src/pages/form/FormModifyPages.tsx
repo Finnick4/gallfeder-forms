@@ -66,9 +66,13 @@ export const FormModifyPages = ({subpage}: Properties) => {
             });
     }, []);
 
+    const updateForm = (updated: Form) => {
+        setForm(updated);
+    }
+
     const getPage = () => {
         switch (subpage) {
-            case FormModifySubpages.Edit: return (<FormEditPage form={form}></FormEditPage>);
+            case FormModifySubpages.Edit: return (<FormEditPage form={form} updateForm={updateForm}></FormEditPage>);
             case FormModifySubpages.Responses: return (<FormResponsesPage></FormResponsesPage>);
         }
     };

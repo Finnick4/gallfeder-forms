@@ -1,4 +1,4 @@
-import {type RefObject, useRef} from "react";
+import {type RefObject, useEffect, useRef} from "react";
 
 interface Properties {
     initialValue: string
@@ -18,6 +18,12 @@ export const FittingTextArea = ({initialValue, className, onLeave, ref, onFocus}
         elem.current.style.height = "1px";
         elem.current.style.height = `calc(${elem.current.scrollHeight + "px"} - 1.5rem)`;
     }
+
+    useEffect(() => {
+        if (elem.current) {
+            elem.current.defaultValue = initialValue;
+        }
+    }, [initialValue]);
 
     resize();
 
