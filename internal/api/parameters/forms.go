@@ -16,9 +16,9 @@ type ParamsFormEdit struct {
 
 type ParamsQuestionChange struct {
 	Id                string // if set, change edit the question, if not, create a new question
-	DeleteQuestion    bool
+	Metadata          shared.QuestionMetaData
 	Index             int
 	QuestionType      shared.QuestionType
+	DeleteQuestion    bool
 	OverwriteMetadata bool
-	Metadata          shared.QuestionMetaData
 }

@@ -18,13 +18,12 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
         }
     }, [isFocussed]);
 
-    const opts = q.meta.choiceOptions ? structuredClone(q.meta.choiceOptions) : [];
+    const opts = q.meta.choiceOptions ? q.meta.choiceOptions : [];
 
     const addOption = () => {
         setQuestion((prev) => {
             if (prev.meta.choiceOptions == null) {
-                prev.meta.choiceOptions = [{text: ""}];
-                return prev;
+                prev.meta.choiceOptions = [];
             }
             if (prev.meta.choiceOptions.findIndex(opt => opt.text == "") != -1) {
                 return prev;
@@ -138,6 +137,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                             className="edit-label-text usable"
                             type="text"
                             defaultValue={opt.text}
+                            autoFocus={opt.text == ""}
                             onBlur={e => callEditOnLabelText(opt, {text: e.target.value})}
                         ></input>
                     </label>

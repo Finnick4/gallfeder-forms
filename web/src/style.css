@@ -211,7 +211,7 @@ div.question.editable {
     input.usable {
         padding: var(--padding-inline-input);
     }
-    input.usable.edit-question-text {
+    input.usable.edit-question-text,button.option {
         margin-bottom: .5rem;
     }
 
