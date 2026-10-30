@@ -1,27 +1,27 @@
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {isLoggedIn} from "../shared/checks.ts";
+import {GoogleMaterialSymbol} from "../components/GoogleMaterialSymbol.tsx";
 
 
 export const LoginPage = () => {
+    const [isTryingToLogIn, setState] = useState<boolean>(false);
+
     const handleRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
-    const btnRef = useRef<HTMLButtonElement>(null);
     const nav = useNavigate();
 
     useEffect(() => {
         if (isLoggedIn()) {
-            nav("/")
+            nav("/");
         }
     }, []);
     const tryLogIn = () => {
-        if (handleRef.current == null || passwordRef.current == null || btnRef.current == null) {
-            return
+        if (isTryingToLogIn || handleRef.current == null || passwordRef.current == null) {
+            return;
         }
         console.log("Trying to log in!");
-        handleRef.current.classList.add("disabled");
-        passwordRef.current.classList.add("disabled");
-        btnRef.current.classList.add("disabled");
+        setState(true);
 
         fetch(`http://localhost:8080/api/sessions`, {
             method: "POST",
@@ -32,19 +32,19 @@ export const LoginPage = () => {
             })
         })
             .then(r => {
+                setState(false);
                 if (r.status != 200) {
-                    console.log(r);
+                    console.log("Failed to login: " + r.status);
                     return null;
                 }
                 console.log("logged in!");
-                if (handleRef.current != null && passwordRef.current != null && btnRef.current != null) {
-                    handleRef.current.classList.remove("disabled");
-                    passwordRef.current.classList.remove("disabled");
-                    btnRef.current.classList.remove("disabled");
-                }
 
                 nav("/");
                 return r.json();
+            })
+            .catch(e => {
+                console.warn(e);
+                setState(false);
             });
 
     }
@@ -58,6 +58,7 @@ export const LoginPage = () => {
                     <input
                         type="text"
                         className="handle usable"
+                        disabled={isTryingToLogIn}
                         ref={handleRef}
                         onKeyUp={e => {
                             if (e.key == "Enter") {
@@ -71,6 +72,7 @@ export const LoginPage = () => {
                     <input
                         type="password"
                         className="password usable"
+                        disabled={isTryingToLogIn}
                         ref={passwordRef}
                         onKeyUp={e => {
                             if (e.key == "Enter") {
@@ -82,9 +84,9 @@ export const LoginPage = () => {
                 <div>
                     <button
                         className="primary"
-                        ref={btnRef}
+                        disabled={isTryingToLogIn}
                         onClick={tryLogIn}
-                    >Log in</button>
+                    ><GoogleMaterialSymbol iconName={isTryingToLogIn ? "progress_activity" : "login"} /> Log in</button>
                 </div>
             </div>
         </div>

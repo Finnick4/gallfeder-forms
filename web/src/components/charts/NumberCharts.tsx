@@ -10,6 +10,13 @@ interface Properties {
 }
 
 export const NumberCharts = ({chartType, assignments}: Properties) => {
+    if (assignments.length == 0) {
+        assignments = [{
+            key: "Nothing...",
+            value: 0
+        }];
+    }
+
     switch (chartType) {
         case NumberChartTypes.Table:
             return (<NumberTable assignments={assignments} />);
