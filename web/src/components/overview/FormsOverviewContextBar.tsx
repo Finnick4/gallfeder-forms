@@ -1,8 +1,9 @@
+import {CreateFormButton} from "../CreateFormButton.tsx";
 
 const FormsOverviewContextBar = () => {
     return (
         <nav className="context-bar">
-            <button className="secondary inline">+ Create</button>
+            <CreateFormButton />
         </nav>
     );
 }

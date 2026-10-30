@@ -76,6 +76,20 @@
     vertical-align: center;
     transition: font-variation-settings .25s ease;
 }
+.icon.spinning {
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 body {
     background-color: var(--bg-color);
     margin: 0;
@@ -278,7 +292,7 @@ div.question.choice {
     }
 }
 
-button.inline {
+button.inline:not(.cell):not(.option) {
     padding: var(--padding-inline-input);
 }
 
@@ -295,10 +309,15 @@ button:not(.cell):not(.option) {
 }
 
 a.button:hover,
-button:hover:not(.cell):not(.option) {
+button:hover:not(.cell):not(.option):not(:disabled) {
     translate: 0 -3px;
     background: var(--secondary-highlight);
     cursor: pointer;
+}
+
+button:disabled:not(.cell):not(.option) {
+    background: var(--secondary-muted);
+    cursor: not-allowed;
 }
 
 button.primary {
@@ -308,6 +327,10 @@ button.primary {
 
 button.primary:hover {
     background: var(--primary-highlight);
+}
+
+button.primary:disabled {
+    background: var(--primary-muted);
 }
 
 textarea {

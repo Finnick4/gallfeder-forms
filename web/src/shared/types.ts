@@ -134,7 +134,21 @@ export type QuestionEditChanges = {
     "metadata"?:          QuestionMetadata
 }
 
-export type AllowedGoogleMaterialSymbol = "add" | "add_circle" | "arrow_back" | "arrow_downward" | "arrow_upward" | "bar_chart" | "how_to_vote" | "pie_chart" | "question_mark" | "radio_button_checked" | "swap_vert" | "table" | "text_fields" | "vertical_bar_chart"
+export type AllowedGoogleMaterialSymbol = "add"
+    | "add_circle"
+    | "arrow_back"
+    | "arrow_downward"
+    | "arrow_upward"
+    | "bar_chart"
+    | "how_to_vote"
+    | "pie_chart"
+    | "progress_activity"
+    | "question_mark"
+    | "radio_button_checked"
+    | "swap_vert"
+    | "table"
+    | "text_fields"
+    | "vertical_bar_chart";
 
 export interface TypeSelectorEntry<T> {
     name: string
