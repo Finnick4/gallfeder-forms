@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {isLoggedIn} from "../shared/checks.ts";
 import {GoogleMaterialSymbol} from "../components/GoogleMaterialSymbol.tsx";
+import {API_BASE_URL} from "../shared/general.ts";
 
 
 export const LoginPage = () => {
@@ -23,7 +24,7 @@ export const LoginPage = () => {
         console.log("Trying to log in!");
         setState(true);
 
-        fetch(`http://localhost:8080/api/sessions`, {
+        fetch(`${API_BASE_URL}/api/sessions`, {
             method: "POST",
             credentials: "include",
             body: JSON.stringify({

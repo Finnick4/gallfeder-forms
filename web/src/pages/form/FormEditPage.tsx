@@ -7,6 +7,7 @@ import FittingTextArea from "../../components/FittingTextArea.tsx";
 import {isLoggedIn} from "../../shared/checks.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
 import {GoogleMaterialSymbol} from "../../components/GoogleMaterialSymbol.tsx";
+import {API_BASE_URL} from "../../shared/general.ts";
 
 type FormVersions = {
     original: Form,
@@ -125,7 +126,7 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
         const old = structuredClone(formVers.original);
         const changed = structuredClone(formVers.changed);
 
-        fetch(`http://localhost:8080/api/forms/${formVers.original.id}`, {
+        fetch(`${API_BASE_URL}/api/forms/${formVers.original.id}`, {
             method: "PATCH",
             credentials: "include",
             body: JSON.stringify(differences)

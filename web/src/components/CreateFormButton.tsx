@@ -2,6 +2,7 @@ import {GoogleMaterialSymbol} from "./GoogleMaterialSymbol.tsx";
 import {useNavigate} from "react-router-dom";
 import type {HTTPResponse} from "../shared/types.ts";
 import {useState} from "react";
+import {API_BASE_URL} from "../shared/general.ts";
 
 export const CreateFormButton = () => {
     const nav = useNavigate();
@@ -9,7 +10,7 @@ export const CreateFormButton = () => {
 
     const createFormAndNavigate = () => {
         setLoading(true);
-        fetch(`http://localhost:8080/api/forms`, {
+        fetch(`${API_BASE_URL}/api/forms`, {
             method: "POST",
             credentials: "include",
             body: JSON.stringify({

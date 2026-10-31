@@ -2,12 +2,13 @@ import FormsOverviewContextBar from "./FormsOverviewContextBar.tsx";
 import {useEffect, useState} from "react";
 import type {FormOverview, HTTPResponse} from "../../shared/types.ts";
 import FormOverviewElement from "./FormOverviewElement.tsx";
+import {API_BASE_URL} from "../../shared/general.ts";
 
 const EditableFormsOverview = () => {
     const [formOverviews, setFormOverviews] = useState<FormOverview[]>([]);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/forms/editable`, {
+        fetch(`${API_BASE_URL}/api/forms/editable`, {
             credentials: "include"
         })
             .then(r => r.json())
@@ -27,7 +28,7 @@ const EditableFormsOverview = () => {
             </div>
 
             <div className="form-overviews">
-                {formOverviews.length == 0 ?
+                {formOverviews == null || formOverviews.length == 0 ?
                     <p>You don't have any editable forms. Go ahead and create one!</p> :
                     formOverviews.map(fo => <FormOverviewElement form={fo} key={fo.id}></FormOverviewElement>)
                 }

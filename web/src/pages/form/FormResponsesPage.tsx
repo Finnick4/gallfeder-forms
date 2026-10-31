@@ -7,6 +7,7 @@ import {
 } from "../../shared/types.ts";
 import {isLoggedIn} from "../../shared/checks.ts";
 import {FormQuestionResponses} from "../../components/questions/responses/FormQuestionResponses.tsx";
+import {API_BASE_URL} from "../../shared/general.ts";
 
 
 export const FormResponsesPage = () => {
@@ -28,7 +29,7 @@ export const FormResponsesPage = () => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/forms/${formID}/responses`, {
+        fetch(`${API_BASE_URL}/api/forms/${formID}/responses`, {
             method: "GET",
             credentials: "include",
         }).then(r => {

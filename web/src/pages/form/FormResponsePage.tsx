@@ -4,6 +4,7 @@ import {type Form, NIL_UUID, type Question, type QuestionAnswer} from "../../sha
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
+import {API_BASE_URL} from "../../shared/general.ts";
 
 // @ts-ignore
 enum ResponseStatus {
@@ -37,7 +38,7 @@ export const FormResponsePage = () => {
     }
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/forms/${formID}`)
+        fetch(`${API_BASE_URL}/api/forms/${formID}`)
             .then(r => {
                 if (r.ok) {
                     return r.json();
@@ -83,7 +84,7 @@ export const FormResponsePage = () => {
     }, []);
 
     const submit = () => {
-        fetch(`http://localhost:8080/api/forms/${formID}/responses`, {
+        fetch(`${API_BASE_URL}/api/forms/${formID}/responses`, {
             method: "POST",
             body: JSON.stringify({
                 answers: answers

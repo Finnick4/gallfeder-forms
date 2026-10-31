@@ -5,6 +5,7 @@ import {FormEditPageHeader} from "../../components/header/FormEditPageHeader.tsx
 import {type Form, type HTTPResponse, NIL_UUID} from "../../shared/types.ts";
 import {useParams} from "react-router-dom";
 import {FormModifySubpages} from "../../shared/enums.ts";
+import {API_BASE_URL} from "../../shared/general.ts";
 
 
 interface Properties {
@@ -21,7 +22,7 @@ export const FormModifyPages = ({subpage}: Properties) => {
     });
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/forms/${formID}`)
+        fetch(`${API_BASE_URL}/api/forms/${formID}`)
             .then(r => {
                 if (r.ok) {
                     return r.json();
