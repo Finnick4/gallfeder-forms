@@ -17,7 +17,7 @@ func main() {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatalf("Failed to load .env variables: %s", err)
+		log.Warnf("Failed to load .env variables: %s", err)
 	}
 
 	db := postgresql.PostgreSQL{}
