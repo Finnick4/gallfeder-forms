@@ -1,7 +1,7 @@
 services:
   database:
     image: postgres:18
-    container_name: gallfeder-forms.database
+    container_name: development.gallfeder-forms.database
     restart: unless-stopped
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
