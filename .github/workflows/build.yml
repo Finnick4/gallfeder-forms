@@ -1,0 +1,66 @@
+name: build.yml
+on:
+  push:
+    tags: [ v* ]
+jobs:
+  testing:
+    uses: ./.github/workflows/test.yml
+
+  build_backend:
+    needs: [ testing ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build backend docker images
+        run: |
+          docker build \
+            -t ghcr.io/finnick4/gallfeder-forms-backend:${GITHUB_REF_NAME#v} \
+            -t ghcr.io/finnick4/gallfeder-forms-backend:latest \
+            .
+
+      - name: Push images
+        run: |
+          docker push ghcr.io/finnick4/gallfeder-forms-backend:latest
+          docker push ghcr.io/finnick4/gallfeder-forms-backend:${GITHUB_REF_NAME#v}
+
+
+  build_frontend:
+    needs: [ testing ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build frontend docker images
+        run: |
+          docker build \
+            -t ghcr.io/finnick4/gallfeder-forms-frontend:${GITHUB_REF_NAME#v} \
+            -t ghcr.io/finnick4/gallfeder-forms-frontend:latest \
+            ./web/
+
+      - name: Push images
+        run: |
+          docker push ghcr.io/finnick4/gallfeder-forms-frontend:latest
+          docker push ghcr.io/finnick4/gallfeder-forms-frontend:${GITHUB_REF_NAME#v}

@@ -28,9 +28,8 @@ go.work.sum
 .idea/
 .vscode/
 
-deployments
-
-
+deployments/
+db/
 
 # Logs
 logs
