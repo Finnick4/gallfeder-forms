@@ -7,6 +7,7 @@ import type {ReactElement} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import {QuestionTypeSelector} from "./QuestionTypeSelector.tsx";
 import {QUESTION_TYPES_SELECTOR_ENTRIES} from "../../shared/types.ts";
+import "./FormQuestion.css";
 
 interface Properties extends FormQuestionProperties{
     addQuestionCallback?: (t: QuestionTypes) => void;

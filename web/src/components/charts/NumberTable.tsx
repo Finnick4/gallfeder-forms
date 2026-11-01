@@ -2,6 +2,7 @@ import type {NumberChartAssignment} from "../../shared/properties.ts";
 import {useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import type {AllowedGoogleMaterialSymbol} from "../../shared/types.ts";
+import "./NumberTable.css";
 
 interface Properties {
     assignments: NumberChartAssignment[]

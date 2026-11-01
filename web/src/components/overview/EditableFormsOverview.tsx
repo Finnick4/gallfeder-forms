@@ -1,8 +1,9 @@
 import FormsOverviewContextBar from "./FormsOverviewContextBar.tsx";
 import {useEffect, useState} from "react";
 import type {FormOverview, HTTPResponse} from "../../shared/types.ts";
-import FormOverviewElement from "./FormOverviewElement.tsx";
+import {FormOverviewElement} from "./FormOverviewElement.tsx";
 import {API_BASE_URL} from "../../shared/general.ts";
+import "./EditableFormsOverview.css";
 
 const EditableFormsOverview = () => {
     const [formOverviews, setFormOverviews] = useState<FormOverview[]>([]);

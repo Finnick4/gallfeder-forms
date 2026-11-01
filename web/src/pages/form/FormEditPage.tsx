@@ -8,6 +8,7 @@ import {isLoggedIn} from "../../shared/checks.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
 import {GoogleMaterialSymbol} from "../../components/GoogleMaterialSymbol.tsx";
 import {API_BASE_URL} from "../../shared/general.ts";
+import "./form_pages.css";
 
 type FormVersions = {
     original: Form,

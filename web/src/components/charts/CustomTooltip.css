@@ -1,0 +1,11 @@
+
+div.chart-tooltip {
+    background-color: var(--element-color);
+    padding: var(--padding-tooltip);
+    border: var(--element-border);
+    border-radius: var(--padding-tooltip);
+    max-width: 10rem;
+    .label {
+        color: var(--text);
+    }
+}

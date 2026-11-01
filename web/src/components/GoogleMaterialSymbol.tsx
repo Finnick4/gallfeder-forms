@@ -1,4 +1,5 @@
 import type {AllowedGoogleMaterialSymbol} from "../shared/types.ts";
+import "./GoogleMaterialSymbols.css";
 
 interface Properties {
     iconName: AllowedGoogleMaterialSymbol

@@ -1,0 +1,11 @@
+
+.question-type-selector {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+
+    .entry {
+        width: max(6rem, calc(25% - .4rem));
+    }
+}
+

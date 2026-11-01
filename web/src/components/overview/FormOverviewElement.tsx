@@ -1,12 +1,13 @@
 import type {FormOverview} from "../../shared/types.ts";
 import {AButton} from "../AButton.tsx";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
+import "./FormOverviewElement.css";
 
 interface Properties {
     form: FormOverview
 }
 
-const FormOverviewElement = ({form}: Properties) => {
+export const FormOverviewElement = ({form}: Properties) => {
 
     return (
         <AButton
@@ -24,5 +25,3 @@ const FormOverviewElement = ({form}: Properties) => {
         </AButton>
     );
 }
-
-export default FormOverviewElement;

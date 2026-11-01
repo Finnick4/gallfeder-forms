@@ -1,0 +1,70 @@
+.chart.table {
+    display: grid;
+    grid-template-columns: auto auto;
+    width: fit-content;
+    border: var(--element-border);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+
+    --gap-outside: .5rem;
+    --gap-inside: .75rem;
+    --gap-inside-vert: .5rem;
+
+    .row {
+        display: grid;
+        grid-column: 1/3;
+        grid-template-columns: subgrid;
+        border-bottom: var(--table-border);
+        padding: calc(var(--gap-inside-vert) / 2) 0;
+        background-color: var(--element-color-muted);
+
+        .cell {
+            padding: 0 calc(var(--gap-inside) / 2);
+            color: var(--text-muted);
+        }
+        button.cell {
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1rem;
+        }
+        button.cell:focus,
+        button.cell:hover {
+            color: var(--text);
+        }
+
+        :first-child {
+            padding-left: var(--gap-outside);
+        }
+        :last-child {
+            padding-right: var(--gap-outside);
+        }
+        :not(:last-child) {
+            padding-right: var(--gap-inside);
+        }
+    }
+    .row:nth-child(odd) {
+        background-color: var(--element-color);
+    }
+    .row:hover:not(.head) {
+        background-color: var(--element-color-highlight);
+        .cell {
+            color: var(--text);
+        }
+    }
+
+
+    .row:first-child {
+        border-radius: calc(var(--border-radius) - var(--padding-section)) calc(var(--border-radius) - var(--padding-section)) 0 0;
+        padding-top: var(--gap-outside);
+    }
+    .row:last-child {
+        padding-bottom: var(--gap-outside);
+        border-bottom: none;
+        border-radius: 0 0 calc(var(--border-radius) - var(--padding-section)) calc(var(--border-radius) - var(--padding-section));
+    }
+    .row.head {
+        .cell {
+            font-weight: bold;
+        }
+    }
+}

@@ -2,6 +2,7 @@ import type {FormQuestionProperties} from "../../shared/properties.ts";
 import {type ChoiceQuestionOption, type Question} from "../../shared/types.ts";
 import {useEffect, useRef, useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
+import "./ChoiceQuestion.css";
 
 export const ChoiceQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
     const [q, setQuestion] = useState<Question>(structuredClone(question));

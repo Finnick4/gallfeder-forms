@@ -1,6 +1,7 @@
 import {useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import type {TypeSelectorEntry} from "../../shared/types.ts";
+import "./ChartTypeSelector.css";
 
 interface Properties<T> {
     entries: TypeSelectorEntry<T>[] | ReadonlyArray<TypeSelectorEntry<T>>

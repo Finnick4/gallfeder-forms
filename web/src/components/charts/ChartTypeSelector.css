@@ -1,0 +1,35 @@
+
+.chart-type-selector {
+    background-color: var(--element-color);
+    border: var(--element-border);
+    display: flex;
+    width: fit-content;
+    padding: calc(var(--padding-inline-selector) / 2) var(--padding-inline-selector);
+    border-radius: calc(var(--border-radius) - var(--padding-element));
+    gap: .25rem;
+
+    .chart-selection-type {
+        padding: calc(var(--padding-inline-selector) / 2) var(--padding-inline-selector);;
+
+        aspect-ratio: 1/1;
+
+        transition:
+                background-color ease .25s,
+                border ease .25s,
+                translate ease .1s;
+
+        .icon {
+            vertical-align: center;
+            font-size: 1.125rem;
+        }
+
+    }
+
+    .chart-selection-type:not(.selected) {
+        background-color: var(--element-color);
+        border: var(--element-border);
+    }
+    .chart-selection-type:not(.selected):hover {
+        background-color: var(--element-color-highlight);
+    }
+}

@@ -1,4 +1,5 @@
 import {type RefObject, useEffect, useRef} from "react";
+import "./FittingTextArea.css";
 
 interface Properties {
     initialValue: string

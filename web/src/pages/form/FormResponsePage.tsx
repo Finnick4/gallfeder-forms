@@ -5,6 +5,7 @@ import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import type {FormGetResponse} from "../../shared/http_responses.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
 import {API_BASE_URL} from "../../shared/general.ts";
+import "./form_pages.css";
 
 // @ts-ignore
 enum ResponseStatus {

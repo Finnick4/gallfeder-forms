@@ -1,4 +1,5 @@
 import type {TooltipContentProps} from "recharts";
+import "./CustomTooltip.css";
 
 export const CustomTooltip = ({ active, payload, label }: TooltipContentProps) => {
     const firstPayload = payload?.[0];

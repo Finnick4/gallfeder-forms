@@ -1,5 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import type {ReactNode} from "react";
+import "./AButton.css";
+import "./buttons.css";
 
 interface Properties {
     href: string

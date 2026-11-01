@@ -1,0 +1,43 @@
+
+a.form-overview {
+    padding: 0;
+    border: var(--element-border);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+    background-color: var(--element-color);
+    transition:
+            background-color ease .1s,
+            transform ease .1s;
+
+    div.illustration {
+        border-radius: calc(var(--border-radius) - var(--padding-section));
+        overflow: hidden;
+        background-color: var(--bg-color);
+        aspect-ratio: 8/4;
+    }
+
+    div.data {
+        padding: var(--padding-data);
+        .title {
+            height: 2.25rem;
+            text-overflow: ellipsis;
+        }
+
+        .stats {
+            display: flex;
+            gap: .5rem;
+            font-size: .9rem;
+            color: var(--text-muted);
+
+            .icon {
+                font-size: .9rem;
+            }
+        }
+    }
+}
+
+a.form-overview:focus,
+a.form-overview:hover {
+    background-color: var(--element-color-highlight);
+    transform: scale(105%);
+    translate: 0;
+}

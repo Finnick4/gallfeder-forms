@@ -8,6 +8,7 @@ import {
 import {isLoggedIn} from "../../shared/checks.ts";
 import {FormQuestionResponses} from "../../components/questions/responses/FormQuestionResponses.tsx";
 import {API_BASE_URL} from "../../shared/general.ts";
+import "./form_pages.css";
 
 
 export const FormResponsesPage = () => {

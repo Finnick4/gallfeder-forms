@@ -1,6 +1,7 @@
 import type {QuestionTypes} from "../../shared/enums.ts";
 import type {TypeSelectorEntry} from "../../shared/types.ts";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
+import "./QuestionTypeSelector.css";
 
 
 interface Properties {

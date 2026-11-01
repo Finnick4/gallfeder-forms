@@ -3,6 +3,7 @@ import type {NumberChartAssignment} from "../../shared/properties.ts";
 import NumberBarChart from "./NumberBarChart.tsx";
 import {NumberChartTypes} from "../../shared/enums.ts";
 import {NumberPieChart} from "./NumberPieChart.tsx";
+import "./NumberCharts.css";
 
 interface Properties {
     chartType: NumberChartTypes

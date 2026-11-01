@@ -1,6 +1,7 @@
 import type {Form} from "../../shared/types.ts";
 import {AButton} from "../AButton.tsx";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
+import "./FormEditPageHeader.css";
 
 interface Properties {
     form: Form

@@ -1,0 +1,42 @@
+
+a.button,
+button:not(.cell):not(.option) {
+    font-size: 1rem;
+    padding: var(--padding-button);
+    background: var(--secondary);
+    border: var(--secondary-border);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+    transition:
+            translate .1s ease,
+            background-color .1s ease;
+}
+
+a.button:hover,
+button:hover:not(.cell):not(.option):not(:disabled) {
+    translate: 0 -3px;
+    background: var(--secondary-highlight);
+    cursor: pointer;
+}
+
+button:disabled:not(.cell):not(.option) {
+    background: var(--secondary-muted);
+    cursor: not-allowed;
+}
+
+button.primary {
+    background: var(--primary);
+    border: var(--primary-border);
+}
+
+button.primary:hover {
+    background: var(--primary-highlight);
+}
+
+button.primary:disabled {
+    background: var(--primary-muted);
+}
+
+button.inline:not(.cell):not(.option) {
+    padding: var(--padding-inline-input);
+}
+

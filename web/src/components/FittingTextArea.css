@@ -1,0 +1,7 @@
+
+textarea {
+    resize: none;
+    width: calc(100% - 2*var(--border-width) - 2*var(--padding-element));
+    font-size: 1rem;
+    font-family: var(--fonts) sans-serif;
+}

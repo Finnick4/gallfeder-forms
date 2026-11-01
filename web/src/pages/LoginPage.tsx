@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {isLoggedIn} from "../shared/checks.ts";
 import {GoogleMaterialSymbol} from "../components/GoogleMaterialSymbol.tsx";
 import {API_BASE_URL} from "../shared/general.ts";
+import "./LoginPage.css";
 
 
 export const LoginPage = () => {
