@@ -12,8 +12,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    ports:
-      - "5432:5432"
     volumes:
       - ./db:/var/lib/postgresql
   gallfeder-forms.backend:
@@ -29,7 +27,9 @@ services:
   gallfeder-forms.frontend:
     image: ghcr.io/finnick4/gallfeder-forms-frontend:latest
     container_name: gallfeder-forms.frontend
-
+    depends_on:
+      gallfeder-forms.backend:
+        condition: service_started
     ports:
       - "4004:4004"
 

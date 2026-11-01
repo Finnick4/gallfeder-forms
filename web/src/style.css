@@ -402,7 +402,7 @@ a.form-overview:hover {
 nav.header-bar {
     z-index: 50;
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: 1fr auto 1fr;
     background-color: var(--bg-color-section);
     position: fixed;
     top: 0;
