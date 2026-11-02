@@ -3,7 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import {type Form, NIL_UUID, type Question, type UUID} from "../../shared/types.ts";
 import {FormQuestion} from "../../components/questions/FormQuestion.tsx";
 import {getDifferencesBetweenForms} from "../../shared/form_difference.ts";
-import FittingTextArea from "../../components/FittingTextArea.tsx";
+import {FittingTextArea} from "../../components/FittingTextArea.tsx";
 import {isLoggedIn} from "../../shared/checks.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
 import {GoogleMaterialSymbol} from "../../components/GoogleMaterialSymbol.tsx";

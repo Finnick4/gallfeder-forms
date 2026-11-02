@@ -7,7 +7,7 @@ interface Properties {
     isVertical?: boolean
 }
 
-const NumberBarChart = ({assignments, isVertical = false}: Properties ) => {
+export const NumberBarChart = ({assignments, isVertical = false}: Properties ) => {
     return (
         <BarChart
             style={{ width: '100%', aspectRatio: 1.618 }}
@@ -52,4 +52,3 @@ const NumberBarChart = ({assignments, isVertical = false}: Properties ) => {
         </BarChart>
     );
 }
-export default NumberBarChart

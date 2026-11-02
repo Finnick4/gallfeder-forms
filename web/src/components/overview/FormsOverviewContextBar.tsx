@@ -1,10 +1,9 @@
 import {CreateFormButton} from "../CreateFormButton.tsx";
 
-const FormsOverviewContextBar = () => {
+export const FormsOverviewContextBar = () => {
     return (
         <nav className="context-bar">
             <CreateFormButton />
         </nav>
     );
 }
-export default FormsOverviewContextBar;

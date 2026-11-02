@@ -1,11 +1,11 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {FormResponsePage} from "./pages/form/FormResponsePage.tsx";
 import {LoginPage} from "./pages/LoginPage.tsx";
-import OverviewPage from "./pages/OverviewPage.tsx";
+import {OverviewPage} from "./pages/OverviewPage.tsx";
 import {FormModifyPages} from "./pages/form/FormModifyPages.tsx";
 import {FormModifySubpages} from "./shared/enums.ts";
 
-function App() {
+export const App = () => {
     return (
         <BrowserRouter>
             <Routes>
@@ -19,4 +19,3 @@ function App() {
     );
 }
 
-export default App
