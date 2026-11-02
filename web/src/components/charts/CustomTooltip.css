@@ -7,5 +7,6 @@ div.chart-tooltip {
     max-width: 10rem;
     .label {
         color: var(--text);
+        overflow-wrap: break-word;
     }
 }

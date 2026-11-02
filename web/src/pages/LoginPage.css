@@ -1,9 +1,16 @@
 
 div.page.login {
+    --width: min(95vw, 20rem);
+
+    margin: 0 auto;
     .section {
         display: flex;
         flex-direction: column;
-        gap: 1rem
+        gap: 1rem;
+        align-items: center;
+    }
+    input {
+        width: calc(var(--width) - 2*var(--padding-section) - 4*var(--border-width) - 2*var(--padding-element));
     }
 
     h2 {

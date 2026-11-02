@@ -30,7 +30,7 @@ const EditableFormsOverview = () => {
 
             <div className="form-overviews">
                 {formOverviews == null || formOverviews.length == 0 ?
-                    <p>You don't have any editable forms. Go ahead and create one!</p> :
+                    <p className="hint">You don't have any editable forms. Go ahead and create one!</p> :
                     formOverviews.map(fo => <FormOverviewElement form={fo} key={fo.id}></FormOverviewElement>)
                 }
 

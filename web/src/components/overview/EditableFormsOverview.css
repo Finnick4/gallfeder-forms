@@ -11,5 +11,9 @@ div.form-overviews {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 1rem;
+
+    .hint {
+        grid-column: 1/-1;
+    }
 }
 

@@ -17,10 +17,11 @@ export const TextInputQuestionResponses = ({question}: FormQuestionResponsesProp
         } as NumberChartAssignment);
         wordCount += wordCountElement.occurrence;
     }
-    if (chartType == NumberChartTypes.Table) {
+    const furtherWords = question.meta.submittedTextsAnalysis.totalWords - wordCount;
+    if (chartType == NumberChartTypes.Table && furtherWords != 0) {
         assignments.push({
             key: "(further words)",
-            value: question.meta.submittedTextsAnalysis.totalWords - wordCount,
+            value: furtherWords,
         } as NumberChartAssignment);
     }
 
