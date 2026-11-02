@@ -1,4 +1,4 @@
-import EditableFormsOverview from "../components/overview/EditableFormsOverview.tsx";
+import {EditableFormsOverview} from "../components/overview/EditableFormsOverview.tsx";
 import {useNavigate} from "react-router-dom";
 import {isLoggedIn} from "../shared/checks.ts";
 import {useEffect} from "react";
