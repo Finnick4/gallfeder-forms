@@ -15,7 +15,8 @@ interface Properties {
 
 export const NumberPieChart = ({assignments}: Properties ) => {
     const color = new ChartColorer();
-    for (const assignment of assignments) {
+    const locAssignments = structuredClone(assignments);
+    for (const assignment of locAssignments) {
         if (assignment.fill == undefined) {
             assignment.fill = color.getColor();
         }
@@ -31,7 +32,7 @@ export const NumberPieChart = ({assignments}: Properties ) => {
             responsive
         >
             <Pie
-                data={assignments}
+                data={locAssignments}
                 dataKey={"value"}
                 nameKey={"key"}
                 label

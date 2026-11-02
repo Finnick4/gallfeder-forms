@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import FormEditPage from "./FormEditPage.tsx";
-import FormResponsesPage from "./FormResponsesPage.tsx";
+import {FormEditPage} from "./FormEditPage.tsx";
+import {FormResponsesPage} from "./FormResponsesPage.tsx";
 import {FormEditPageHeader} from "../../components/header/FormEditPageHeader.tsx";
 import {type Form, type HTTPResponse, NIL_UUID} from "../../shared/types.ts";
 import {useParams} from "react-router-dom";
@@ -73,7 +73,7 @@ export const FormModifyPages = ({subpage}: Properties) => {
 
     const getPage = () => {
         switch (subpage) {
-            case FormModifySubpages.Edit: return (<FormEditPage form={form} updateForm={updateForm}></FormEditPage>);
+            case FormModifySubpages.Edit: return (<FormEditPage form={structuredClone(form)} updateForm={updateForm}></FormEditPage>);
             case FormModifySubpages.Responses: return (<FormResponsesPage></FormResponsesPage>);
         }
     };

@@ -19,7 +19,7 @@ export const FormResponsesPage = () => {
         if (!isLoggedIn()) {
             nav("/login")
         }
-    }, []);
+    }, [nav]);
 
     const [formResponses, setFormResponses] = useState<FormResponses>({
         id: NIL_UUID,
@@ -79,7 +79,7 @@ export const FormResponsesPage = () => {
             .then((resp: HTTPResponse<FormResponses>) => {
                 setFormResponses(resp.data);
             });
-    }, []);
+    }, [formID]);
 
     return (
         <div className="page form responses">
@@ -98,5 +98,3 @@ export const FormResponsesPage = () => {
         </div>
     );
 }
-
-export default FormResponsesPage

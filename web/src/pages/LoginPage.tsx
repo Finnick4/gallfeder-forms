@@ -17,7 +17,7 @@ export const LoginPage = () => {
         if (isLoggedIn()) {
             nav("/");
         }
-    }, []);
+    }, [nav]);
     const tryLogIn = () => {
         if (isTryingToLogIn || handleRef.current == null || passwordRef.current == null) {
             return;
@@ -94,5 +94,3 @@ export const LoginPage = () => {
         </div>
     );
 }
-
-export default LoginPage

@@ -7,7 +7,7 @@ import {QuestionTypes} from "../../shared/enums.ts";
 import {API_BASE_URL} from "../../shared/general.ts";
 import "./form_pages.css";
 
-// @ts-ignore
+// @ts-expect-error enum
 enum ResponseStatus {
     Respondable,
     Responded,
@@ -82,7 +82,7 @@ export const FormResponsePage = () => {
             .then((resp: FormGetResponse) => {
                 setForm(resp.data);
             });
-    }, []);
+    }, [formID]);
 
     const submit = () => {
         fetch(`${API_BASE_URL}/api/forms/${formID}/responses`, {

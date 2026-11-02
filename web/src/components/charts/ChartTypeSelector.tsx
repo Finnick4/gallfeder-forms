@@ -10,11 +10,12 @@ interface Properties<T> {
 }
 
 export const ChartTypeSelector = <T,>({entries, defaultSelected, onChange}: Properties<T>) => {
+    const defaultState = defaultSelected ? entries.find(e => e.storedType == defaultSelected)! : entries[0];
+    const [selected, setSelected] = useState<T>(defaultState.storedType);
+
     if (entries.length == 0) {
         return (<div className="chart-type-selector">No entries parsed!</div>);
     }
-    const defaultState = defaultSelected ? entries.find(e => e.storedType == defaultSelected)! : entries[0];
-    const [selected, setSelected] = useState<T>(defaultState.storedType);
     
     const changeSelection = (entry: TypeSelectorEntry<T>) => {
         setSelected(entry.storedType);

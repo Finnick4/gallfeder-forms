@@ -8,7 +8,7 @@ interface Properties {
     assignments: NumberChartAssignment[]
 }
 
-// @ts-ignore
+// @ts-expect-error enum
 enum SortTypes {
     none,
     keyAsc,

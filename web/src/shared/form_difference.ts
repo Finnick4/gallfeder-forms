@@ -51,7 +51,7 @@ export const getDifferencesBetweenForms = (old: Form, current: Form): FormEditCh
         }
     }
 
-    let foundDifference = old.title != current.title || old.description != current.description || questionEdits.length != 0;
+    const foundDifference = old.title != current.title || old.description != current.description || questionEdits.length != 0;
 
     const fixedDesc = current.description.replaceAll("\n", "\\n")
 

@@ -27,7 +27,7 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
         if (!isLoggedIn()) {
             nav("/login")
         }
-    }, []);
+    }, [nav]);
 
     const [formVers, setFormVersions] = useState<FormVersions>({
         original: structuredClone(form),
@@ -39,19 +39,6 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
 
     const titleEdit = useRef<HTMLInputElement>(null);
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
-
-    useEffect(() => {
-        setFormVersions({
-            original: structuredClone(form),
-            changed: structuredClone(form)
-        });
-        if (titleEdit.current) {
-            titleEdit.current.value = form.title;
-        }
-        if (descriptionEdit.current) {
-            descriptionEdit.current.value = form.description.replaceAll("\\n", "\n");
-        }
-    }, [form])
 
 
     const notifyQuestionEdit =  (question: Question) => {
@@ -219,5 +206,3 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
         </div>
     );
 }
-
-export default FormEditPage

@@ -11,7 +11,7 @@ export const OverviewPage = () => {
         if (!isLoggedIn()) {
             nav("/login")
         }
-    }, []);
+    }, [nav]);
 
     return (
       <div className="page overview">

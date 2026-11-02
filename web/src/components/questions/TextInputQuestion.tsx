@@ -17,13 +17,13 @@ export const TextInputQuestion = ({question, respondableSettings, editableSettin
     }, [isFocussed]);
 
     const callUpdate = () => {
-        console.log("Update!!!")
         if (respondableSettings == undefined || inputElem.current == null) {
             console.warn("Tried to change the answer of an irrespondable choice question.");
             return;
         }
-        respondableSettings.currentAnswer.meta.writtenText = inputElem.current.value;
-        respondableSettings.answerChangeCallback(respondableSettings.currentAnswer);
+        const answer = structuredClone(respondableSettings.currentAnswer);
+        answer.meta.writtenText = inputElem.current.value;
+        respondableSettings.answerChangeCallback(answer);
     }
 
     const callEditOnQuestionText = (original: string, changed: string) => {

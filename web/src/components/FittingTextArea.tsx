@@ -1,4 +1,4 @@
-import {type RefObject, useEffect, useRef} from "react";
+import {type RefObject, useCallback, useEffect, useRef} from "react";
 import "./FittingTextArea.css";
 
 interface Properties {
@@ -10,28 +10,28 @@ interface Properties {
 }
 
 export const FittingTextArea = ({initialValue, className, onLeave, ref, onFocus}: Properties) => {
-    const elem = ref == undefined  ? useRef<HTMLTextAreaElement>(null) : ref;
+    const elemRef = useRef<HTMLTextAreaElement>(null);
+    const elem = ref == undefined ? elemRef : ref;
 
-    const resize = () => {
+    const resize = useCallback(() => {
         if (elem.current == null) {
             return;
         }
         elem.current.style.height = "1px";
         elem.current.style.height = `calc(${elem.current.scrollHeight + "px"} - 1.5rem)`;
-    }
+    }, [elem])
 
     useEffect(() => {
         if (elem.current) {
-            elem.current.defaultValue = initialValue;
+            elem.current.defaultValue = initialValue.replaceAll("\\n", "\n");
         }
-    }, [initialValue]);
-
-    resize();
+        resize();
+    }, [elem, initialValue, resize]);
 
     return (
         <textarea
             className={className}
-            defaultValue={initialValue}
+            defaultValue={initialValue.replaceAll("\\n", "\n")}
             onChange={resize}
             ref={elem}
             onFocus={onFocus}
@@ -40,5 +40,3 @@ export const FittingTextArea = ({initialValue, className, onLeave, ref, onFocus}
         </textarea>
     );
 }
-
-export default FittingTextArea

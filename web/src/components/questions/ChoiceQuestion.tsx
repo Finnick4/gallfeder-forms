@@ -40,8 +40,9 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
             console.warn("Tried to change the answer of an irrespondable choice question.");
             return;
         }
-        respondableSettings.currentAnswer.meta.selectedChoices = [opt];
-        respondableSettings.answerChangeCallback(respondableSettings.currentAnswer);
+        const answer = structuredClone(respondableSettings.currentAnswer);
+        answer.meta.selectedChoices = [opt];
+        respondableSettings.answerChangeCallback(answer);
     }
     const isSelected = (opt: ChoiceQuestionOption) => {
         if (respondableSettings == undefined || respondableSettings.currentAnswer.meta.selectedChoices == undefined) {

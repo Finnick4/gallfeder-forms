@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-expect-error enum
 export enum NumberChartTypes {
     Table,
     BarChart,
@@ -6,13 +6,13 @@ export enum NumberChartTypes {
     VerticalBarChart
 }
 
-// @ts-ignore
+// @ts-expect-error enum
 export enum FormModifySubpages {
     Edit,
     Responses,
 }
 
-// @ts-ignore
+// @ts-expect-error enum
 export enum QuestionTypes {
     InternalNotice = -1,
     Invalid,
