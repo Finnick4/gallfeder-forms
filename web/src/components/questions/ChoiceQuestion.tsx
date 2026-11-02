@@ -11,7 +11,6 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
 
     const isRespondable = respondableSettings != undefined;
     const isFocussed = editableSettings?.currentlyFocussed == q.id;
-    const showAddPrompt = q.meta.choiceOptions == undefined || q.meta.choiceOptions.findIndex(opt => opt.text == "") == -1;
 
     useEffect(() => {
         if (isFocussed) {
@@ -19,17 +18,19 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
         }
     }, [isFocussed]);
 
-    const opts = q.meta.choiceOptions ? q.meta.choiceOptions : [];
+    const opts = q.meta.choiceOptions ?? [];
 
     const addOption = () => {
+        const n = (q.meta.choiceOptions?.length ?? 0) + 1;
+        const optTxt = `Option ${n}`;
         setQuestion((prev) => {
             if (prev.meta.choiceOptions == null) {
                 prev.meta.choiceOptions = [];
             }
-            if (prev.meta.choiceOptions.findIndex(opt => opt.text == "") != -1) {
-                return prev;
+            if (prev.meta.choiceOptions.findIndex(opt => opt.text == optTxt) != -1) {
+                return structuredClone(prev);
             }
-            prev.meta.choiceOptions.push({text: ""});
+            prev.meta.choiceOptions.push({text: optTxt});
             return structuredClone(prev);
         });
     }
@@ -138,22 +139,19 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                             className="edit-label-text usable"
                             type="text"
                             defaultValue={opt.text}
-                            autoFocus={opt.text == ""}
+                            autoFocus={opt.text == `Option ${opts.length}`}
                             onBlur={e => callEditOnLabelText(opt, {text: e.target.value})}
                         ></input>
                     </label>
                 );
             })}
-            {
-                showAddPrompt ?
-                <button
-                    className="option"
-                    onClick={addOption}
-                >
-                    <GoogleMaterialSymbol iconName="add" />
-                    <div className="edit-label-text">Add option</div>
-                </button> : <></>
-            }
+            <button
+                className="option"
+                onClick={addOption}
+            >
+                <GoogleMaterialSymbol iconName="add" />
+                <div className="edit-label-text">Add option</div>
+            </button>
         </div>
     );
 }
