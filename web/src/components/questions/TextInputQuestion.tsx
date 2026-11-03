@@ -56,6 +56,7 @@ export const TextInputQuestion = ({question, respondableSettings, editableSettin
                        ref={inputElem}
                        disabled={!isRespondable}
                        onChange={callUpdate}
+                       placeholder={isRespondable ? "Your answer..." : "User answer"}
                 />
             </div>
         );
@@ -71,11 +72,13 @@ export const TextInputQuestion = ({question, respondableSettings, editableSettin
                 defaultValue={q.meta.question}
                 ref={qInputElem}
                 onBlur={e => callEditOnQuestionText(q.meta.question, e.target.value)}
+                placeholder="Question..."
             ></input>
 
             <input type="text"
                    ref={inputElem}
                    disabled={true}
+                   placeholder="User answer"
             />
         </div>
     );

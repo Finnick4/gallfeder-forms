@@ -163,12 +163,14 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
                         onFocus={() => setFocussed("")}
                         onChange={e => editTitleInput(e.target)}
                         onBlur={e => editTitle(e.target.value)}
+                        placeholder="Form title..."
                     />
                     <FittingTextArea
                         className="description"
                         ref={descriptionEdit}
                         onFocus={() => setFocussed("")}
                         initialValue={formVers.changed.description}
+                        placeholder="A description of this form..."
                         onLeave={editDescription}
                     />
                 </div>

@@ -123,6 +123,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                 type="text"
                 defaultValue={q.meta.question}
                 ref={qInputElem}
+                placeholder="Question..."
                 onBlur={e => callEditOnQuestionText(q.meta.question, e.target.value)}
             ></input>
 
@@ -141,6 +142,7 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                             type="text"
                             defaultValue={opt.text}
                             autoFocus={opt.text == `Option ${opts.length}`}
+                            placeholder="Choice option"
                             onBlur={e => callEditOnLabelText(opt, {text: e.target.value})}
                         ></input>
                     </label>

@@ -7,9 +7,10 @@ interface Properties {
     className: string
     ref?: RefObject<HTMLTextAreaElement | null>
     onFocus?: () => void
+    placeholder?: string
 }
 
-export const FittingTextArea = ({initialValue, className, onLeave, ref, onFocus}: Properties) => {
+export const FittingTextArea = ({initialValue, className, onLeave, ref, onFocus, placeholder}: Properties) => {
     const elemRef = useRef<HTMLTextAreaElement>(null);
     const elem = ref == undefined ? elemRef : ref;
 
@@ -35,6 +36,7 @@ export const FittingTextArea = ({initialValue, className, onLeave, ref, onFocus}
             onChange={resize}
             ref={elem}
             onFocus={onFocus}
+            placeholder={placeholder ?? ""}
             onBlur={e => onLeave(e.target.value)}
         >
         </textarea>
