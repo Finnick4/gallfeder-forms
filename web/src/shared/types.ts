@@ -74,7 +74,7 @@ export const makeFormFromResponses = (resp: FormResponses): Form => {
         description: resp.description,
         questions: resp.questionResponses.map(r => {
             return {
-                id: r.questionID,
+                id: r.id,
                 formID: r.formID,
                 index: r.index,
                 type: r.type,
@@ -85,7 +85,7 @@ export const makeFormFromResponses = (resp: FormResponses): Form => {
 }
 
 export type QuestionResponses = {
-    "questionID": UUID
+    "id": UUID
     "formID": UUID
     "index": number
     "type": QuestionTypes

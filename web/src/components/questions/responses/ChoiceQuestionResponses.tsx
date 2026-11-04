@@ -17,6 +17,7 @@ export const ChoiceQuestionResponses = ({question}: FormQuestionResponsesPropert
                 entries={NUMBER_CHART_TYPES_SELECTOR_ENTRIES}
                 defaultSelected={NumberChartTypes.BarChart}
                 onChange={type => setChartType(type)}
+                identifier={`${question.formID}---${question.id}`}
             />
             <NumberCharts
                 chartType={chartType}

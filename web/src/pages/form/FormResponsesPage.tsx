@@ -80,7 +80,6 @@ export const FormResponsesPage = () => {
                 setFormResponses(resp.data);
             });
     }, [formID]);
-
     return (
         <div className="page form responses">
             <div className="form-response-head section">
@@ -92,7 +91,7 @@ export const FormResponsesPage = () => {
             <div className="questions section">
                 {formResponses.questionResponses.map(q => <FormQuestionResponses
                     question={structuredClone(q)}
-                    key={q.questionID}/>)}
+                    key={q.id}/>)}
             </div>
 
         </div>
