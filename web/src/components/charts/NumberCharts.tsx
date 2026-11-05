@@ -14,7 +14,8 @@ export const NumberCharts = ({chartType, assignments}: Properties) => {
     if (assignments.length == 0) {
         assignments = [{
             key: "Nothing...",
-            value: 0
+            value: chartType == NumberChartTypes.PieChart ? 1 : 0,
+            fill: "#888888",
         }];
     }
 
