@@ -66,9 +66,9 @@ export const NumberTable = ({assignments}: Properties ) => {
                     Times Chosen <GoogleMaterialSymbol iconName={determineIcon(SortTypes.valueAsc)} />
                 </button>
             </div>
-            {sorted.map(a => {
+            {sorted.map((a, i) => {
                 return (
-                    <div className="row">
+                    <div className="row" key={i}>
                         <div className="cell text">{a.key}</div>
                         <div className="cell value">{a.value}</div>
                     </div>
