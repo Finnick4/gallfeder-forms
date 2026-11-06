@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 import type {HTTPResponse} from "../shared/types.ts";
 import {useState} from "react";
 import {API_BASE_URL} from "../shared/general.ts";
+import {Button} from "./Button.tsx";
 
 export const CreateFormButton = () => {
     const nav = useNavigate();
@@ -35,12 +36,13 @@ export const CreateFormButton = () => {
     }
 
     return (
-        <button
-            className="secondary inline"
+        <Button
+            styleType="secondary"
+            className="inline"
             onClick={createFormAndNavigate}
             disabled={isLoading}
         >
             <GoogleMaterialSymbol iconName={isLoading ? "progress_activity" : "add"} /> Create
-        </button>
+        </Button>
     );
 }

@@ -2,6 +2,7 @@ import type {QuestionTypes} from "../shared/enums.ts";
 import type {TypeSelectorEntry} from "../shared/types.ts";
 import {GoogleMaterialSymbol} from "./GoogleMaterialSymbol.tsx";
 import "./QuestionTypeSelector.css";
+import {Button} from "./Button.tsx";
 
 
 interface Properties {
@@ -15,12 +16,13 @@ export const QuestionTypeSelector = ({entries, onClick}: Properties) => {
     }
 
     return (<div className="question-type-selector">
-        {entries.map((e, i) => <button
+        {entries.map((e, i) => <Button
+            styleType="secondary"
             key={i}
             className="entry"
             onClick={() => onClick ? onClick(e.storedType) : undefined}
         >
             <GoogleMaterialSymbol iconName={e.icon} /> {e.name}
-        </button>)}
+        </Button>)}
     </div>);
 }

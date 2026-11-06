@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import type {TypeSelectorEntry} from "../../shared/types.ts";
 import "./ChartTypeSelector.css";
+import {Button} from "../Button.tsx";
 
 interface Properties<T> {
     entries: TypeSelectorEntry<T>[] | ReadonlyArray<TypeSelectorEntry<T>>
@@ -46,14 +47,15 @@ export const ChartTypeSelector = <T,>({entries, defaultSelected, onChange, ident
 
     return (
         <div className="chart-type-selector">
-            {entries.map((entry, index) => <button
+            {entries.map((entry, index) => <Button
                 key={index}
                 className={`chart-selection-type ${selected == entry.storedType ? "selected" : ""}`}
                 onClick={() => changeSelection(entry)}
+                styleType="secondary"
                 title={entry.name}
             >
                 <GoogleMaterialSymbol iconName={entry.icon} filled={selected == entry.storedType} />
-            </button>)}
+            </Button>)}
         </div>
     );
 }

@@ -1,0 +1,70 @@
+a.button {
+    text-decoration: none;
+    color: var(--text);
+}
+
+.button:not(.no-styling) {
+    font-size: 1rem;
+    padding: var(--padding-button);
+    border-radius: calc(var(--border-radius) - var(--padding-section));
+    transition:
+            translate .1s ease,
+            background-color .1s ease;
+}
+.button:not(.no-styling):hover:not(:disabled) {
+    translate: 0 -3px;
+    cursor: pointer;
+}
+.button:not(.no-styling):disabled {
+    cursor: not-allowed;
+}
+
+.button.secondary {
+    background: var(--secondary);
+    border: var(--secondary-border);
+}
+.button.secondary:hover:not(:disabled) {
+    background: var(--secondary-highlight);
+}
+.button.secondary:disabled {
+    background: var(--secondary-muted);
+
+}
+
+.button.primary {
+    background: var(--primary);
+    border: var(--primary-border);
+}
+.button.primary:hover:not(:disabled) {
+    background: var(--primary-highlight);
+}
+.button.primary:disabled {
+    background: var(--primary-muted);
+}
+
+.button.accent {
+    background: var(--accent);
+    border: var(--accent-border);
+}
+.button.accent:hover:not(:disabled) {
+    background: var(--accent-highlight);
+}
+.button.accent:disabled {
+    background: var(--accent-muted);
+}
+
+.button.element {
+    background: var(--element-color);
+    border: var(--element-border);
+}
+.button.element:hover:not(:disabled) {
+    background: var(--element-color-highlight);
+}
+.button.element:disabled {
+    background: var(--element-color-muted);
+}
+
+.button.inline:not(.no-styling) {
+    padding: var(--padding-inline-input);
+}
+

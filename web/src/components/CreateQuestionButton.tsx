@@ -4,6 +4,7 @@ import {QuestionTypeSelector} from "./QuestionTypeSelector.tsx";
 import {useState} from "react";
 import {QuestionTypes} from "../shared/enums.ts";
 import "./CreateQuestionButton.css";
+import {Button} from "./Button.tsx";
 
 interface Properties {
     addQuestionCallback: (t: QuestionTypes) => void;
@@ -15,11 +16,12 @@ export const CreateQuestionButton = ({addQuestionCallback}: Properties) => {
     return (
         <div className="add-question">
             <div className="head">
-                <button
+                <Button
+                    styleType="secondary"
                     onClick={() => setExpanded(!expanded)}
                 >
                     <GoogleMaterialSymbol iconName="add_circle" /> Add question
-                </button>
+                </Button>
             </div>
 
             {expanded ?

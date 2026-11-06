@@ -1,5 +1,5 @@
 import type {Form} from "../../shared/types.ts";
-import {AButton} from "../AButton.tsx";
+import { Button } from "../Button.tsx";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import "./FormEditPageHeader.css";
 
@@ -12,12 +12,12 @@ export const FormEditPageHeader = ({form, signalEditTitle}: Properties) => {
     return (
         <nav className="header-bar">
             <div className="left">
-                <AButton className="back" href="/"><GoogleMaterialSymbol iconName={"arrow_back"} /></AButton>
+                <Button styleType="no-styling" className="back" href="/"><GoogleMaterialSymbol iconName={"arrow_back"} /></Button>
                 <h3 onDoubleClick={signalEditTitle}>{form.title}</h3>
             </div>
             <div className="center panels">
-                <AButton href={`/form/${form.id}/edit`}>Edit</AButton>
-                <AButton href={`/form/${form.id}/responses`}>Responses</AButton>
+                <Button styleType="no-styling" href={`/form/${form.id}/edit`}>Edit</Button>
+                <Button styleType="no-styling" href={`/form/${form.id}/responses`}>Responses</Button>
             </div>
             <div className="right">
 

@@ -4,6 +4,7 @@ import {isLoggedIn} from "../shared/checks.ts";
 import {GoogleMaterialSymbol} from "../components/GoogleMaterialSymbol.tsx";
 import {API_BASE_URL} from "../shared/general.ts";
 import "./LoginPage.css";
+import {Button} from "../components/Button.tsx";
 
 
 export const LoginPage = () => {
@@ -84,11 +85,11 @@ export const LoginPage = () => {
                     />
                 </label>
                 <div>
-                    <button
-                        className="primary"
+                    <Button
+                        styleType="primary"
                         disabled={isTryingToLogIn}
                         onClick={tryLogIn}
-                    ><GoogleMaterialSymbol iconName={isTryingToLogIn ? "progress_activity" : "login"} /> Log in</button>
+                    ><GoogleMaterialSymbol iconName={isTryingToLogIn ? "progress_activity" : "login"} /> Log in</Button>
                 </div>
             </div>
         </div>

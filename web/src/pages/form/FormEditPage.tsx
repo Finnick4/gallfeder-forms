@@ -9,6 +9,7 @@ import {QuestionTypes} from "../../shared/enums.ts";
 import {GoogleMaterialSymbol} from "../../components/GoogleMaterialSymbol.tsx";
 import {API_BASE_URL} from "../../shared/general.ts";
 import "./form_pages.css";
+import {Button} from "../../components/Button.tsx";
 
 type FormVersions = {
     original: Form,
@@ -210,13 +211,14 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
                     }
                 </div>
                 <div className="control section">
-                    <button
-                        className="save primary"
+                    <Button
+                        styleType="primary"
+                        className="save"
                         onClick={save}
                         disabled={isTryingToSave}
                         onFocus={() => setFocussed("")}
                     ><GoogleMaterialSymbol iconName={isTryingToSave ? "progress_activity" : "save"} /> Save changes
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

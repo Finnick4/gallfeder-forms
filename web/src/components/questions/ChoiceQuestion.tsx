@@ -3,6 +3,7 @@ import {type ChoiceQuestionOption, type Question} from "../../shared/types.ts";
 import {useEffect, useRef, useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import "./ChoiceQuestion.css";
+import {Button} from "../Button.tsx";
 
 export const ChoiceQuestion = ({question, respondableSettings, editableSettings}: FormQuestionProperties) => {
     const [q, setQuestion] = useState<Question>(structuredClone(question));
@@ -148,13 +149,14 @@ export const ChoiceQuestion = ({question, respondableSettings, editableSettings}
                     </label>
                 );
             })}
-            <button
+            <Button
+                styleType="no-styling"
                 className="option"
                 onClick={addOption}
             >
                 <GoogleMaterialSymbol iconName="add" />
                 <div className="edit-label-text">Add option</div>
-            </button>
+            </Button>
         </div>
     );
 }

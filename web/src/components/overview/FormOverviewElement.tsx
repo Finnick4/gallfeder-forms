@@ -1,7 +1,7 @@
 import type {FormOverview} from "../../shared/types.ts";
-import {AButton} from "../AButton.tsx";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import "./FormOverviewElement.css";
+import {Button} from "../Button.tsx";
 
 interface Properties {
     form: FormOverview
@@ -10,7 +10,8 @@ interface Properties {
 export const FormOverviewElement = ({form}: Properties) => {
 
     return (
-        <AButton
+        <Button
+            styleType="no-styling"
             className="form-overview"
             href={`/form/${form.id}/edit`}
         >
@@ -22,6 +23,6 @@ export const FormOverviewElement = ({form}: Properties) => {
                     <span className="responses"><GoogleMaterialSymbol iconName={"how_to_vote"} /> {form.responses}</span>
                 </div>
             </div>
-        </AButton>
+        </Button>
     );
 }

@@ -3,6 +3,7 @@ import {useState} from "react";
 import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
 import type {AllowedGoogleMaterialSymbol} from "../../shared/types.ts";
 import "./NumberTable.css";
+import { Button } from "../Button.tsx";
 
 interface Properties {
     assignments: NumberChartAssignment[]
@@ -59,12 +60,12 @@ export const NumberTable = ({assignments}: Properties ) => {
     return (
         <div className="chart table">
             <div className="row head">
-                <button onClick={() => changeSortType(SortTypes.keyAsc)} className="cell text">
+                <Button styleType="no-styling" onClick={() => changeSortType(SortTypes.keyAsc)} className="cell text">
                     Option <GoogleMaterialSymbol iconName={determineIcon(SortTypes.keyAsc)} />
-                </button>
-                <button onClick={() => changeSortType(SortTypes.valueAsc)} className="cell value">
+                </Button>
+                <Button styleType="no-styling" onClick={() => changeSortType(SortTypes.valueAsc)} className="cell value">
                     Times Chosen <GoogleMaterialSymbol iconName={determineIcon(SortTypes.valueAsc)} />
-                </button>
+                </Button>
             </div>
             {sorted.map((a, i) => {
                 return (

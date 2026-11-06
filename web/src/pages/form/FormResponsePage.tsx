@@ -6,6 +6,7 @@ import type {FormGetResponse} from "../../shared/http_responses.ts";
 import {QuestionTypes} from "../../shared/enums.ts";
 import {API_BASE_URL} from "../../shared/general.ts";
 import "./form_pages.css";
+import {Button} from "../../components/Button.tsx";
 
 // @ts-expect-error enum
 enum ResponseStatus {
@@ -117,13 +118,13 @@ export const FormResponsePage = () => {
                 <div className="section">
                     <h1>Thank you for responding!</h1>
                     <p>Thank you for taking your time and responding to this form.</p>
-                    <button
+                    <Button
+                        styleType="secondary"
                         onClick={() => {
                             setAnswers([]);
                             setStatus(ResponseStatus.Respondable);
                         }}
-                        className="secondary"
-                    >Submit a new response</button>
+                    >Submit a new response</Button>
                 </div>
             </div>
         );
@@ -165,7 +166,7 @@ export const FormResponsePage = () => {
                 }
             </div>
             <div className="control section">
-                <button className="submit primary" onClick={submit}>Submit</button>
+                <Button styleType="primary" className="submit" onClick={submit}>Submit</Button>
             </div>
         </div>
     );
