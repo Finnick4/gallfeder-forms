@@ -1,0 +1,12 @@
+div.add-question {
+    div.head {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--text);
+        margin-bottom: .5rem;
+
+        .icon {
+            font-size: 1.2rem;
+        }
+    }
+}

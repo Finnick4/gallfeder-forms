@@ -133,17 +133,3 @@ input:disabled {
     font-size: 1.125rem;
     margin: .5rem 0;
 }
-
-
-
-.add-question {
-    .head {
-        text-align: center;
-        font-size: 1.2rem;
-        color: var(--text);
-        margin-bottom: .5rem;
-        .icon {
-            font-size: 1.2rem;
-        }
-    }
-}

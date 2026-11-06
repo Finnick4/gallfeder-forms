@@ -4,10 +4,8 @@ import type {FormQuestionProperties} from "../../shared/properties.ts";
 import {TextInputQuestion} from "./TextInputQuestion.tsx";
 import {InternalNoticeMockQuestion} from "./InternalNoticeMockQuestion.tsx";
 import type {ReactElement} from "react";
-import {GoogleMaterialSymbol} from "../GoogleMaterialSymbol.tsx";
-import {QuestionTypeSelector} from "./QuestionTypeSelector.tsx";
-import {QUESTION_TYPES_SELECTOR_ENTRIES} from "../../shared/types.ts";
 import "./FormQuestion.css";
+import {CreateQuestionButton} from "../CreateQuestionButton.tsx";
 
 interface Properties extends FormQuestionProperties{
     addQuestionCallback?: (t: QuestionTypes) => void;
@@ -42,11 +40,6 @@ export const FormQuestion = ({question, respondableSettings, editableSettings, a
 
     return (<>
         {qElem}
-        {(isFocussed || forceAddQuestionSection) && addQuestionCallback ?
-            <div className="add-question">
-                <div className="head"><GoogleMaterialSymbol iconName="add_circle" /> Add question</div>
-                <QuestionTypeSelector entries={QUESTION_TYPES_SELECTOR_ENTRIES} onClick={addQuestionCallback} />
-            </div>
-            : <></>}
+        {(isFocussed || forceAddQuestionSection) && addQuestionCallback ? <CreateQuestionButton addQuestionCallback={addQuestionCallback} /> : <></>}
     </>)
 }

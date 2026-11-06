@@ -41,6 +41,7 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
     const descriptionEdit = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setFormVersions({
             original: structuredClone(form),
             changed: structuredClone(form)
@@ -176,7 +177,7 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
                 </div>
                 <div className="questions section">
                     {formVers.changed.questions ?
-                        formVers.changed.questions.map(q => <FormQuestion
+                        formVers.changed.questions.map((q, i) => <FormQuestion
                             question={structuredClone(q)}
                             editableSettings={{
                                 questionEditedCallback: notifyQuestionEdit,
@@ -188,6 +189,7 @@ export const FormEditPage = ({form, updateForm}: Properties) => {
                             respondableSettings={undefined}
                             addQuestionCallback={addQuestion}
                             key={q.id}
+                            forceAddQuestionSection={i + 1 == formVers.changed.questions.length && currentlyFocussed == ""}
                         />)
                         :
                         <FormQuestion
